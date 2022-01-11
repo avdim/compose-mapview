@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import example.imageviewer.ResString
+import com.map.ResString
 import com.map.model.ContentState
 import com.map.model.Picture
 import com.map.style.*

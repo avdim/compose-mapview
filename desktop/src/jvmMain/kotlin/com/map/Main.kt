@@ -23,7 +23,7 @@ fun main() = application {
 
     Window(
         onCloseRequest = ::exitApplication,
-        title = "Image Viewer",
+        title = "Map View",
         state = WindowState(
             position = WindowPosition.Aligned(Alignment.Center),
             size = getPreferredWindowSize(800, 1000)

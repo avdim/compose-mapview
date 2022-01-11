@@ -1,4 +1,4 @@
-package example.imageviewer
+package com.map
 
 object ResString {
 
@@ -19,7 +19,7 @@ object ResString {
 
     init {
         if (System.getProperty("user.language").equals("ru")) {
-            appName = "ImageViewer"
+            appName = "MapView"
             loading = "Загружаем изображения..."
             repoEmpty = "Репозиторий пуст."
             noInternet = "Нет доступа в интернет."
@@ -34,7 +34,7 @@ object ResString {
             back = "Назад"
             refresh = "Обновить"
         } else {
-            appName = "ImageViewer"
+            appName = "MapView"
             loading = "Loading images..."
             repoEmpty = "Repository is empty."
             noInternet = "No internet access."

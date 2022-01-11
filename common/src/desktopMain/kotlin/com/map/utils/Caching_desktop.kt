@@ -9,8 +9,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-val cacheImagePath = System.getProperty("user.home")!! +
-        File.separator + "Pictures/imageviewer" + File.separator
+val cacheImagePath = System.getProperty("user.home")!! + //todo /tmp dir
+        File.separator + "Pictures/mapview" + File.separator
 
 actual fun cacheImage(path: String, picture: Picture) {
     try {

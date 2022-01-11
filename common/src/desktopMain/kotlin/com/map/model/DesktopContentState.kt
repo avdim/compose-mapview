@@ -3,7 +3,7 @@ package com.map.model
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.window.WindowState
-import example.imageviewer.ResString
+import com.map.ResString
 import com.map.utils.cacheImagePath
 import com.map.view.showPopUpMessage
 import kotlinx.coroutines.CoroutineScope
