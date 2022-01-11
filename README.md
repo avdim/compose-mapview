@@ -6,7 +6,7 @@
 ### Install Android application
 
 ```
-./gradlew installDebug
+./gradlew android:installDebug
 ```
 
 Open project in IntelliJ IDEA or Android Studio and run "android" configuration.
