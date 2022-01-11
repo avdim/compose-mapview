@@ -31,41 +31,22 @@ object ContentState {
     val drag = DragHandler()
     val scale = ScaleHandler()
     lateinit var windowState: WindowState
-    private lateinit var repository: ImageRepository
-    private lateinit var uriRepository: String
     val scope = CoroutineScope(Dispatchers.IO)
 
-    fun applyContent(state: WindowState, uriRepository: String): ContentState {
+    fun applyContent(state: WindowState): ContentState {
         windowState = state
-        if (this::uriRepository.isInitialized && this.uriRepository == uriRepository) {
-            return this
-        }
-        this.uriRepository = uriRepository
-        repository = ImageRepository(uriRepository)
-        isContentReady.value = false
-
         initData()
 
         return this
     }
 
-    private val isAppReady = mutableStateOf(false)
-    fun isAppReady(): Boolean {
-        return isAppReady.value
-    }
-
-    private val isContentReady = mutableStateOf(false)
-    fun isContentReady(): Boolean {
-        return isContentReady.value
-    }
-
     // drawable content
     private val mainImage = mutableStateOf(BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
     private val currentImageIndex = mutableStateOf(0)
-    private val miniatures = Miniatures()
+    private val miniatures = mutableStateOf(Miniatures())
 
-    fun getMiniatures(): List<Picture> {
-        return miniatures.getMiniatures()
+    fun getMiniatures(): MutableState<Miniatures> {
+        return miniatures
     }
 
     fun getSelectedImage(): ImageBitmap {
@@ -141,9 +122,6 @@ object ContentState {
 
     // application content initialization
     private fun initData() {
-        if (isContentReady.value)
-            return
-
         val directory = File(cacheImagePath)
         if (!directory.exists()) {
             directory.mkdir()
@@ -159,17 +137,15 @@ object ContentState {
                 showPopUpMessage(
                     ResString.repoEmpty
                 )
-                onContentReady()
             } else {
                 val picture = loadFullImage(imageList[0])
-                miniatures.setMiniatures(pictureList)
+                miniatures.value = pictureList
                 if (isMainImageEmpty()) {
                     wrapPictureIntoMainImage(picture)
                 } else {
                     appliedFilters.add(MainImageWrapper.getFilters())
                     currentImageIndex.value = MainImageWrapper.getId()
                 }
-                onContentReady()
             }
         }
     }
@@ -177,42 +153,6 @@ object ContentState {
     // preview/fullscreen image managing
     fun isMainImageEmpty(): Boolean {
         return MainImageWrapper.isEmpty()
-    }
-
-    fun fullscreen(picture: Picture) {
-        isContentReady.value = false
-        AppState.screenState(ScreenType.FullscreenImage)
-        setMainImage(picture)
-    }
-
-    fun setMainImage(picture: Picture) {
-        if (MainImageWrapper.getId() == picture.id) {
-            if (!isContentReady()) {
-                onContentReady()
-            }
-            return
-        }
-        isContentReady.value = false
-
-        scope.launch(Dispatchers.IO) {
-            scale.reset()
-            if (isInternetAvailable()) {
-                    val fullSizePicture = loadFullImage(picture.source)
-                    fullSizePicture.id = picture.id
-                    wrapPictureIntoMainImage(fullSizePicture)
-            } else {
-                    showPopUpMessage(
-                        "${ResString.noInternet}\n${ResString.loadImageUnavailable}"
-                    )
-                    wrapPictureIntoMainImage(picture)
-            }
-            onContentReady()
-        }
-    }
-
-    private fun onContentReady() {
-        isContentReady.value = true
-        isAppReady.value = true
     }
 
     private fun wrapPictureIntoMainImage(picture: Picture) {
@@ -237,13 +177,12 @@ object ContentState {
     }
 
     fun swipeNext() {
-        if (currentImageIndex.value == miniatures.size() - 1) {
+        if (currentImageIndex.value == miniatures.value.size - 1) {
             showPopUpMessage(ResString.lastImage)
             return
         }
 
         restoreFilters()
-        setMainImage(miniatures.get(++currentImageIndex.value))
     }
 
     fun swipePrevious() {
@@ -253,23 +192,6 @@ object ContentState {
         }
 
         restoreFilters()
-        setMainImage(miniatures.get(--currentImageIndex.value))
-    }
-
-    fun refresh() {
-        scope.launch(Dispatchers.IO) {
-            if (isInternetAvailable()) {
-                clearCache()
-                MainImageWrapper.clear()
-                miniatures.clear()
-                isContentReady.value = false
-                initData()
-            } else {
-                showPopUpMessage(
-                    "${ResString.noInternet}\n${ResString.refreshUnavailable}"
-                )
-            }
-        }
     }
 }
 
@@ -307,10 +229,6 @@ private object MainImageWrapper {
 
     fun isEmpty(): Boolean {
         return (picture.value.name == "")
-    }
-
-    fun clear() {
-        picture.value = Picture(image = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
     }
 
     fun getName(): String {

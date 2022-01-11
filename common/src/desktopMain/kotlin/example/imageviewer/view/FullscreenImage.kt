@@ -38,9 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowSize
 import example.imageviewer.core.FilterType
-import example.imageviewer.model.AppState
 import example.imageviewer.model.ContentState
-import example.imageviewer.model.ScreenType
 import example.imageviewer.ResString
 import example.imageviewer.style.DarkGray
 import example.imageviewer.style.DarkGreen
@@ -55,19 +53,6 @@ import example.imageviewer.style.icFilterGrayscaleOff
 import example.imageviewer.style.icFilterGrayscaleOn
 import example.imageviewer.style.icFilterPixelOff
 import example.imageviewer.style.icFilterPixelOn
-
-@Composable
-fun FullscreenImage(
-    content: ContentState
-) {
-    Column {
-        ToolBar(content.getSelectedImageName(), content)
-        Image(content)
-    }
-    if (!content.isContentReady()) {
-        LoadingScreen()
-    }
-}
 
 @Composable
 fun ToolBar(
@@ -98,10 +83,7 @@ fun ToolBar(
                         })
                         .background(color = if (backButtonHover.value) TranslucentBlack else Transparent),
                         onClick = {
-                            if (content.isContentReady()) {
-                                content.restoreMainImage()
-                                AppState.screenState(ScreenType.MainScreen)
-                            }
+                            TODO("")
                         }) {
                         Image(
                             icBack(),

@@ -18,42 +18,22 @@ import example.imageviewer.view.SplashUI
 fun main() = application {
     val state = rememberWindowState()
     val content = remember {
-        ContentState.applyContent(
-            state,
-            "https://raw.githubusercontent.com/JetBrains/compose-jb/master/artwork/imageviewerrepo/fetching.list"
-        )
+        ContentState.applyContent(state)
     }
 
     val icon = icAppRounded()
 
-    if (content.isAppReady()) {
-        Window(
-            onCloseRequest = ::exitApplication,
-            title = "Image Viewer",
-            state = WindowState(
-                position = WindowPosition.Aligned(Alignment.Center),
-                size = getPreferredWindowSize(800, 1000)
-            ),
-            icon = icon
-        ) {
-            MaterialTheme {
-                AppUI(content)
-            }
-        }
-    } else {
-        Window(
-            onCloseRequest = ::exitApplication,
-            title = "Image Viewer",
-            state = WindowState(
-                position = WindowPosition.Aligned(Alignment.Center),
-                size = getPreferredWindowSize(800, 300)
-            ),
-            undecorated = true,
-            icon = icon,
-        ) {
-            MaterialTheme {
-                SplashUI()
-            }
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "Image Viewer",
+        state = WindowState(
+            position = WindowPosition.Aligned(Alignment.Center),
+            size = getPreferredWindowSize(800, 1000)
+        ),
+        icon = icon
+    ) {
+        MaterialTheme {
+            AppUI(content)
         }
     }
 }
