@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.map.ResString
 import com.map.model.ContentState
 import com.map.model.Picture
 import com.map.style.*
@@ -38,7 +37,7 @@ fun Miniature(
 
                 }
             ) {
-                Image(
+                Image( //todo multiplatform
                     org.jetbrains.skia.Image.makeFromEncoded(
                         toByteArray(picture.image)
                     ).asImageBitmap(),
@@ -59,22 +58,6 @@ fun Miniature(
                 style = MaterialTheme.typography.body1
             )
 
-            Clickable(
-                modifier = Modifier.height(70.dp)
-                    .width(30.dp)
-                    .background(color = if (infoButtonHover.value) TranslucentWhite else Transparent),
-                onClick = {
-                }
-            ) {
-                Image(
-                    icDots(),
-                    contentDescription = null,
-                    modifier = Modifier.height(70.dp)
-                        .width(30.dp)
-                        .padding(start = 1.dp, top = 25.dp, end = 1.dp, bottom = 25.dp),
-                    contentScale = ContentScale.FillHeight
-                )
-            }
         }
     }
 }
@@ -100,10 +83,10 @@ fun ScrollableArea(content: ContentState) {
                 }
             }
         }
-        VerticalScrollbar(
-            adapter = rememberScrollbarAdapter(stateVertical),
-            modifier = Modifier.align(Alignment.CenterEnd)
-                .fillMaxHeight()
-        )
+//        VerticalScrollbar(//todo Desktop
+//            adapter = rememberScrollbarAdapter(stateVertical),
+//            modifier = Modifier.align(Alignment.CenterEnd)
+//                .fillMaxHeight()
+//        )
     }
 }
