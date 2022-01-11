@@ -25,6 +25,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -137,10 +138,11 @@ fun Miniature(
 
 @Composable
 fun ScrollableArea(content: ContentState) {
+    val state by content.stateFlow.collectAsState()
     var index = 1
     val scrollState = rememberScrollState()
     Column(Modifier.verticalScroll(scrollState)) {
-        for (picture in content.getMiniatures().value) {
+        for (picture in state.pictures) {
             Miniature(
                 picture = picture,
                 content = content

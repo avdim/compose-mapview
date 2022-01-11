@@ -96,6 +96,8 @@ fun Miniature(
 
 @Composable
 fun ScrollableArea(content: ContentState) {
+    val state by content.stateFlow.collectAsState()
+
     Box(
         modifier = Modifier.fillMaxSize()
         .padding(end = 8.dp)
@@ -104,7 +106,6 @@ fun ScrollableArea(content: ContentState) {
         Column(modifier = Modifier.verticalScroll(stateVertical)) {
             var index = 1
             Column {
-                val state by content.stateFlow.collectAsState()
                 for (picture in state.pictures) {
                     Miniature(
                         picture = picture,

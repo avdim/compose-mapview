@@ -10,11 +10,7 @@ import com.map.model.ImageRepository
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val content = ContentState.applyContent(
-            this@MainActivity
-        )
-        
+        val content = ContentState
         setContent {
             AppUI(content)
         }
