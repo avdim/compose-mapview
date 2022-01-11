@@ -2,6 +2,8 @@ package com.map.model
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import com.map.model.PictureInfo
 import java.io.BufferedReader
 import java.io.FileInputStream
@@ -44,3 +46,7 @@ actual fun readPictureInfoFromFile(path: String): PictureInfo {
         height = height
     )
 }
+
+actual fun Picture.toImageBitmap(): ImageBitmap =
+    image.asImageBitmap()
+

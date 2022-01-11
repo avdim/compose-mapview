@@ -11,14 +11,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.map.model.ContentState
 import com.map.model.Picture
+import com.map.model.toImageBitmap
 import com.map.style.*
 import com.map.utils.toByteArray
+
 
 @Composable
 fun Miniature(
@@ -37,10 +40,8 @@ fun Miniature(
 
                 }
             ) {
-                Image( //todo multiplatform
-                    org.jetbrains.skia.Image.makeFromEncoded(
-                        toByteArray(picture.image)
-                    ).asImageBitmap(),
+                Image(
+                    picture.toImageBitmap(),
                     contentDescription = null,
                     modifier = Modifier.height(70.dp)
                         .width(90.dp)
@@ -62,13 +63,14 @@ fun Miniature(
     }
 }
 
+
 @Composable
 fun ScrollableArea(content: ContentState) {
     val state by content.stateFlow.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
-        .padding(end = 8.dp)
+            .padding(end = 8.dp)
     ) {
         val stateVertical = rememberScrollState(0)
         Column(modifier = Modifier.verticalScroll(stateVertical)) {

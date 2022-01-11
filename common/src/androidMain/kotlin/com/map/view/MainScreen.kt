@@ -29,6 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.map.model.ContentState
 import com.map.model.Picture
+import com.map.model.toImageBitmap
 import com.map.style.DarkGreen
 import com.map.style.Foreground
 import com.map.style.LightGray
@@ -97,7 +98,7 @@ fun Miniature(
                 }
             ) {
                 Image(
-                    picture.image.asImageBitmap(),
+                    picture.toImageBitmap(),
                     contentDescription = null,
                     modifier = Modifier.height(70.dp)
                         .width(90.dp)

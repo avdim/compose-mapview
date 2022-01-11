@@ -5,6 +5,8 @@
 
 package com.map.model
 
+import androidx.compose.ui.graphics.ImageBitmap
+
 data class Picture(
     var source: String = "",
     var name: String = "",
@@ -25,3 +27,4 @@ data class PictureInfo(
 expect fun PictureInfo.saveToFile(path: String)
 expect fun readPictureInfoFromFile(path: String): PictureInfo
 expect fun readAbstractImageDataFromFile(path: String): AbstractImageData
+expect fun Picture.toImageBitmap(): ImageBitmap

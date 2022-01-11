@@ -1,5 +1,8 @@
 package com.map.model
 
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
+import com.map.utils.toByteArray
 import java.awt.image.BufferedImage
 import java.io.BufferedReader
 import java.io.File
@@ -45,4 +48,8 @@ actual fun readPictureInfoFromFile(path: String): PictureInfo {
         height = height
     )
 }
+
+actual fun Picture.toImageBitmap(): ImageBitmap = org.jetbrains.skia.Image.makeFromEncoded(
+    toByteArray(image)
+).toComposeImageBitmap()
 
