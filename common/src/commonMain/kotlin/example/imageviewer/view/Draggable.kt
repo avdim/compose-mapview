@@ -18,7 +18,7 @@ import example.imageviewer.style.Transparent
 fun Draggable(
     dragHandler: DragHandler = remember { DragHandler() },
     modifier: Modifier = Modifier,
-    onUpdate: (() -> Unit)? = null,
+    onUpdate: (() -> Unit) = {  },
     children: @Composable() () -> Unit
 ) {
     val offsetPoint = dragHandler.getAmount()
@@ -31,7 +31,7 @@ fun Draggable(
                 onDragCancel = { dragHandler.cancel() },
             ) { change, dragAmount ->
                 dragHandler.drag(dragAmount)
-                onUpdate?.invoke()
+                onUpdate.invoke()
                 change.consumePositionChange()
             }
         }

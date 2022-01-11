@@ -192,7 +192,6 @@ fun Image(content: ContentState) {
         modifier = Modifier.fillMaxSize()
     ) {
         Draggable(
-            onUpdate = onUpdate,
             modifier = Modifier.fillMaxSize()
         ) {
             Zoomable(
