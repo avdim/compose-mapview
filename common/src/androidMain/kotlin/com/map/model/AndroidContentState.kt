@@ -1,18 +1,10 @@
 package com.map.model
 
 import android.content.Context
-import android.graphics.*
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import com.map.common.R
-import com.map.model.Miniatures
-import com.map.model.loadImages
-import com.map.utils.clearCache
-import com.map.utils.isInternetAvailable
-import com.map.view.showPopUpMessage
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

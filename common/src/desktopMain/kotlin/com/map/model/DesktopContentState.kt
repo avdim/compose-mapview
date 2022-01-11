@@ -42,7 +42,7 @@ object ContentState {
 
             // https://api.maptiler.com/maps/streets/1/0/0.png?key=
             // https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=
-            val pictureList = loadImages(cacheImagePath, imageList)
+            val pictureList: MutableList<Picture> = loadImages(cacheImagePath, imageList)
             if (pictureList.isEmpty()) {
                 showPopUpMessage(
                     ResString.repoEmpty
