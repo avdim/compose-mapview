@@ -22,7 +22,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "example.imageviewer.MainKt"
+        mainClass = "com.map.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

@@ -1,3 +1,6 @@
 compose 1.0.1
 isInternetAvailable
 cache
+launcher icons
+android string resources
+
