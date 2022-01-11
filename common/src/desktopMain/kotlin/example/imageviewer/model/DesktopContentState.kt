@@ -150,43 +150,26 @@ object ContentState {
         }
 
         scope.launch(Dispatchers.IO) {
-            try {
-                if (isInternetAvailable()) {
-                    val imageList = repository.get()
-
-                    if (imageList.isEmpty()) {
-                        showPopUpMessage(
-                            ResString.repoInvalid
-                        )
-                        onContentReady()
-                    } else {
-                        val pictureList = loadImages(cacheImagePath, imageList)
-
-                        if (pictureList.isEmpty()) {
-                            showPopUpMessage(
-                                ResString.repoEmpty
-                            )
-                            onContentReady()
-                        } else {
-                            val picture = loadFullImage(imageList[0])
-                            miniatures.setMiniatures(pictureList)
-                            if (isMainImageEmpty()) {
-                                wrapPictureIntoMainImage(picture)
-                            } else {
-                                appliedFilters.add(MainImageWrapper.getFilters())
-                                currentImageIndex.value = MainImageWrapper.getId()
-                            }
-                            onContentReady()
-                        }
-                    }
+            val imageList: List<String> = listOf(
+                "https://raw.githubusercontent.com/JetBrains/compose-jb/master/artwork/imageviewerrepo/1.jpg"
+                ,"https://raw.githubusercontent.com/JetBrains/compose-jb/master/artwork/imageviewerrepo/2.jpg"
+            )
+            val pictureList = loadImages(cacheImagePath, imageList)
+            if (pictureList.isEmpty()) {
+                showPopUpMessage(
+                    ResString.repoEmpty
+                )
+                onContentReady()
+            } else {
+                val picture = loadFullImage(imageList[0])
+                miniatures.setMiniatures(pictureList)
+                if (isMainImageEmpty()) {
+                    wrapPictureIntoMainImage(picture)
                 } else {
-                    showPopUpMessage(
-                        ResString.noInternet
-                    )
-                    onContentReady()
+                    appliedFilters.add(MainImageWrapper.getFilters())
+                    currentImageIndex.value = MainImageWrapper.getId()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+                onContentReady()
             }
         }
     }
