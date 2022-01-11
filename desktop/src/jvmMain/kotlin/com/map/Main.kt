@@ -15,9 +15,7 @@ import com.map.view.AppUI
 
 fun main() = application {
     val state = rememberWindowState()
-    val content = remember {
-        ContentState.applyContent(state)
-    }
+    val content = ContentState
 
     val icon = icAppRounded()
 

@@ -9,8 +9,11 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-val cacheImagePath = System.getProperty("user.home")!! + //todo /tmp dir
-        File.separator + "Pictures/mapview" + File.separator
+//todo
+//val directory = File(cacheImagePath)
+//if (!directory.exists()) {
+//    directory.mkdirs()
+//}
 
 actual fun cacheImage(path: String, picture: Picture) {
     try {
@@ -31,21 +34,5 @@ actual fun cacheImage(path: String, picture: Picture) {
 
     } catch (e: IOException) {
         e.printStackTrace()
-    }
-}
-
-fun clearCache() {
-
-    val directory = File(cacheImagePath)
-
-    val files: Array<File>? = directory.listFiles()
-
-    if (files != null) {
-        for (file in files) {
-            if (file.isDirectory)
-                continue
-
-            file.delete()
-        }
     }
 }
