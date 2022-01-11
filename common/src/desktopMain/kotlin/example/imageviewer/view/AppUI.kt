@@ -11,9 +11,6 @@ import example.imageviewer.model.ScreenType
 import example.imageviewer.model.ContentState
 import example.imageviewer.style.Gray
 
-private val message: MutableState<String> = mutableStateOf("")
-private val state: MutableState<Boolean> = mutableStateOf(false)
-
 @Composable
 fun AppUI(content: ContentState) {
 
@@ -25,16 +22,11 @@ fun AppUI(content: ContentState) {
             ScreenType.MainScreen -> {
                 MainScreen(content)
             }
-            ScreenType.FullscreenImage -> {
-                FullscreenImage(content)
-            }
         }
     }
 
-    Toast(message.value, state)
 }
 
 fun showPopUpMessage(text: String) {
-    message.value = text
-    state.value = true
+    //todo delete
 }
