@@ -32,20 +32,11 @@ fun Miniature(
     picture: Picture,
     content: ContentState
 ) {
-    val cardHover = remember { mutableStateOf(false) }
     val infoButtonHover = remember { mutableStateOf(false) }
     Card(
-        backgroundColor = if (cardHover.value) MiniatureHoverColor else MiniatureColor,
+        backgroundColor = MiniatureColor,
         modifier = Modifier.padding(start = 10.dp, end = 18.dp).height(150.dp)
-            .fillMaxWidth()
-            .hover(onEnter = {
-                cardHover.value = true
-                false
-            },
-            onExit = {
-                cardHover.value = false
-                false
-            }),
+            .fillMaxWidth(),
         shape = RectangleShape
     ) {
         Row(modifier = Modifier.padding(end = 30.dp)) {
@@ -78,15 +69,6 @@ fun Miniature(
             Clickable(
                 modifier = Modifier.height(70.dp)
                     .width(30.dp)
-                    .hover(
-                        onEnter = {
-                            infoButtonHover.value = true
-                            false
-                        },
-                        onExit = {
-                            infoButtonHover.value = false
-                            false
-                    })
                     .background(color = if (infoButtonHover.value) TranslucentWhite else Transparent),
                 onClick = {
                     showPopUpMessage(
