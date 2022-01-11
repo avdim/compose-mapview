@@ -3,16 +3,30 @@ package com.map
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
-import com.map.view.AppUI
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.ui.Modifier
 import com.map.model.ContentState
-import com.map.model.ImageRepository
+import com.map.style.Gray
+import com.map.view.ScrollableArea
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val content = ContentState
         setContent {
-            AppUI(content)
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Gray
+                ) {
+                    Column {
+                        ScrollableArea(content)
+                    }
+                }
+            }
         }
     }
 }
