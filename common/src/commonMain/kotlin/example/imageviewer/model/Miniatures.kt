@@ -14,8 +14,6 @@
 
 package example.imageviewer.model
 
-expect class Picture
-
 class Miniatures(
     private var list: List<Picture> = emptyList()
 ) {

@@ -1,6 +1,5 @@
 package example.imageviewer.utils
 
-import java.awt.image.BufferedImage
 import example.imageviewer.model.Picture
 import javax.imageio.ImageIO
 import java.io.File
@@ -10,11 +9,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-val cacheImagePostfix = "info"
 val cacheImagePath = System.getProperty("user.home")!! +
         File.separator + "Pictures/imageviewer" + File.separator
 
-fun cacheImage(path: String, picture: Picture) {
+actual fun cacheImage(path: String, picture: Picture) {
     try {
         ImageIO.write(picture.image, "png", File(path))
 

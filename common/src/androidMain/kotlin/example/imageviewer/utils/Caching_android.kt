@@ -10,9 +10,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-val cacheImagePostfix = "info"
-
-fun cacheImage(path: String, picture: Picture) {
+actual fun cacheImage(path: String, picture: Picture) {
     try {
         FileOutputStream(path).use { out ->
             picture.image.compress(Bitmap.CompressFormat.PNG, 100, out)
