@@ -164,7 +164,7 @@ fun Miniature(
     val infoButtonHover = remember { mutableStateOf(false) }
     Card(
         backgroundColor = if (cardHover.value) MiniatureHoverColor else MiniatureColor,
-        modifier = Modifier.padding(start = 10.dp, end = 18.dp).height(70.dp)
+        modifier = Modifier.padding(start = 10.dp, end = 18.dp).height(150.dp)
             .fillMaxWidth()
             .hover(onEnter = {
                 cardHover.value = true

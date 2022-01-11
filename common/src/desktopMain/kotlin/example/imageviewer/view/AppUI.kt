@@ -13,16 +13,11 @@ import example.imageviewer.style.Gray
 
 @Composable
 fun AppUI(content: ContentState) {
-
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Gray
     ) {
-        when (AppState.screenState()) {
-            ScreenType.MainScreen -> {
-                MainScreen(content)
-            }
-        }
+        MainScreen(content)
     }
 
 }
