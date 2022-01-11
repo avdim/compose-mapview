@@ -1,24 +1,19 @@
 package com.map.view
 
-import android.content.res.Configuration
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -30,22 +25,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.map.common.R
 import com.map.model.ContentState
 import com.map.model.Picture
-import com.map.style.DarkGray
 import com.map.style.DarkGreen
 import com.map.style.Foreground
 import com.map.style.LightGray
 import com.map.style.MiniatureColor
 import com.map.style.Transparent
 import com.map.style.icDots
-import com.map.style.icEmpty
 import com.map.style.icRefresh
-import com.map.view.Clickable
 
 @Composable
 fun MainScreen(content: ContentState) {
@@ -88,8 +78,7 @@ fun TitleBar(text: String, content: ContentState) {
 
 @Composable
 fun Miniature(
-    picture: Picture,
-    content: ContentState
+    picture: Picture
 ) {
     Card(
         backgroundColor = MiniatureColor,
@@ -144,8 +133,7 @@ fun ScrollableArea(content: ContentState) {
     Column(Modifier.verticalScroll(scrollState)) {
         for (picture in state.pictures) {
             Miniature(
-                picture = picture,
-                content = content
+                picture = picture
             )
             Spacer(modifier = Modifier.height(5.dp))
             index++

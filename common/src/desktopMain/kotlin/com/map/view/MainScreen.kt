@@ -22,16 +22,8 @@ import com.map.style.*
 import com.map.utils.toByteArray
 
 @Composable
-fun MainScreen(content: ContentState) {
-    Column {
-        ScrollableArea(content)
-    }
-}
-
-@Composable
 fun Miniature(
-    picture: Picture,
-    content: ContentState
+    picture: Picture
 ) {
     val infoButtonHover = remember { mutableStateOf(false) }
     Card(
@@ -72,13 +64,6 @@ fun Miniature(
                     .width(30.dp)
                     .background(color = if (infoButtonHover.value) TranslucentWhite else Transparent),
                 onClick = {
-                    showPopUpMessage(
-                        "${ResString.picture} " +
-                        "${picture.name} \n" +
-                        "${ResString.size} " +
-                        "${picture.width}x${picture.height} " +
-                        "${ResString.pixels}"
-                    )
                 }
             ) {
                 Image(
@@ -108,8 +93,7 @@ fun ScrollableArea(content: ContentState) {
             Column {
                 for (picture in state.pictures) {
                     Miniature(
-                        picture = picture,
-                        content = content
+                        picture = picture
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     index++
