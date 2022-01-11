@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 object ContentState {
-    val scale = ScaleHandler()
     lateinit var windowState: WindowState
     val scope = CoroutineScope(Dispatchers.IO)
 
@@ -46,6 +45,9 @@ object ContentState {
                 "https://raw.githubusercontent.com/JetBrains/compose-jb/master/artwork/imageviewerrepo/1.jpg"
                 ,"https://raw.githubusercontent.com/JetBrains/compose-jb/master/artwork/imageviewerrepo/2.jpg"
             )
+
+            // https://api.maptiler.com/maps/streets/1/0/0.png?key=
+            // https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=
             val pictureList = loadImages(cacheImagePath, imageList)
             if (pictureList.isEmpty()) {
                 showPopUpMessage(

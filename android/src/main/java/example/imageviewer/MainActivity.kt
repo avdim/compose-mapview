@@ -12,8 +12,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val content = ContentState.applyContent(
-            this@MainActivity,
-            "https://raw.githubusercontent.com/JetBrains/compose-jb/master/artwork/imageviewerrepo/fetching.list"
+            this@MainActivity
         )
         
         setContent {

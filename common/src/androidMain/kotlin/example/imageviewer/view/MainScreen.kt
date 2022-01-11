@@ -33,10 +33,8 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import example.imageviewer.common.R
-import example.imageviewer.model.AppState
 import example.imageviewer.model.ContentState
 import example.imageviewer.model.Picture
-import example.imageviewer.model.ScreenType
 import example.imageviewer.style.DarkGray
 import example.imageviewer.style.DarkGreen
 import example.imageviewer.style.Foreground
@@ -50,23 +48,8 @@ import example.imageviewer.style.icRefresh
 @Composable
 fun MainScreen(content: ContentState) {
     Column {
-        TopContent(content)
         ScrollableArea(content)
     }
-    if (!content.isContentReady()) {
-        LoadingScreen(content.getString(R.string.loading))
-    }
-}
-
-@Composable
-fun TopContent(content: ContentState) {
-    TitleBar(text = content.getString(R.string.app_name), content = content)
-    if (content.getOrientation() == Configuration.ORIENTATION_PORTRAIT) {
-        PreviewImage(content)
-        Spacer(modifier = Modifier.height(10.dp))
-        Divider()
-    }
-    Spacer(modifier = Modifier.height(5.dp))
 }
 
 @Composable
@@ -87,9 +70,6 @@ fun TitleBar(text: String, content: ContentState) {
                 ) {
                     Clickable(
                         onClick = {
-                            if (content.isContentReady()) {
-                                content.refresh()
-                            }
                         }
                     ) {
                         Image(
@@ -103,31 +83,6 @@ fun TitleBar(text: String, content: ContentState) {
         })
 }
 
-@Composable
-fun PreviewImage(content: ContentState) {
-    Clickable(onClick = {
-        AppState.screenState(ScreenType.FullscreenImage)
-    }) {
-        Card(
-            backgroundColor = DarkGray,
-            modifier = Modifier.height(250.dp),
-            shape = RectangleShape,
-            elevation = 1.dp
-        ) {
-            Image(
-                if (content.isMainImageEmpty()) {
-                    icEmpty()
-                } else {
-                    BitmapPainter(content.getSelectedImage().asImageBitmap())
-                },
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth().padding(start = 1.dp, top = 1.dp, end = 1.dp, bottom = 5.dp),
-                contentScale = ContentScale.Fit
-            )
-        }
-    }
-}
 
 @Composable
 fun Miniature(
@@ -139,7 +94,7 @@ fun Miniature(
         modifier = Modifier.padding(start = 10.dp, end = 10.dp).height(70.dp)
             .fillMaxWidth()
             .clickable {
-                content.setMainImage(picture)
+
             },
         shape = RectangleShape,
         elevation = 2.dp
@@ -147,7 +102,7 @@ fun Miniature(
         Row(modifier = Modifier.padding(end = 30.dp)) {
             Clickable(
                 onClick = {
-                    content.fullscreen(picture)
+
                 }
             ) {
                 Image(
@@ -166,29 +121,15 @@ fun Miniature(
                 style = MaterialTheme.typography.body1
             )
 
-            Clickable(
+            Image(
+                icDots(),
+                contentDescription = null,
                 modifier = Modifier.height(70.dp)
-                    .width(30.dp),
-                onClick = {
-                    showPopUpMessage(
-                        "${content.getString(R.string.picture)} " +
-                                "${picture.name} \n" +
-                                "${content.getString(R.string.size)} " +
-                                "${picture.width}x${picture.height} " +
-                                "${content.getString(R.string.pixels)}",
-                        content.getContext()
-                    )
-                }
-            ) {
-                Image(
-                    icDots(),
-                    contentDescription = null,
-                    modifier = Modifier.height(70.dp)
-                        .width(30.dp)
-                        .padding(start = 1.dp, top = 25.dp, end = 1.dp, bottom = 25.dp),
-                    contentScale = ContentScale.FillHeight
-                )
-            }
+                    .width(30.dp)
+                    .padding(start = 1.dp, top = 25.dp, end = 1.dp, bottom = 25.dp),
+                contentScale = ContentScale.FillHeight
+            )
+
         }
     }
 }
@@ -198,7 +139,7 @@ fun ScrollableArea(content: ContentState) {
     var index = 1
     val scrollState = rememberScrollState()
     Column(Modifier.verticalScroll(scrollState)) {
-        for (picture in content.getMiniatures()) {
+        for (picture in content.getMiniatures().value) {
             Miniature(
                 picture = picture,
                 content = content
