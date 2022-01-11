@@ -1,3 +1,9 @@
 compose 1.0.1
 isInternetAvailable
 cache
+
+if (isInternetAvailable()) {
+val imageList: List<String> = listOf(
+                        "https://raw.githubusercontent.com/JetBrains/compose-jb/master/artwork/imageviewerrepo/1.jpg"
+                        ,"https://raw.githubusercontent.com/JetBrains/compose-jb/master/artwork/imageviewerrepo/2.jpg"
+                    )
