@@ -1,0 +1,27 @@
+###### Custom #############################
+size_story.txt
+
+###### Gradle ##############################
+build
+.gradle
+
+###### Idea ###############################
+.idea
+*.ipr
+*.iws
+*.iml
+
+!hand-test-empty-project/*
+
+###### Android #############################
+out/
+local.properties
+
+##### OS Specific ##########################
+.DS_Store
+Thumbs.db
+
+temp_id_rsa
+.exclude
+.idea_system**
+.system**
