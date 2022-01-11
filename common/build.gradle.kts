@@ -10,6 +10,11 @@ kotlin {
     android()
     jvm("desktop")
     sourceSets {
+        named("commonTest") {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
         named("commonMain") {
             dependencies {
                 api(compose.runtime)
