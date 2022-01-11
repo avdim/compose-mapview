@@ -1,6 +1,7 @@
 package example.imageviewer.view
 
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +9,7 @@ import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.dp
 import example.imageviewer.core.EventLocker
 import example.imageviewer.style.Transparent
 
@@ -18,9 +20,10 @@ fun Draggable(
     onUpdate: (() -> Unit)? = null,
     children: @Composable() () -> Unit
 ) {
+    val offsetPoint = dragHandler.getAmount()
     Surface(
         color = Transparent,
-        modifier = modifier.pointerInput(Unit) {
+        modifier = modifier.offset(offsetPoint.x.dp, offsetPoint.y.dp).pointerInput(Unit) {
             detectDragGestures(
                 onDragStart = { dragHandler.reset() },
                 onDragEnd = { dragHandler.reset() },
@@ -61,7 +64,8 @@ class DragHandler {
     }
 
     fun drag(dragDistance: Offset) {
-        if (locker.isLocked()) {
+        val locked = locker.isLocked()
+        if (locked) {
             val dx = dragDistance.x
             val dy = dragDistance.y
             
