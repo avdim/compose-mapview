@@ -8,9 +8,6 @@ plugins {
 
 version = "1.0-SNAPSHOT"
 
-//val KTOR_VERSION = "1.4.1"
-val KTOR_VERSION = "1.6.7"
-
 kotlin {
     android()
     jvm("desktop")
@@ -27,7 +24,16 @@ kotlin {
                 api(compose.runtime)
             }
         }
+        val shareAndroidDesktop by creating {
+            dependsOn(commonMain)
+            dependencies {
+                api(compose.runtime)
+                api(compose.foundation)
+                api(compose.material)
+            }
+        }
         val androidMain by getting {
+            dependsOn(shareAndroidDesktop)
             dependencies {
                 api("androidx.appcompat:appcompat:1.3.1")
                 api("androidx.core:core-ktx:1.3.1")
@@ -35,24 +41,15 @@ kotlin {
             }
         }
         val desktopMain by getting {
+            dependsOn(shareAndroidDesktop)
             dependencies {
                 api(compose.desktop.common)
                 implementation("io.ktor:ktor-client-cio:${KTOR_VERSION}")
             }
         }
-        val shareAndroidDesktop by creating {
-            dependsOn(commonMain)
-            androidMain.dependsOn(this)
-            desktopMain.dependsOn(this)
-            dependencies {
-                api(compose.runtime)
-                api(compose.foundation)
-                api(compose.material)
-            }
-        }
         val jsMain by getting {
             dependencies {
-                implementation(compose.web.widgets)
+                implementation(compose.web.core)
                 implementation(compose.runtime)
             }
         }
