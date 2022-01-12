@@ -15,6 +15,7 @@ import org.w3c.dom.HTMLElement
 //}
 
 fun main() {
+    println("Hello Compose Web")
     val root = document.getElementById("root") as HTMLElement
     root.textContent = "Hello Compose Web"
 //    renderComposable(root = root) {

@@ -6,12 +6,15 @@ plugins {
     id("org.jetbrains.compose")
 }
 
+version = "1.0-SNAPSHOT"
+
 kotlin {
     android()
     jvm("desktop")
     js(IR) {
         browser()
         binaries.executable()
+
     }
     sourceSets {
         val commonMain by sourceSets.getting {
@@ -41,6 +44,12 @@ kotlin {
                 api(compose.foundation)
                 api(compose.material)
                 implementation("io.ktor:ktor-client-core:1.4.1")
+            }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation(compose.web.widgets)
+                implementation(compose.runtime)
             }
         }
         val commonTest by getting {
