@@ -22,5 +22,10 @@ pluginManagement {
 include(":common")
 include(":android")
 include(":desktop")
+includeBuild("include-model") {
+    dependencySubstitution {
+        substitute(module("com.map:model")).using(project(":model"))
+    }
+}
 
 rootProject.name = "map-view"

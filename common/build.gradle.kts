@@ -11,19 +11,17 @@ version = "1.0-SNAPSHOT"
 kotlin {
     android()
     jvm("desktop")
-    js(IR) {
-        browser()
-        binaries.executable()
-    }
+//    js(IR) {
+//        browser()
+//        binaries.executable()
+//    }
     sourceSets {
         val commonMain by getting {
-
-        }
-        val commonEntity by creating {
-
+            dependencies {
+                api("com.map:model:1.0")
+            }
         }
         val commonModel by creating {
-            dependsOn(commonEntity)
             dependencies {
                 api(Deps.coroutinesCore)
                 api(Deps.ktorCore)
@@ -31,7 +29,6 @@ kotlin {
             }
         }
         val shareAndroidDesktop by creating {
-            dependsOn(commonEntity)
             dependsOn(commonMain)
             dependencies {
                 api(compose.runtime)
@@ -56,13 +53,13 @@ kotlin {
                 implementation(Deps.ktorCIO)
             }
         }
-        val jsMain by getting {
-            dependsOn(commonModel)
-            dependencies {
-                implementation(compose.web.core)
-                implementation(compose.runtime)
-            }
-        }
+//        val jsMain by getting {
+//            dependsOn(commonModel)
+//            dependencies {
+//                implementation(compose.web.core)
+//                implementation(compose.runtime)
+//            }
+//        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -92,10 +89,10 @@ android {
     }
 }
 
-// a temporary workaround for a bug in jsRun invocation - see https://youtrack.jetbrains.com/issue/KT-48273
-afterEvaluate {
-    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackDevServer.version = "4.0.0"
-        versions.webpackCli.version = "4.9.0"
-    }
-}
+//// a temporary workaround for a bug in jsRun invocation - see https://youtrack.jetbrains.com/issue/KT-48273
+//afterEvaluate {
+//    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+//        versions.webpackDevServer.version = "4.0.0"
+//        versions.webpackCli.version = "4.9.0"
+//    }
+//}

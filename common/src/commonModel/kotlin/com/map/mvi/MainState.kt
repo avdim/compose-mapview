@@ -1,12 +1,13 @@
 package com.map.mvi
 
+import com.map.lib.Store
 import com.map.model.Picture
 import com.map.model.loadImages
 import com.map.lib.createStore
 import com.map.network.getNetworkScope
 import kotlinx.coroutines.launch
 
-fun createMapViewStore() = createStore(MainState(listOf())) { state: MainState, intent: Intent ->
+fun createMapViewStore(): Store<MainState, Intent> = createStore(MainState(listOf())) { state: MainState, intent: Intent ->
     when (intent) {
         is Intent.AddPictures -> {
             state.copy(pictures = intent.pictures)

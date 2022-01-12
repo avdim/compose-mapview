@@ -1,6 +1,9 @@
 
 package com.map.model
 
+import kotlin.js.JsExport
+
+@JsExport
 data class Picture(
     var source: String = "",
     var name: String = "",
