@@ -19,6 +19,9 @@ pluginManagement {
     }
 }
 
-include(":common", ":android", ":desktop")
+include(":common")
+include(":common-desktop-android")
+include(":android")
+include(":desktop")
 
 rootProject.name = "map-view"
