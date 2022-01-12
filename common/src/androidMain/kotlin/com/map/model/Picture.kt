@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import com.map.model.PictureInfo
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.InputStreamReader

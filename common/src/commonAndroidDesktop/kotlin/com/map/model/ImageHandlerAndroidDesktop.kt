@@ -6,18 +6,9 @@
 package com.map.model
 
 import com.map.utils.cacheImage
-import com.map.utils.cacheImagePostfix
 
 expect fun isFileExists(path:String):Boolean
 expect fun getFileSeparator():String
-expect fun loadFullImage(source: String): Picture
-expect fun Picture.scale(width: Int, height: Int): Picture
-
-fun loadImages(list: List<String>): List<Picture> {
-    return list.map {
-        loadFullImage(it).scale(200, 200)
-    }
-}
 
 fun getNameURL(url: String): String {
     return url.substring(url.lastIndexOf('/') + 1, url.length)
@@ -47,7 +38,7 @@ private fun todoCache() {
         outList: MutableList<Picture>,
         path: String?
     ) {
-        val scaledPicture: Picture = loadFullImage(source).scale(200, 164)
+        val scaledPicture: Picture = loadFullImage(source).scale(200, 200)
         outList.add(scaledPicture)
         cacheImage(path + getNameURL(source), scaledPicture)
     }
@@ -57,16 +48,16 @@ private fun todoCache() {
         outList: MutableList<Picture>
     ) {
         try {
-            val info = readPictureInfoFromFile(filePath + cacheImagePostfix)
-            val result: AbstractImageData = readAbstractImageDataFromFile(filePath)
-            val picture = Picture(
-                info.source,
-                getNameURL(info.source),
-                result,
-                info.width,
-                info.height
-            )
-            outList.add(picture)
+//            val info = readPictureInfoFromFile(filePath + cacheImagePostfix)
+//            val result: AbstractImageData = readAbstractImageDataFromFile(filePath)
+//            val picture = Picture(
+//                info.source,
+//                getNameURL(info.source),
+//                result,
+//                info.width,
+//                info.height
+//            )
+//            outList.add(picture)
         } catch (e: Exception) {
             e.printStackTrace()
         }
