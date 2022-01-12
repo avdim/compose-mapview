@@ -21,7 +21,7 @@ import com.map.mvi.MainState
 import com.map.style.*
 
 @Composable
-fun MainUI() {
+fun MainUiWithState() {
     val state by ContentState.stateFlow.collectAsState()
     ScrollableArea(state)
 }

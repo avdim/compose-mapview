@@ -5,13 +5,11 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import com.map.model.ContentState
 import com.map.style.icAppRounded
 import com.map.utils.getPreferredWindowSize
-import com.map.view.MainUI
+import com.map.view.MainUiWithState
 
 fun main() = application {
-    val content = ContentState
     val icon = icAppRounded()
 
     Window(
@@ -23,6 +21,6 @@ fun main() = application {
         ),
         icon = icon
     ) {
-        MainUI()
+        MainUiWithState()
     }
 }
