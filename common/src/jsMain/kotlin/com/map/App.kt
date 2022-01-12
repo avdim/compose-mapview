@@ -1,21 +1,41 @@
 package com.map
 
 import kotlinx.browser.document
-import org.w3c.dom.HTMLElement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
+import org.w3c.dom.*
+import kotlin.reflect.KClass
+
+const val STYLE_CONTAINER = "position: absolute; left: 0px; top: 0px;"
 
 fun main() {
     println("Hello Compose Web")
     val root = document.getElementById("root") as HTMLElement
     root.textContent = "Hello Compose Web"
     ComposeCounterApp("root")
+
+     val canvas = document.getElementById("map-canvas") as HTMLCanvasElement
+
+    val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
+    ctx.fillStyle = "green";
+    ctx.fillRect(0.0, 0.0, 1000.0, 1000.0)
+    val img = Image() // Create new img element
+    img.onload = {
+        ctx.drawImage(img, 10.0, 10.0)
+    }
+    img.src = composeImg
 }
+
+fun <T : Any> Document.createElement(localName: String, kClass: KClass<T>): T = createElement(localName) as T //todo inline
+fun Document.createCanvas(style: String) =
+    (createElement("canvas", HTMLCanvasElement::class)).apply { setAttribute("style", style) }
+
 
 @JsExport
 abstract class ComposeCounterAppController {
