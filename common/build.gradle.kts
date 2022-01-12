@@ -24,6 +24,7 @@ kotlin {
             dependencies {
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
                 api("io.ktor:ktor-client-core:${KTOR_VERSION}")
+                api(compose.runtime)
             }
         }
         val androidMain by getting {

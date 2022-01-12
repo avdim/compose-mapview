@@ -13,10 +13,6 @@ import javax.imageio.ImageIO
 
 actual typealias AbstractImageData = BufferedImage
 
-actual fun PictureInfo.saveToFile(path: String) {
-    TODO("save to file")
-}
-
 actual fun readAbstractImageDataFromFile(path: String): AbstractImageData {
     try {
         val result: BufferedImage? = ImageIO.read(File(path))
@@ -27,26 +23,6 @@ actual fun readAbstractImageDataFromFile(path: String): AbstractImageData {
         t.printStackTrace()
         TODO(message)
     }
-}
-
-actual fun readPictureInfoFromFile(path: String): PictureInfo {
-    val read = BufferedReader(
-        InputStreamReader(
-            FileInputStream(path),
-            StandardCharsets.UTF_8
-        )
-    )
-
-    val source = read.readLine()
-    val width = read.readLine().toInt()
-    val height = read.readLine().toInt()
-
-    read.close()
-    return PictureInfo(
-        source = source,
-        width = width,
-        height = height
-    )
 }
 
 actual fun Picture.toImageBitmap(): ImageBitmap = org.jetbrains.skia.Image.makeFromEncoded(
