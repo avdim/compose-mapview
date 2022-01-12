@@ -1,3 +1,6 @@
+### Setup project
+in local.properties add sdk.dir=Path to Android SDK
+
 ### Running desktop application
 ```
 ./gradlew :desktop:run
