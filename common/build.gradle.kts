@@ -16,7 +16,10 @@ kotlin {
         binaries.executable()
     }
     sourceSets {
-        val commonMain by sourceSets.getting {
+        val commonMain by getting {
+
+        }
+        val commonModel by creating {
             dependencies {
                 api(Deps.coroutinesCore)
                 api(Deps.ktorCore)
@@ -24,6 +27,7 @@ kotlin {
             }
         }
         val shareAndroidDesktop by creating {
+            dependsOn(commonModel)
             dependsOn(commonMain)
             dependencies {
                 api(compose.runtime)
@@ -47,6 +51,7 @@ kotlin {
             }
         }
         val jsMain by getting {
+            dependsOn(commonModel)
             dependencies {
                 implementation(compose.web.core)
                 implementation(compose.runtime)
