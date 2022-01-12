@@ -14,13 +14,12 @@ kotlin {
     js(IR) {
         browser()
         binaries.executable()
-
     }
     sourceSets {
         val commonMain by sourceSets.getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-                api("io.ktor:ktor-client-core:${KTOR_VERSION}")
+                api(Deps.coroutinesCore)
+                api(Deps.ktorCore)
                 api(compose.runtime)
             }
         }
@@ -37,14 +36,14 @@ kotlin {
             dependencies {
                 api("androidx.appcompat:appcompat:1.3.1")
                 api("androidx.core:core-ktx:1.3.1")
-                implementation("io.ktor:ktor-client-cio:${KTOR_VERSION}")
+                implementation(Deps.ktorCIO)
             }
         }
         val desktopMain by getting {
             dependsOn(shareAndroidDesktop)
             dependencies {
                 api(compose.desktop.common)
-                implementation("io.ktor:ktor-client-cio:${KTOR_VERSION}")
+                implementation(Deps.ktorCIO)
             }
         }
         val jsMain by getting {
