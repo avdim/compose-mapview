@@ -6,14 +6,6 @@ import com.map.lib.createStore
 import com.map.network.getNetworkScope
 import kotlinx.coroutines.launch
 
-data class MainState(
-    val pictures: List<Picture>
-)
-
-sealed interface Intent {
-    class AddPictures(val pictures: List<Picture>) : Intent
-}
-
 fun createMapViewStore() = createStore(MainState(listOf())) { state: MainState, intent: Intent ->
     when (intent) {
         is Intent.AddPictures -> {

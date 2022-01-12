@@ -1,3 +1,4 @@
+
 package com.map.model
 
 data class Picture(
