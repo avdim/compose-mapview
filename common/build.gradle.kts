@@ -40,7 +40,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-cio:${KTOR_VERSION}")
             }
         }
-        val commonAndroidDesktop by creating {
+        val shareAndroidDesktop by creating {
             dependsOn(commonMain)
             androidMain.dependsOn(this)
             desktopMain.dependsOn(this)
