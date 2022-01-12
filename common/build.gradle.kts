@@ -31,23 +31,13 @@ kotlin {
             dependencies {
                 api("androidx.appcompat:appcompat:1.3.1")
                 api("androidx.core:core-ktx:1.3.1")
-                implementation("io.ktor:ktor-client-cio:${KTOR_VERSION}")
+                api("io.ktor:ktor-client-cio:${KTOR_VERSION}")
             }
         }
         val desktopMain by getting {
             dependencies {
                 api(compose.desktop.common)
-                implementation("io.ktor:ktor-client-cio:${KTOR_VERSION}")
-            }
-        }
-        val commonAndroidDesktop by creating {
-            dependsOn(commonMain)
-            androidMain.dependsOn(this)
-            desktopMain.dependsOn(this)
-            dependencies {
-                api(compose.runtime)
-                api(compose.foundation)
-                api(compose.material)
+                api("io.ktor:ktor-client-cio:${KTOR_VERSION}")
             }
         }
         val jsMain by getting {

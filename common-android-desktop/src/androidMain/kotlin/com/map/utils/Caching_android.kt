@@ -11,6 +11,12 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
+actual fun isFileExists(path:String):Boolean =
+    File(path).exists()
+
+actual fun getFileSeparator():String=
+    File.separator
+
 actual fun cacheImage(path: String, picture: Picture) {
     try {
         FileOutputStream(path).use { out ->

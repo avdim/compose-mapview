@@ -7,14 +7,14 @@ plugins {
 }
 
 kotlin {
-    jvm {
+    jvm("desktop") {
         withJava()
     }
     sourceSets {
-        named("jvmMain") {
+        val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(project(":common"))
+                implementation(project(":common-android-desktop"))
             }
         }
     }

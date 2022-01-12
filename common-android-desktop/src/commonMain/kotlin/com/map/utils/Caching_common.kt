@@ -9,3 +9,6 @@ import com.map.model.Picture
 
 val cacheImagePostfix = "info"
 expect fun cacheImage(path: String, picture: Picture)
+
+expect fun isFileExists(path:String):Boolean
+expect fun getFileSeparator():String

@@ -15,6 +15,14 @@ import java.nio.charset.StandardCharsets
 //    directory.mkdirs()
 //}
 
+
+actual fun isFileExists(path:String):Boolean =
+    File(path).exists()
+
+actual fun getFileSeparator():String=
+    File.separator
+
+
 actual fun cacheImage(path: String, picture: Picture) {
     try {
         ImageIO.write(picture.image, "png", File(path))

@@ -2,6 +2,7 @@ package com.map.utils
 
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.map.model.scaleBitmapAspectRatio
 import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.Toolkit
@@ -14,28 +15,6 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import com.map.view.DragHandler
 
-fun scaleBitmapAspectRatio(
-    bitmap: BufferedImage,
-    width: Int,
-    height: Int
-): BufferedImage {
-    val boundW: Float = width.toFloat()
-    val boundH: Float = height.toFloat()
-
-    val ratioX: Float = boundW / bitmap.width
-    val ratioY: Float = boundH / bitmap.height
-    val ratio: Float = if (ratioX < ratioY) ratioX else ratioY
-
-    val resultH = (bitmap.height * ratio).toInt()
-    val resultW = (bitmap.width * ratio).toInt()
-
-    val result = BufferedImage(resultW, resultH, BufferedImage.TYPE_INT_ARGB)
-    val graphics = result.createGraphics()
-    graphics.drawImage(bitmap, 0, 0, resultW, resultH, null)
-    graphics.dispose()
-
-    return result
-}
 
 fun getDisplayBounds(bitmap: BufferedImage, windowSize: DpSize): Rectangle {
 

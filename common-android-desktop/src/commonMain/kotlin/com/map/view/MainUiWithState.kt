@@ -79,16 +79,6 @@ fun Miniature(
                     contentScale = ContentScale.Crop
                 )
             }
-            Text(
-                text = picture.name,
-                color = Foreground,
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 16.dp),
-                style = MaterialTheme.typography.body1
-            )
-
         }
     }
 }

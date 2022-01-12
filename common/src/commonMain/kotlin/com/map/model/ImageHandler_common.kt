@@ -6,5 +6,5 @@ fun loadImages(list: List<String>): List<Picture> {
     }
 }
 
-expect fun loadFullImage(source: String): Picture
-expect fun Picture.scale(width: Int, height: Int): Picture
+expect inline fun loadFullImage(source: String): Picture
+expect inline fun Picture.scale(width: Int, height: Int): Picture

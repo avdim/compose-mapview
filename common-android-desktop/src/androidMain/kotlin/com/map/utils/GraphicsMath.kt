@@ -8,28 +8,10 @@ import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
 import androidx.compose.ui.layout.ContentScale
+import com.map.model.scaleBitmapAspectRatio
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import com.map.view.DragHandler
-
-fun scaleBitmapAspectRatio(
-    bitmap: Bitmap,
-    width: Int,
-    height: Int,
-    filter: Boolean = false
-): Bitmap {
-    val boundW: Float = width.toFloat()
-    val boundH: Float = height.toFloat()
-
-    val ratioX: Float = boundW / bitmap.width
-    val ratioY: Float = boundH / bitmap.height
-    val ratio: Float = if (ratioX < ratioY) ratioX else ratioY
-
-    val resultH = (bitmap.height * ratio).toInt()
-    val resultW = (bitmap.width * ratio).toInt()
-
-    return Bitmap.createScaledBitmap(bitmap, resultW, resultH, filter)
-}
 
 fun getDisplayBounds(bitmap: Bitmap): Rect {
 

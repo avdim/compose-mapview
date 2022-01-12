@@ -5,31 +5,13 @@
 
 package com.map.model
 
-import com.map.model.Picture
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.map.model.getNameURL
-import com.map.utils.cacheImage
-import com.map.utils.cacheImagePostfix
-import com.map.utils.scaleBitmapAspectRatio
-import com.map.utils.toPx
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
-import java.io.InputStreamReader
-import java.io.BufferedReader
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
-import java.nio.charset.StandardCharsets
 
-actual fun isFileExists(path:String):Boolean =
-    File(path).exists()
-
-actual fun getFileSeparator():String=
-    File.separator
-
-actual fun loadFullImage(source: String): Picture {
+actual inline fun loadFullImage(source: String): Picture {
     try {
         val url = URL(source)
         val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
@@ -42,7 +24,6 @@ actual fun loadFullImage(source: String): Picture {
             return Picture(
                 source = source,
                 image = bitmap,
-                name = getNameURL(source),
                 width = bitmap.width,
                 height = bitmap.height
             )
@@ -54,9 +35,29 @@ actual fun loadFullImage(source: String): Picture {
     return Picture(image = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
 }
 
-actual fun Picture.scale(width: Int, height: Int): Picture =
+actual inline fun Picture.scale(width: Int, height: Int): Picture =
     copy(
         width = width,
         height = height,
         image = scaleBitmapAspectRatio(image.copy(Bitmap.Config.ARGB_8888, true), width, height)
     )
+
+fun scaleBitmapAspectRatio(
+    bitmap: Bitmap,
+    width: Int,
+    height: Int,
+    filter: Boolean = false
+): Bitmap {
+    val boundW: Float = width.toFloat()
+    val boundH: Float = height.toFloat()
+
+    val ratioX: Float = boundW / bitmap.width
+    val ratioY: Float = boundH / bitmap.height
+    val ratio: Float = if (ratioX < ratioY) ratioX else ratioY
+
+    val resultH = (bitmap.height * ratio).toInt()
+    val resultW = (bitmap.width * ratio).toInt()
+
+    return Bitmap.createScaledBitmap(bitmap, resultW, resultH, filter)
+}
+

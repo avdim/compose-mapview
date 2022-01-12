@@ -7,13 +7,6 @@ package com.map.model
 
 import com.map.utils.cacheImage
 
-expect fun isFileExists(path:String):Boolean
-expect fun getFileSeparator():String
-
-fun getNameURL(url: String): String {
-    return url.substring(url.lastIndexOf('/') + 1, url.length)
-}
-
 private fun todoCache() {
     val cachePath: String? = null
     //todo cache
@@ -40,7 +33,7 @@ private fun todoCache() {
     ) {
         val scaledPicture: Picture = loadFullImage(source).scale(200, 200)
         outList.add(scaledPicture)
-        cacheImage(path + getNameURL(source), scaledPicture)
+//        cacheImage(path + getNameURL(source), scaledPicture)
     }
 
     fun addCachedMiniature(
