@@ -1,4 +1,4 @@
-package com.map.mvi
+package com.map.lib
 
 import com.map.network.APP_SCOPE
 import kotlinx.coroutines.channels.Channel
@@ -34,7 +34,9 @@ fun <STATE, INTENT> createStore(init: STATE, reducer: Reducer<STATE, INTENT>): S
         }
 
         override fun send(intent: INTENT) {
-            channel.offer(intent)//mutableStateFlow.value = reducer(mutableStateFlow.value, intent)
+            //mutableStateFlow.value = reducer(mutableStateFlow.value, intent)
+            val success = channel.trySend(intent).isSuccess
+            //todo check success or use coroutine scope with guaranteed send
         }
 
         override val stateFlow: StateFlow<STATE> = mutableStateFlow

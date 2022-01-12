@@ -8,6 +8,9 @@ plugins {
 
 version = "1.0-SNAPSHOT"
 
+//val KTOR_VERSION = "1.4.1"
+val KTOR_VERSION = "1.6.7"
+
 kotlin {
     android()
     jvm("desktop")
@@ -19,20 +22,21 @@ kotlin {
     sourceSets {
         val commonMain by sourceSets.getting {
             dependencies {
-
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                api("io.ktor:ktor-client-core:${KTOR_VERSION}")
             }
         }
         val androidMain by getting {
             dependencies {
                 api("androidx.appcompat:appcompat:1.3.1")
                 api("androidx.core:core-ktx:1.3.1")
-                implementation("io.ktor:ktor-client-cio:1.4.1")
+                implementation("io.ktor:ktor-client-cio:${KTOR_VERSION}")
             }
         }
         val desktopMain by getting {
             dependencies {
                 api(compose.desktop.common)
-                implementation("io.ktor:ktor-client-cio:1.4.1")
+                implementation("io.ktor:ktor-client-cio:${KTOR_VERSION}")
             }
         }
         val commonAndroidDesktop by creating {
@@ -43,7 +47,6 @@ kotlin {
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
-                implementation("io.ktor:ktor-client-core:1.4.1")
             }
         }
         val jsMain by getting {
