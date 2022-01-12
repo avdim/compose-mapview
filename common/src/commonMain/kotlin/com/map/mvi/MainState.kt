@@ -2,12 +2,10 @@ package com.map.mvi
 
 import com.map.model.Picture
 import com.map.model.loadImages
-import com.map.network.APP_SCOPE
 import com.map.network.getNetworkScope
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-data class State(
+data class MainState(
     val pictures: List<Picture>
 )
 
@@ -15,7 +13,7 @@ sealed interface Intent {
     class AddPictures(val pictures: List<Picture>) : Intent
 }
 
-fun createMapViewStore() = createStore(State(listOf())) { state: State, intent: Intent ->
+fun createMapViewStore() = createStore(MainState(listOf())) { state: MainState, intent: Intent ->
     when (intent) {
         is Intent.AddPictures -> {
             state.copy(pictures = intent.pictures)

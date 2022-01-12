@@ -28,7 +28,6 @@ kotlin {
                 api("androidx.appcompat:appcompat:1.3.1")
                 api("androidx.core:core-ktx:1.3.1")
                 implementation("io.ktor:ktor-client-cio:1.4.1")
-//                implementation("io.ktor:ktor-client-okhttp:$KTOR_VERSION")
             }
         }
         named("desktopMain") {

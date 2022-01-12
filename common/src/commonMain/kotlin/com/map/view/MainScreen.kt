@@ -17,7 +17,41 @@ import androidx.compose.ui.unit.dp
 import com.map.model.ContentState
 import com.map.model.Picture
 import com.map.model.toImageBitmap
+import com.map.mvi.MainState
 import com.map.style.*
+
+@Composable
+fun MainUI() {
+    val state by ContentState.stateFlow.collectAsState()
+    ScrollableArea(state)
+}
+
+@Composable
+fun ScrollableArea(state: MainState) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .padding(end = 8.dp)
+    ) {
+        val stateVertical = rememberScrollState(0)
+        Column(modifier = Modifier.verticalScroll(stateVertical)) {
+            var index = 1
+            Column {
+                for (picture in state.pictures) {
+                    Miniature(
+                        picture = picture
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    index++
+                }
+            }
+        }
+//        VerticalScrollbar(//todo Desktop
+//            adapter = rememberScrollbarAdapter(stateVertical),
+//            modifier = Modifier.align(Alignment.CenterEnd)
+//                .fillMaxHeight()
+//        )
+    }
+}
 
 @Composable
 fun Miniature(
@@ -56,34 +90,5 @@ fun Miniature(
             )
 
         }
-    }
-}
-
-@Composable
-fun ScrollableArea(content: ContentState) {
-    val state by content.stateFlow.collectAsState()
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-            .padding(end = 8.dp)
-    ) {
-        val stateVertical = rememberScrollState(0)
-        Column(modifier = Modifier.verticalScroll(stateVertical)) {
-            var index = 1
-            Column {
-                for (picture in state.pictures) {
-                    Miniature(
-                        picture = picture
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    index++
-                }
-            }
-        }
-//        VerticalScrollbar(//todo Desktop
-//            adapter = rememberScrollbarAdapter(stateVertical),
-//            modifier = Modifier.align(Alignment.CenterEnd)
-//                .fillMaxHeight()
-//        )
     }
 }

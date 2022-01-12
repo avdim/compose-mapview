@@ -10,23 +10,14 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.map.model.ContentState
 import com.map.style.Gray
+import com.map.view.MainUI
 import com.map.view.ScrollableArea
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val content = ContentState
         setContent {
-            MaterialTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Gray
-                ) {
-                    Column {
-                        ScrollableArea(content)
-                    }
-                }
-            }
+            MainUI()
         }
     }
 }
