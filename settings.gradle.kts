@@ -20,7 +20,7 @@ pluginManagement {
 }
 
 include(":common")
-include(":common-desktop-android")
+include(":common-android-desktop")
 include(":android")
 include(":desktop")
 
