@@ -11,14 +11,14 @@ import android.renderscript.ScriptIntrinsicBlur
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-actual typealias AbstractImageData = Bitmap
+actual typealias AbstractImageData = ByteArray //Bitmap
 
-actual fun Picture.scale(width: Int, height: Int): Picture =
-    copy(
-        width = width,
-        height = height,
-        image = scaleBitmapAspectRatio(image.copy(Bitmap.Config.ARGB_8888, true), width, height)
-    )
+actual fun Picture.scale(width: Int, height: Int): Picture = this
+//    copy(
+//        width = width,
+//        height = height,
+//        image = scaleBitmapAspectRatio(image.copy(Bitmap.Config.ARGB_8888, true), width, height)
+//    )
 
 fun scaleBitmapAspectRatio(
     bitmap: Bitmap,

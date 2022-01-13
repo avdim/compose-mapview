@@ -25,3 +25,5 @@ temp_id_rsa
 .exclude
 .idea_system**
 .system**
+
+SecretApiKey.kt

@@ -14,14 +14,14 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 //import com.map.view.DragHandler
 
-actual typealias AbstractImageData = BufferedImage
+actual typealias AbstractImageData = ByteArray //BufferedImage
 
-actual fun Picture.scale(width: Int, height: Int): Picture =
-    copy(
-        width = width,
-        height = height,
-        image = scaleBitmapAspectRatio(image, width, height)
-    )
+actual fun Picture.scale(width: Int, height: Int): Picture = this
+//    copy(
+//        width = width,
+//        height = height,
+//        image = scaleBitmapAspectRatio(image, width, height)
+//    )
 
 
 fun scaleBitmapAspectRatio(
