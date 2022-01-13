@@ -12,48 +12,49 @@ import org.w3c.dom.HTMLCanvasElement
 
 @JsExport
 @Composable
-public fun LibJSCounter() {
-    var count: Int by mutableStateOf(0)
+public fun LibJSCounter(stateFlow: StateFlow<Int>, sendIntent: (Int) -> Unit) {
+    val state: State<Int> = stateFlow.collectAsState()
     Div({ style { padding(25.px) } }) {
         Button(attrs = {
             onClick {
-                count = count + 1
+                sendIntent(1)
             }
         }) {
             Text("+++")
         }
 
         Span({ style { padding(15.px) } }) {
-            Text("$count")
+            Text("${state.value}")
         }
 
         Button(attrs = {
             onClick {
-                count = count - 1
+                sendIntent(-1)
             }
         }) {
             Text("---")
         }
     }
     Div {
-        CanvasWithRect(count)
+        CanvasWithRect(stateFlow)
     }
 }
 
 @Composable
-private fun CanvasWithRect(level: Int) {
+private fun CanvasWithRect(stateFlow: StateFlow<Int>) {
+    val state = stateFlow.collectAsState()
     TagElement(
         elementBuilder = ElementBuilder.createBuilder("canvas"),
         applyAttrs = {
-            attr("width", "200px")
+            attr("width", "${200 + state.value * 10}px")
             attr("height", "200px")
         },
         content = {
-            DomSideEffect(level) { element: Element ->
+            DomSideEffect(state.value) { element: Element ->
                 val canvas = element as HTMLCanvasElement
                 val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
                 ctx.fillStyle = "green";
-                val size = 20.0 + level * 5
+                val size = 20.0 + state.value * 5
                 ctx.fillRect(0.0, 0.0, size, size)
             }
         }
