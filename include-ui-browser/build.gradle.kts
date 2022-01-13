@@ -10,21 +10,23 @@ version = "1.0-SNAPSHOT"
 kotlin {
     js(IR) {
         browser()
-        binaries.executable()
     }
     sourceSets {
         val jsMain by getting {
             dependencies {
-                implementation("com.map:model:1.0")
-                implementation("com.map:ui-browser:1.0")
-                implementation(compose.web.core)
+//                implementation("com.map:model:1.0")
                 implementation(compose.runtime)
-//                api(compose.foundation)
-//                api(compose.material)
-                implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
+                implementation(compose.web.core)
+//                implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0 //todo
             }
         }
     }
+}
+
+repositories {
+    google()
+    mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 // a temporary workaround for a bug in jsRun invocation - see https://youtrack.jetbrains.com/issue/KT-48273

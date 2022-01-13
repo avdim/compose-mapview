@@ -32,6 +32,11 @@ includeBuild("include-ui-android-desktop") {
         substitute(module("com.map:ui-android-desktop")).using(project(":"))
     }
 }
+includeBuild("include-ui-browser") {
+    dependencySubstitution {
+        substitute(module("com.map:ui-browser")).using(project(":"))
+    }
+}
 includeBuild("include-mapview") {
     dependencySubstitution {
         substitute(module("com.map:mapview")).using(project(":"))

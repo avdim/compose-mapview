@@ -10,18 +10,13 @@ import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.*
+import kotlin.random.Random
 import kotlin.reflect.KClass
-
-const val STYLE_CONTAINER = "position: absolute; left: 0px; top: 0px;"
 
 fun main() {
     println("Hello Compose Web")
-    val root = document.getElementById("root") as HTMLElement
-    root.textContent = "Hello Compose Web"
     ComposeCounterApp("root")
-
-     val canvas = document.getElementById("map-canvas") as HTMLCanvasElement
-
+    val canvas = document.getElementById("map-canvas") as HTMLCanvasElement
     val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
     ctx.fillStyle = "green";
     ctx.fillRect(0.0, 0.0, 1000.0, 1000.0)
@@ -36,64 +31,11 @@ fun <T : Any> Document.createElement(localName: String, kClass: KClass<T>): T = 
 fun Document.createCanvas(style: String) =
     (createElement("canvas", HTMLCanvasElement::class)).apply { setAttribute("style", style) }
 
-
-@JsExport
-abstract class ComposeCounterAppController {
-    abstract fun setCount(newCount: Int)
-    abstract fun dispose()
-}
-
-/**
- * @param rootId - an id of an HTML element which is already added into the DOM.
- * Compose will manage the content of this element.
- *
- * @param onCountChange - a callback to receive state updates in non-compose code.
- *
- * @return instance of [ComposeCounterAppController] to control the composition in non-compose code.
- */
-@JsExport
-fun ComposeCounterApp(rootId: String, onCountChange: (Int) -> Unit = {}): ComposeCounterAppController {
-    var count: Int by mutableStateOf(0)
-
+fun ComposeCounterApp(rootId: String) {
     val composition = renderComposable(rootElementId = rootId) {
-        Counter(count) {
-            count = it
-            onCountChange(count)
-        }
+        LibCounter()
     }
-
-    return object : ComposeCounterAppController() {
-        override fun setCount(newCount: Int) {
-            count = newCount
-        }
-
-        override fun dispose() {
-            composition.dispose()
-        }
-    }
-}
-
-@Composable
-private fun Counter(count: Int, onCountChange: (Int) -> Unit) {
-    Div({ style { padding(25.px) } }) {
-        Button(attrs = {
-            onClick {
-                onCountChange(count - 1)
-            }
-        }) {
-            Text("-")
-        }
-
-        Span({ style { padding(15.px) } }) {
-            Text("$count")
-        }
-
-        Button(attrs = {
-            onClick {
-                onCountChange(count + 1)
-            }
-        }) {
-            Text("+")
-        }
+    if (false) {
+        composition.dispose()
     }
 }

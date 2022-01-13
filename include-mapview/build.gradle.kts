@@ -32,11 +32,11 @@ kotlin {
                 implementation(compose.desktop.common)
             }
         }
-//        val jsMain by getting {
-//            dependencies {
-//                implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
-//            }
-//        }
+        val jsMain by getting {
+            dependencies {
+                implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
+            }
+        }
     }
 }
 
@@ -65,4 +65,12 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+}
+
+// a temporary workaround for a bug in jsRun invocation - see https://youtrack.jetbrains.com/issue/KT-48273
+afterEvaluate {
+    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+        versions.webpackDevServer.version = "4.0.0"
+        versions.webpackCli.version = "4.9.0"
+    }
 }
