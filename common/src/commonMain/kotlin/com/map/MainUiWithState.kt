@@ -37,7 +37,7 @@ fun ScrollableArea(state: MainState) {
                 }
             }
         }
-//        VerticalScrollbar(//todo Desktop
+//        VerticalScrollbar(// Desktop
 //            adapter = rememberScrollbarAdapter(stateVertical),
 //            modifier = Modifier.align(Alignment.CenterEnd)
 //                .fillMaxHeight()
