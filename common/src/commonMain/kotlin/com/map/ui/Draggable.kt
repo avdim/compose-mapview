@@ -1,4 +1,4 @@
-package com.map
+package com.map.ui
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.offset
@@ -39,6 +39,23 @@ fun Draggable(
 }
 
 class DragHandler {
+
+    class EventLocker {
+
+        private var value: Boolean = false
+
+        fun lock() {
+            value = false
+        }
+
+        fun unlock() {
+            value = true
+        }
+
+        fun isLocked(): Boolean {
+            return value
+        }
+    }
 
     private val amount = mutableStateOf(Point(0f, 0f))
     private val distance = mutableStateOf(Point(0f, 0f))

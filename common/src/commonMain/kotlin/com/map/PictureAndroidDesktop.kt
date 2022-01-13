@@ -7,6 +7,5 @@ package com.map
 
 import androidx.compose.ui.graphics.ImageBitmap
 
-
 expect fun readAbstractImageDataFromFile(path: String): AbstractImageData
 expect fun Picture.toImageBitmap(): ImageBitmap

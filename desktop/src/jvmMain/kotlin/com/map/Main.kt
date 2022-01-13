@@ -1,5 +1,6 @@
 package com.map
 
+import com.map.ui.*
 import java.awt.Toolkit
 import java.awt.Dimension
 import androidx.compose.ui.unit.DpSize

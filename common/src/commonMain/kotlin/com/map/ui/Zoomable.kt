@@ -1,4 +1,4 @@
-package com.map
+package com.map.ui
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures

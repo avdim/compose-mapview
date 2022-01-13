@@ -1,4 +1,4 @@
-package com.map
+package com.map.ui
 
 import androidx.compose.ui.graphics.Color
 

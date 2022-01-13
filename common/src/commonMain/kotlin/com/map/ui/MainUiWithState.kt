@@ -1,4 +1,4 @@
-package com.map
+package com.map.ui
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.map.*
 
 @Composable
 fun MainUiWithState() {
