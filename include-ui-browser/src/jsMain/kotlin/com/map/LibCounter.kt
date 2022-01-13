@@ -46,8 +46,11 @@ private fun CanvasWithRect(stateFlow: StateFlow<Int>) {
     TagElement(
         elementBuilder = ElementBuilder.createBuilder("canvas"),
         applyAttrs = {
-            attr("width", "${200 + state.value * 10}px")
+            val width = 200 + state.value * 10
+//            attr("width", "${width}px")
+            attr("width", "200px")
             attr("height", "200px")
+            attr("workaround", state.value.toString())
         },
         content = {
             DomSideEffect(state.value) { element: Element ->
