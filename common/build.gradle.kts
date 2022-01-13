@@ -15,8 +15,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("com.map:model:1.0")
-                api(Deps.coroutinesCore)
-                api(Deps.ktorCore)
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
@@ -26,13 +24,11 @@ kotlin {
             dependencies {
                 api("androidx.appcompat:appcompat:1.3.1")
                 api("androidx.core:core-ktx:1.3.1")
-                implementation(Deps.ktorCIO)
             }
         }
         val desktopMain by getting {
             dependencies {
                 api(compose.desktop.common)
-                implementation(Deps.ktorCIO)
             }
         }
         val commonTest by getting {
