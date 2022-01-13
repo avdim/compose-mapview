@@ -15,8 +15,7 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             dependencies {
-                implementation("com.map:model:1.0")
-                implementation("com.map:ui-browser:1.0")
+                implementation("com.map:mapview:1.0")
                 implementation(compose.web.core)
                 implementation(compose.runtime)
 //                api(compose.foundation)

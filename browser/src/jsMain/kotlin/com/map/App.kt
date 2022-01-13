@@ -33,7 +33,7 @@ fun Document.createCanvas(style: String) =
 
 fun ComposeCounterApp(rootId: String) {
     val composition = renderComposable(rootElementId = rootId) {
-        LibCounter()
+        MapView()
     }
     if (false) {
         composition.dispose()

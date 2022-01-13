@@ -12,7 +12,11 @@ kotlin {
     android()
     jvm("desktop")
     js(IR) {
-        browser()
+        browser {
+            testTask {
+                enabled = false
+            }
+        }
     }
     sourceSets {
         val commonMain by getting {
@@ -34,6 +38,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
+                implementation("com.map:ui-browser:1.0")
                 implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
             }
         }
