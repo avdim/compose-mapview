@@ -5,6 +5,9 @@ import android.graphics.Bitmap
 import java.io.*
 import java.nio.charset.StandardCharsets
 
+fun isFileExists(path:String):Boolean = File(path).exists()
+fun getFileSeparator():String= File.separator
+
 actual fun cacheImage(path: String, picture: Picture) {
     try {
         FileOutputStream(path).use { out ->

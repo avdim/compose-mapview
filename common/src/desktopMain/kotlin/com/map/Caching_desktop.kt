@@ -31,3 +31,7 @@ actual fun cacheImage(path: String, picture: Picture) {
         e.printStackTrace()
     }
 }
+
+fun isFileExists(path:String):Boolean = File(path).exists()
+
+fun getFileSeparator():String= File.separator
