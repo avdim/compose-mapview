@@ -12,20 +12,21 @@ import javax.imageio.ImageIO
 
 actual fun cacheImage(path: String, picture: Picture) {
     try {
-        ImageIO.write(picture.image, "png", File(path))
-
-        val bw =
-            BufferedWriter(
-                OutputStreamWriter(
-                    FileOutputStream(path + cacheImagePostfix),
-                    StandardCharsets.UTF_8
-                )
-            )
-
-        bw.write(picture.url)
-        bw.write("\r\n${picture.width}")
-        bw.write("\r\n${picture.height}")
-        bw.close()
+        File(path).writeBytes(picture.image)
+//        ImageIO.write(picture.image, "png", File(path))
+//
+//        val bw =
+//            BufferedWriter(
+//                OutputStreamWriter(
+//                    FileOutputStream(path + cacheImagePostfix),
+//                    StandardCharsets.UTF_8
+//                )
+//            )
+//
+//        bw.write(picture.url)
+//        bw.write("\r\n${picture.width}")
+//        bw.write("\r\n${picture.height}")
+//        bw.close()
 
     } catch (e: IOException) {
         e.printStackTrace()

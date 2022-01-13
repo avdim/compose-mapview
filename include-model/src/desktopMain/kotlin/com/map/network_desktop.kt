@@ -17,8 +17,8 @@ actual suspend fun loadFullImage(url: String): Picture {
     return Picture(
         url = url,
         image = byteArray,
-        width = 512,
-        height = 512
+        width = TILE_SIZE,
+        height = TILE_SIZE
     )
 //    return Picture(url = url, image = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)) //default picture
 }

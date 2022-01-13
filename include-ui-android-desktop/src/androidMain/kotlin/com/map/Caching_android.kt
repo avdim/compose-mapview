@@ -10,21 +10,22 @@ fun getFileSeparator():String= File.separator
 
 actual fun cacheImage(path: String, picture: Picture) {
     try {
-        FileOutputStream(path).use { out ->
-            picture.image.compress(Bitmap.CompressFormat.PNG, 100, out)
-        }
-
-        val bw =
-            BufferedWriter(
-                OutputStreamWriter(
-                    FileOutputStream(path + cacheImagePostfix), StandardCharsets.UTF_8
-                )
-            )
-
-        bw.write(picture.url)
-        bw.write("\r\n${picture.width}")
-        bw.write("\r\n${picture.height}")
-        bw.close()
+        FileOutputStream(path).write(picture.image)
+//        FileOutputStream(path).use { out ->
+//            picture.image.compress(Bitmap.CompressFormat.PNG, 100, out)
+//        }
+//
+//        val bw =
+//            BufferedWriter(
+//                OutputStreamWriter(
+//                    FileOutputStream(path + cacheImagePostfix), StandardCharsets.UTF_8
+//                )
+//            )
+//
+//        bw.write(picture.url)
+//        bw.write("\r\n${picture.width}")
+//        bw.write("\r\n${picture.height}")
+//        bw.close()
 
     } catch (e: IOException) {
         e.printStackTrace()

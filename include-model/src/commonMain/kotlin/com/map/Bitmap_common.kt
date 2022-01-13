@@ -6,8 +6,8 @@ import kotlin.js.JsExport
 public data class Picture(
     val url: String,
     val image: AbstractImageData,
-    val width: Int = 512,
-    val height: Int = 512
+    val width: Int = TILE_SIZE,
+    val height: Int = TILE_SIZE
 )
 
 expect public class AbstractImageData

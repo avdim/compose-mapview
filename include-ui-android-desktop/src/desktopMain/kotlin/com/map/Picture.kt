@@ -8,8 +8,9 @@ import javax.imageio.ImageIO
 
 actual fun readAbstractImageDataFromFile(path: String): AbstractImageData {
     try {
-        val result: BufferedImage? = ImageIO.read(File(path))
-        return result ?: throw Error("readAbstractImageDataFromFile, result == null")
+        return File(path).readBytes()
+//        val result: BufferedImage? = ImageIO.read(File(path))
+//        return result ?: throw Error("readAbstractImageDataFromFile, result == null")
     } catch (t: Throwable) {
         val message = "Error in readAbstractImageDataFromFile"
         println(message)
@@ -18,7 +19,9 @@ actual fun readAbstractImageDataFromFile(path: String): AbstractImageData {
     }
 }
 
-actual fun Picture.toImageBitmap(): ImageBitmap = org.jetbrains.skia.Image.makeFromEncoded(
-    toByteArray(image)
-).toComposeImageBitmap()
+actual fun Picture.toImageBitmap(): ImageBitmap = image.toImageBitmap()
+
+//org.jetbrains.skia.Image.makeFromEncoded(
+//    toByteArray(image)
+//).toComposeImageBitmap()
 
