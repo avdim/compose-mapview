@@ -11,7 +11,7 @@ import javax.imageio.ImageIO
 
 actual val ktorClient: HttpClient = HttpClient(CIO)
 
-actual suspend fun loadFullImage(url: String): Picture {
+actual suspend fun loadImage(url: String): Picture {
     val byteArray: ByteArray = ktorClient.get<ByteArray>(url)
 //    val bitmap: BufferedImage = ImageIO.read(byteArray.inputStream())//todo redundant inputStream()
     return Picture(

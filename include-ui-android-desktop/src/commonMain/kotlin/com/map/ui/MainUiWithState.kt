@@ -8,15 +8,39 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.map.*
+import kotlinx.coroutines.flow.StateFlow
+
+object ContentState {
+    //todo remove
+    private val store = createMapViewStore()
+    val stateFlow = store.stateFlow
+}
 
 @Composable
-fun MainUiWithState() {
-    val state by ContentState.stateFlow.collectAsState()
-    ScrollableArea(state)
+fun MapViewAndroidDesktop(
+    width: Int,
+    height: Int,
+    stateFlow: StateFlow<ImageTilesGrid>,
+    onZoom: (Double) -> Unit,
+    onMove: (Int, Int) -> Unit
+) {
+    val state by stateFlow.collectAsState()
+    Canvas(Modifier.size(width.dp, height.dp)) {
+        for (x in 0 until state.lengthX) {
+            for (y in 0 until state.lengthY) {
+                val t = state[x, y]
+                val topLeft = Offset(t.display.x.toFloat(), t.display.y.toFloat())
+                //todo scale
+                drawImage(t.pic.toImageBitmap(), topLeft = topLeft)
+            }
+        }
+    }
+//    ScrollableArea(state)
 }
 
 @Composable
