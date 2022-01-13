@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.map.*
 import kotlinx.coroutines.flow.StateFlow
@@ -35,8 +37,9 @@ fun MapViewAndroidDesktop(
             for (y in 0 until state.lengthY) {
                 val t = state[x, y]
                 val topLeft = Offset(t.display.x.toFloat(), t.display.y.toFloat())
-                //todo scale
-                drawImage(t.pic.toImageBitmap(), topLeft = topLeft)
+                val dstSize = IntSize(t.display.size, t.display.size)
+                val dstOffset = IntOffset(t.display.x, t.display.y)
+                drawImage(t.pic.toImageBitmap(), dstOffset = dstOffset, dstSize = dstSize)
             }
         }
     }
