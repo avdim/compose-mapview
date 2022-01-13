@@ -18,5 +18,3 @@ pluginManagement {
         id("org.jetbrains.compose").version(composeVersion)
     }
 }
-
-include(":ui")

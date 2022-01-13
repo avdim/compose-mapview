@@ -24,12 +24,12 @@ include(":desktop")
 include(":browser")
 includeBuild("include-model") {
     dependencySubstitution {
-        substitute(module("com.map:model")).using(project(":model"))
+        substitute(module("com.map:model")).using(project(":"))
     }
 }
 includeBuild("include-ui-android-desktop") {
     dependencySubstitution {
-        substitute(module("com.map:ui-android-desktop")).using(project(":ui"))
+        substitute(module("com.map:ui-android-desktop")).using(project(":"))
     }
 }
 

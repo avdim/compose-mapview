@@ -14,5 +14,3 @@ pluginManagement {
         id("com.android.library").version(agpVersion)
     }
 }
-
-include(":model")
