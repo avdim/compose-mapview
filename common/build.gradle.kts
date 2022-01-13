@@ -19,26 +19,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("com.map:model:1.0")
-            }
-        }
-        val commonModel by creating {
-            dependencies {
                 api(Deps.coroutinesCore)
                 api(Deps.ktorCore)
-                api(compose.runtime)
-            }
-        }
-        val shareAndroidDesktop by creating {
-            dependsOn(commonMain)
-            dependencies {
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
             }
         }
         val androidMain by getting {
-            dependsOn(commonModel)
-            dependsOn(shareAndroidDesktop)
             dependencies {
                 api("androidx.appcompat:appcompat:1.3.1")
                 api("androidx.core:core-ktx:1.3.1")
@@ -46,8 +34,6 @@ kotlin {
             }
         }
         val desktopMain by getting {
-            dependsOn(commonModel)
-            dependsOn(shareAndroidDesktop)
             dependencies {
                 api(compose.desktop.common)
                 implementation(Deps.ktorCIO)
