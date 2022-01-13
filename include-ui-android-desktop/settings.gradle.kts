@@ -19,18 +19,4 @@ pluginManagement {
     }
 }
 
-include(":android")
-include(":desktop")
-include(":browser")
-includeBuild("include-model") {
-    dependencySubstitution {
-        substitute(module("com.map:model")).using(project(":model"))
-    }
-}
-includeBuild("include-ui-android-desktop") {
-    dependencySubstitution {
-        substitute(module("com.map:ui-android-desktop")).using(project(":ui"))
-    }
-}
-
-rootProject.name = "map-view"
+include(":ui")
