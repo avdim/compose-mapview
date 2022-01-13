@@ -4,5 +4,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 internal actual fun PlatformMapView() {
-    LibCounter()
+    val store = createMapViewStore()
+    LibJSCounter()
 }

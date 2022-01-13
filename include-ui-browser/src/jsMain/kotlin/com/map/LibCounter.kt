@@ -1,19 +1,19 @@
 package com.map
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import org.jetbrains.compose.web.attributes.value
+import androidx.compose.runtime.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.dom.Text
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.Element
+import org.w3c.dom.HTMLCanvasElement
 
 @JsExport
 @Composable
-public fun LibCounter() {
+public fun LibJSCounter() {
     var count: Int by mutableStateOf(0)
-
     Div({ style { padding(25.px) } }) {
         Button(attrs = {
             onClick {
@@ -34,15 +34,28 @@ public fun LibCounter() {
         }) {
             Text("---")
         }
-        TagElement(
-            elementBuilder = ElementBuilder.createBuilder("canvas"),
-            applyAttrs = {
-                attr("width", "200px")
-                attr("height", "200px")
-            },
-            content = {
-
-            }
-        )
     }
+    Div {
+        CanvasWithRect(count)
+    }
+}
+
+@Composable
+private fun CanvasWithRect(level: Int) {
+    TagElement(
+        elementBuilder = ElementBuilder.createBuilder("canvas"),
+        applyAttrs = {
+            attr("width", "200px")
+            attr("height", "200px")
+        },
+        content = {
+            DomSideEffect(level) { element: Element ->
+                val canvas = element as HTMLCanvasElement
+                val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
+                ctx.fillStyle = "green";
+                val size = 20.0 + level * 5
+                ctx.fillRect(0.0, 0.0, size, size)
+            }
+        }
+    )
 }
