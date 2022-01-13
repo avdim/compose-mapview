@@ -22,7 +22,7 @@ fun main() {
     ctx.fillRect(0.0, 0.0, 1000.0, 1000.0)
     val img = Image() // Create new img element
     img.onload = {
-        ctx.drawImage(image = img, dx = 10.0, dy = 10.0, dw = 100.0, dh = 50.0)
+        ctx.drawImage(image = img, dx = -50.0, dy = 10.0, dw = 100.0, dh = 50.0)
     }
     img.src = composeImg
 }
