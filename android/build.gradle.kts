@@ -21,6 +21,8 @@ android {
 }
 
 dependencies {
-    implementation("com.map:ui-android-desktop:1.0")
+    implementation("com.map:mapview:1.0")
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.core:core-ktx:1.3.1")
     implementation("androidx.activity:activity-compose:1.3.1")
 }

@@ -33,7 +33,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(npm("colors", "=1.4.0"))//temp vulnerability fix
+                implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
             }
         }
         val commonTest by getting {

@@ -14,7 +14,7 @@ kotlin {
         named("jvmMain") {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation("com.map:ui-android-desktop:1.0")
+                implementation("com.map:mapview:1.0")
             }
         }
     }

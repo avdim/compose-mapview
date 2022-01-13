@@ -1,6 +1,6 @@
 package com.map
 
-import com.map.ui.*
+import com.map.*
 import java.awt.Toolkit
 import java.awt.Dimension
 import androidx.compose.ui.unit.DpSize
@@ -10,9 +10,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import androidx.compose.ui.res.painterResource
 
 fun main() = application {
-    val icon = icAppRounded()
+    val icon = painterResource("images/ic_imageviewer_round.png")
 
     Window(
         onCloseRequest = ::exitApplication,
@@ -23,7 +24,7 @@ fun main() = application {
         ),
         icon = icon
     ) {
-        MainUiWithState()
+        MapView()
     }
 }
 
