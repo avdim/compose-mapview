@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import org.jetbrains.compose.web.attributes.value
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.dom.Text
@@ -33,5 +34,15 @@ public fun LibCounter() {
         }) {
             Text("---")
         }
+        TagElement(
+            elementBuilder = ElementBuilder.createBuilder("canvas"),
+            applyAttrs = {
+                attr("width", "200px")
+                attr("height", "200px")
+            },
+            content = {
+
+            }
+        )
     }
 }
