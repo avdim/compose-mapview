@@ -2,3 +2,5 @@ isInternetAvailable
 cache
 launcher icons
 ic_imageviewer_round
+http://jsfiddle.net/84P9r/
+https://cloud.maptiler.com/maps/streets/
