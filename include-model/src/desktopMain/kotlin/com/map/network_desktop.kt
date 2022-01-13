@@ -2,6 +2,7 @@ package com.map
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
 import java.awt.image.BufferedImage
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -10,7 +11,26 @@ import javax.imageio.ImageIO
 
 actual val ktorClient: HttpClient = HttpClient(CIO)
 
-actual fun loadFullImage(source: String): Picture {
+actual suspend fun loadFullImage(url: String): Picture {
+    try {
+        val byteArray: ByteArray = ktorClient.get<ByteArray>(url)
+        val bitmap: BufferedImage? = ImageIO.read(byteArray.inputStream())//todo redundant inputStream()
+        if (bitmap != null) {
+            return Picture(
+                url = url,
+                image = bitmap,
+                width = bitmap.width,
+                height = bitmap.height
+            )
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    return Picture(url = url, image = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
+}
+
+private fun loadFullImageBlocking(source: String): Picture {
     try {
         val url = URL(source)
         val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
@@ -31,5 +51,6 @@ actual fun loadFullImage(source: String): Picture {
         e.printStackTrace()
     }
 
-    return Picture(image = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
+    return Picture(url = source, image = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
 }
+

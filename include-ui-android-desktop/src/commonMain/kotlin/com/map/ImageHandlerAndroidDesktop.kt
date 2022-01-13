@@ -23,7 +23,7 @@ private fun todoCache() {
 //        result.last().id = result.size - 1
 //    }
 //
-    fun addFreshMiniature(
+    suspend fun addFreshMiniature(
         source: String,
         outList: MutableList<Picture>,
         path: String?

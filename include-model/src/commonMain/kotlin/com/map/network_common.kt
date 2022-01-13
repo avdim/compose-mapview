@@ -1,14 +1,18 @@
 package com.map
 
 import io.ktor.client.*
-
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 
 expect val ktorClient: HttpClient
 
-fun loadImages(list: List<String>): List<Picture> {
+suspend fun loadImages(list: List<String>): List<Picture> {
     return list.map {
-        loadFullImage(it)
-    }
+        getNetworkScope().async {
+            loadFullImage(it)
+        }
+    }.awaitAll()
 }
 
-expect fun loadFullImage(source: String): Picture
+expect suspend fun loadFullImage(url: String): Picture

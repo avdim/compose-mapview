@@ -4,6 +4,6 @@ import io.ktor.client.*
 
 actual val ktorClient: HttpClient = HttpClient()
 
-actual fun loadFullImage(source: String): Picture {
+actual suspend fun loadFullImage(url: String): Picture {
     TODO("Not yet implemented")
 }

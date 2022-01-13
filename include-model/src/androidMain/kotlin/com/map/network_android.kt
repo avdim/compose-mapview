@@ -11,10 +11,9 @@ import java.net.URL
 
 actual val ktorClient: HttpClient = HttpClient(CIO)
 
-actual fun loadFullImage(source: String): Picture {
+actual suspend fun loadFullImage(url: String): Picture {
     try {
-        val url = URL(source)
-        val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+        val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
         connection.connectTimeout = 5000
         connection.connect()
 
@@ -22,7 +21,7 @@ actual fun loadFullImage(source: String): Picture {
         val bitmap: Bitmap? = BitmapFactory.decodeStream(input)
         if (bitmap != null) {
             return Picture(
-                url = source,
+                url = url,
                 image = bitmap,
                 width = bitmap.width,
                 height = bitmap.height
@@ -32,6 +31,28 @@ actual fun loadFullImage(source: String): Picture {
         e.printStackTrace()
     }
 
-    return Picture(image = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+    return Picture(url = url, image = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
 }
 
+private fun loadFullImageBlocking(url: String): Picture {
+    try {
+        val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+        connection.connectTimeout = 5000
+        connection.connect()
+
+        val input: InputStream = connection.inputStream
+        val bitmap: Bitmap? = BitmapFactory.decodeStream(input)
+        if (bitmap != null) {
+            return Picture(
+                url = url,
+                image = bitmap,
+                width = bitmap.width,
+                height = bitmap.height
+            )
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    return Picture(url = url, image = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+}
