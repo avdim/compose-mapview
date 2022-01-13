@@ -18,24 +18,3 @@ pluginManagement {
         id("org.jetbrains.compose").version(composeVersion)
     }
 }
-
-include(":android")
-include(":desktop")
-include(":browser")
-includeBuild("include-model") {
-    dependencySubstitution {
-        substitute(module("com.map:model")).using(project(":"))
-    }
-}
-includeBuild("include-ui-android-desktop") {
-    dependencySubstitution {
-        substitute(module("com.map:ui-android-desktop")).using(project(":"))
-    }
-}
-includeBuild("include-mapview") {
-    dependencySubstitution {
-        substitute(module("com.map:mapview")).using(project(":"))
-    }
-}
-
-rootProject.name = "map-view"
