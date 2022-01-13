@@ -6,6 +6,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 
-actual internal inline fun getAppScope() = MainScope()
-actual internal inline fun getNetworkScope(): CoroutineScope = CoroutineScope(Dispatchers.IO)
+actual fun getAppScope() = MainScope()
+actual fun getNetworkScope(): CoroutineScope = CoroutineScope(Dispatchers.IO)
 actual val ktorClient: HttpClient = HttpClient(CIO)

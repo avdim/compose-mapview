@@ -17,6 +17,6 @@ fun launchAppScope(block: suspend () -> Unit) {
     }
 }
 
-expect internal inline fun getAppScope():CoroutineScope
-expect internal inline fun getNetworkScope():CoroutineScope
+expect fun getAppScope():CoroutineScope
+expect fun getNetworkScope():CoroutineScope
 expect val ktorClient: HttpClient
