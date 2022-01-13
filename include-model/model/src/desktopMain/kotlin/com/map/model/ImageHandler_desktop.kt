@@ -8,12 +8,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.imageio.ImageIO
 
-actual fun isFileExists(path:String):Boolean =
-    File(path).exists()
-
-actual fun getFileSeparator():String=
-    File.separator
-
 actual fun loadFullImage(source: String): Picture {
     try {
         val url = URL(source)
@@ -27,7 +21,6 @@ actual fun loadFullImage(source: String): Picture {
             return Picture(
                 source = source,
                 image = bitmap,
-                name = getNameURL(source),
                 width = bitmap.width,
                 height = bitmap.height
             )

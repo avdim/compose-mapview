@@ -7,9 +7,6 @@ package com.map.model
 
 import com.map.utils.cacheImage
 
-expect fun isFileExists(path:String):Boolean
-expect fun getFileSeparator():String
-
 fun getNameURL(url: String): String {
     return url.substring(url.lastIndexOf('/') + 1, url.length)
 }

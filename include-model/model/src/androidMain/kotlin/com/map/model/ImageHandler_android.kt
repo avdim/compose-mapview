@@ -8,11 +8,7 @@ package com.map.model
 import com.map.model.Picture
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.map.model.getNameURL
-import com.map.utils.cacheImage
-import com.map.utils.cacheImagePostfix
 import com.map.utils.scaleBitmapAspectRatio
-import com.map.utils.toPx
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -22,12 +18,6 @@ import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
-
-actual fun isFileExists(path:String):Boolean =
-    File(path).exists()
-
-actual fun getFileSeparator():String=
-    File.separator
 
 actual fun loadFullImage(source: String): Picture {
     try {
@@ -42,7 +32,6 @@ actual fun loadFullImage(source: String): Picture {
             return Picture(
                 source = source,
                 image = bitmap,
-                name = getNameURL(source),
                 width = bitmap.width,
                 height = bitmap.height
             )

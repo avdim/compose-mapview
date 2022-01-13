@@ -22,6 +22,7 @@ pluginManagement {
 include(":common")
 include(":android")
 include(":desktop")
+include(":browser")
 includeBuild("include-model") {
     dependencySubstitution {
         substitute(module("com.map:model")).using(project(":model"))
