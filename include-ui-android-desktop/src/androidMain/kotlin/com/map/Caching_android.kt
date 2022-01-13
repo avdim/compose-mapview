@@ -21,7 +21,7 @@ actual fun cacheImage(path: String, picture: Picture) {
                 )
             )
 
-        bw.write(picture.source)
+        bw.write(picture.url)
         bw.write("\r\n${picture.width}")
         bw.write("\r\n${picture.height}")
         bw.close()

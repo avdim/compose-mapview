@@ -22,7 +22,7 @@ actual fun loadFullImage(source: String): Picture {
         val bitmap: Bitmap? = BitmapFactory.decodeStream(input)
         if (bitmap != null) {
             return Picture(
-                source = source,
+                url = source,
                 image = bitmap,
                 width = bitmap.width,
                 height = bitmap.height

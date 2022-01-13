@@ -3,14 +3,13 @@ package com.map
 import kotlin.js.JsExport
 
 @JsExport
-data class Picture(
-    var source: String = "",
-    var image: AbstractImageData,
-    var width: Int = 0,
-    var height: Int = 0,
-    var id: Int = 0
+public data class Picture(
+    val url: String,
+    val image: AbstractImageData,
+    val width: Int = 512,
+    val height: Int = 512
 )
 
-expect class AbstractImageData
+expect public class AbstractImageData
 
 expect fun Picture.scale(width: Int, height: Int): Picture

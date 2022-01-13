@@ -3,7 +3,6 @@ package com.map
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import java.awt.image.BufferedImage
-import java.io.File
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -22,7 +21,7 @@ actual fun loadFullImage(source: String): Picture {
         val bitmap: BufferedImage? = ImageIO.read(input)
         if (bitmap != null) {
             return Picture(
-                source = source,
+                url = source,
                 image = bitmap,
                 width = bitmap.width,
                 height = bitmap.height
