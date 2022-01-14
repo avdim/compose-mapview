@@ -17,6 +17,7 @@ public fun MapView(width:Int = 600, height:Int = 700) {
         stateFlow.emit(tileGrid.downloadImages())
     }
     PlatformMapView(width, height, stateFlow, {}, { dx, dy -> })
+
 }
 
 @Composable

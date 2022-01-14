@@ -17,12 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.map.*
 import kotlinx.coroutines.flow.StateFlow
 
-object ContentState {
-    //todo remove
-    private val store = createMapViewStore()
-    val stateFlow = store.stateFlow
-}
-
 @Composable
 fun MapViewAndroidDesktop(
     width: Int,
@@ -47,7 +41,11 @@ fun MapViewAndroidDesktop(
 }
 
 @Composable
-fun ScrollableArea(state: MainState) {
+fun ScrollableArea() {
+    data class MainState(
+        val pictures: List<Picture>
+    )
+    val state: MainState = MainState(listOf())
     Box(
         modifier = Modifier.fillMaxSize()
             .padding(end = 8.dp)
