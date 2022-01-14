@@ -20,7 +20,7 @@ data class MapState(
 //     */
 //    val lon: Double = 0.0,
 //
-    val center: GeoPt = GeoPt(0.5, 0.5),
+    val topLeft: GeoPt = GeoPt(0.0, 0.0),
     val mousePoint: GeoPt = GeoPt(0.4, 0.4),
     val width: Int,
     val height: Int,
@@ -32,15 +32,13 @@ sealed interface MapIntent {
 }
 
 fun createMapStore(width: Int, height: Int) = createStore(MapState(width = width, height = height)) { state: MapState, intent: MapIntent ->
-    println("intent: $intent")
     when(intent) {
         is MapIntent.Zoom -> {
             state.copy(scale = state.scale + intent.delta)
         }
         is MapIntent.Move -> {
-            println("state.displayToGeo(intent.pt): ${state.displayToGeo(intent.pt)}")
             state.copy(
-                center = state.center + state.displayToGeo(intent.pt),
+                topLeft = state.topLeft + state.displayToGeo(intent.pt),
                 mousePoint = state.mousePoint + state.displayToGeo(intent.pt)
             )
         }
