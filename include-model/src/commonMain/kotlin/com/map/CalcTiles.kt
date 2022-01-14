@@ -4,7 +4,6 @@ import kotlin.math.log
 import kotlin.math.pow
 
 fun calcTiles(mapState: MapState, width: Int, height: Int): TilesGrid {
-    val centerTodo: GeoPt = GeoPt(0.5, 0.5)
     fun GeoPt.toDisplay(): Pt {
         TODO()
     }
@@ -18,7 +17,7 @@ fun calcTiles(mapState: MapState, width: Int, height: Int): TilesGrid {
         val diff = GeoPt((width / 2).toGeo(), (height / 2).toGeo())
         val x1 = (x - width / 2).toGeo()
         val y1 = (y - height / 2).toGeo()
-        val result = centerTodo + GeoPt(x1, y1)
+        val result = mapState.center + GeoPt(x1, y1)
         return result
     }
 

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.map.*
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.ceil
 
 @Composable
 fun MapViewAndroidDesktop(
@@ -38,18 +40,26 @@ fun MapViewAndroidDesktop(
                     val event = awaitPointerEventScope {
                         awaitPointerEvent()
                     }
-                if (true || event.type == PointerEventType.Scroll) { //todo try to make false
-                    val scrollX = event.changes.firstOrNull()?.scrollDelta?.x
-                    val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
-                    if (scrollY != null && scrollY != 0f) {
-                        onZoom(scrollY * getSensitivity())
+                    if (event.type == PointerEventType.Scroll) {
+                        val scrollX = event.changes.firstOrNull()?.scrollDelta?.x
+                        val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
+                        if (scrollY != null && scrollY != 0f) {
+                            onZoom(scrollY * getSensitivity())
+                        }
+                    } else if (event.type == PointerEventType.Move && event.buttons.isPrimaryPressed) {
+                        val change = event.changes.firstOrNull()
+                        if(change != null) {
+                            val before = change.previousPosition
+                            val after = change.position
+                            onMove((before.x - after.x).ceilInt(), (before.y - after.y).ceilInt())
+                        }
                     }
-                }
+
                 }
             }
     ) {
         state.matrix.forEach {
-            it.forEach { t->
+            it.forEach { t ->
                 val topLeft = Offset(t.display.x.toFloat(), t.display.y.toFloat())
                 val dstSize = IntSize(t.display.size, t.display.size)
                 val dstOffset = IntOffset(t.display.x, t.display.y)
@@ -65,6 +75,7 @@ fun ScrollableArea() {
     data class MainState(
         val pictures: List<Picture>
     )
+
     val state: MainState = MainState(listOf())
     Box(
         modifier = Modifier.fillMaxSize()
@@ -120,3 +131,5 @@ fun Miniature(
         }
     }
 }
+
+fun Float.ceilInt() = (this + 0.5).toInt()

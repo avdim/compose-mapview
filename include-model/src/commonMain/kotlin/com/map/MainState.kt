@@ -8,14 +8,16 @@ data class MapState(
      * 0.0 - (min zoom) .. 1.0 (max zoom)
      */
     val zoom: Double = 0.07,
-    /**
-     * Latitude -90(South) .. 90(North)
-     */
-    val lat: Double = 0.0,
-    /**
-     * Longitude -180(Left) .. 180(Right)
-     */
-    val lon: Double = 0.0
+//    /**
+//     * Latitude -90(South) .. 90(North)
+//     */
+//    val lat: Double = 0.0,
+//    /**
+//     * Longitude -180(Left) .. 180(Right)
+//     */
+//    val lon: Double = 0.0,
+//
+    val center: GeoPt = GeoPt(0.5, 0.5)
 )
 
 sealed interface MapIntent {
@@ -29,7 +31,7 @@ fun createMapStore() = createStore(MapState()) { state: MapState, intent: MapInt
             state.copy(zoom = state.zoom + intent.delta)
         }
         is MapIntent.Move -> {
-            state.copy()//todo move
+            state.copy(center = state.center + GeoPt(intent.dx / 1000.0, intent.dy / 1000.0))
         }
     }
 }

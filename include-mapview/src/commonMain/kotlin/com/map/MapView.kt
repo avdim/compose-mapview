@@ -17,7 +17,7 @@ public fun MapView(width:Int = 600, height:Int = 700) {
     ) {
         calcTiles(it, width, height).downloadImages()
     }
-    PlatformMapView(width, height, tilesStateFlow, { store.send(MapIntent.Zoom(it)) }, { dx, dy -> })
+    PlatformMapView(width, height, tilesStateFlow, { store.send(MapIntent.Zoom(it)) }, { dx, dy -> store.send(MapIntent.Move(dx, dy))})
     Telemetry(store.stateFlow)
 }
 
