@@ -69,3 +69,13 @@ fun <STATE, INTENT, EFFECT> createStoreWithSideEffect(
 
 fun <STATE:Any, EFFECT> STATE.noSideEffects() = ReducerResult(this, emptyList<EFFECT>())
 fun <STATE:Any, EFFECT> STATE.addSideEffects(sideEffects: List<EFFECT>) = ReducerResult(this, sideEffects)
+
+fun <T, R> StateFlow<T>.mapStateFlow(init:R, transform: suspend (T) -> R): StateFlow<R> {
+    val result = MutableStateFlow(init)
+    APP_SCOPE.launch {
+        collect {
+            result.value = transform(it)
+        }
+    }
+    return result
+}
