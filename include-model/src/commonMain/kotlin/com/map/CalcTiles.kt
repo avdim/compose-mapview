@@ -3,7 +3,7 @@ package com.map
 import kotlin.math.log
 
 fun MapState.geoToDisplay(geoLength: Double): Int {
-    return (height * geoLength / scale).toInt()
+    return (height * geoLength * scale).toInt()
 }
 
 fun MapState.geoToDisplay(geoPt: GeoPt): Pt {
