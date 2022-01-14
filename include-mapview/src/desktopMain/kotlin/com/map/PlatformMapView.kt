@@ -24,8 +24,6 @@ internal actual fun PlatformMapView(
 internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     val state by stateFlow.collectAsState()
     Column {
-        Text("zoom: ${state.zoom}")
-//        Text("lat: ${state.lat}, lon: ${state.lon}")
         Text(state.toString())
     }
 }

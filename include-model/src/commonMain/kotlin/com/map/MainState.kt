@@ -10,7 +10,7 @@ data class MapState(
      * 10.0 = countries
      * 100.0 = cities
      */
-    val zoom: Double = 0.07,
+    val scale: Double = 1.0,
 //    /**
 //     * Latitude -90(South) .. 90(North)
 //     */
@@ -35,7 +35,7 @@ fun createMapStore(width: Int, height: Int) = createStore(MapState(width = width
     println("intent: $intent")
     when(intent) {
         is MapIntent.Zoom -> {
-            state.copy(zoom = state.zoom + intent.delta)
+            state.copy(scale = state.scale + intent.delta)
         }
         is MapIntent.Move -> {
             println("state.displayToGeo(intent.pt): ${state.displayToGeo(intent.pt)}")

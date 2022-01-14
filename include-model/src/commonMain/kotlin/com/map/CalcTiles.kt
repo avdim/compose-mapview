@@ -3,7 +3,7 @@ package com.map
 import kotlin.math.log
 
 fun MapState.displayToGeo(displayLength:Int):Double {
-    val scale: Double = 1.0 + (zoom * 10)
+    val scale: Double = scale
     val result = (displayLength) / (scale * height)
     return result
 }
