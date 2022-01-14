@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.map.ui
 
 import androidx.compose.foundation.*
@@ -7,15 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.map.*
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -27,7 +31,23 @@ fun MapViewAndroidDesktop(
     onMove: (Int, Int) -> Unit
 ) {
     val state by stateFlow.collectAsState()
-    Canvas(Modifier.size(width.dp, height.dp)) {
+    Canvas(
+        Modifier.size(width.dp, height.dp)
+            .pointerInput(Unit) {
+                while (true) {
+                    val event = awaitPointerEventScope {
+                        awaitPointerEvent()
+                    }
+                if (true || event.type == PointerEventType.Scroll) { //todo try to make false
+                    val scrollX = event.changes.firstOrNull()?.scrollDelta?.x
+                    val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
+                    if (scrollY != null && scrollY != 0f) {
+                        onZoom(scrollY * getSensitivity())
+                    }
+                }
+                }
+            }
+    ) {
         for (x in 0 until state.lengthX) {
             for (y in 0 until state.lengthY) {
                 val t = state[x, y]

@@ -20,7 +20,7 @@ public fun MapView(width:Int = 600, height:Int = 700) {
     GlobalScope.launch {
         stateFlow.emit(tileGrid.downloadImages())
     }
-    PlatformMapView(width, height, stateFlow, { store.send(MapIntent.Zoom(it / 100)) }, { dx, dy -> })
+    PlatformMapView(width, height, stateFlow, { store.send(MapIntent.Zoom(it)) }, { dx, dy -> })
     Telemetry(store.stateFlow)
 }
 
