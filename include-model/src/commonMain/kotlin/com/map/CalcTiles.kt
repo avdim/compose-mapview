@@ -4,22 +4,22 @@ import kotlin.math.log
 import kotlin.math.pow
 
 fun calcTiles(mapState: MapState, width: Int, height: Int): TilesGrid {
-    val center: GeoPt = GeoPt(0.5, 0.5)
+    val centerTodo: GeoPt = GeoPt(0.5, 0.5)
     fun GeoPt.toDisplay(): Pt {
         TODO()
     }
 
     fun Int.toGeo():Double {
-        val scale:Double = 1.0 + (mapState.zoom * 100)
+        val scale:Double = 1.0 + (mapState.zoom * 10)
         return (this) / (scale * height)
     }
 
     fun Pt.toGeo(): GeoPt {
-        center
-        return GeoPt(
-            x.toGeo(),
-            y.toGeo()
-        )
+        val diff = GeoPt((width / 2).toGeo(), (height / 2).toGeo())
+        val x1 = (x - width / 2).toGeo()
+        val y1 = (y - height / 2).toGeo()
+
+        return centerTodo + GeoPt(x1, y1)
     }
 
     val topLeftGeo = Pt(0, 0).toGeo()
@@ -61,7 +61,13 @@ data class GeoPt(val x: Double, val y: Double)
 data class Pt(val x: Int, val y: Int)
 
 infix fun GeoPt.delta(minus: GeoPt): GeoPt {
+    return this - minus
+}
+operator fun GeoPt.minus(minus: GeoPt): GeoPt {
     return GeoPt(x - minus.x, y - minus.y)
+}
+operator fun GeoPt.plus(minus: GeoPt): GeoPt {
+    return GeoPt(x + minus.x, y + minus.y)
 }
 fun calcZoomLevel(zoom: Double):Int {
     return log(zoom, 2.0).toInt() + 1
