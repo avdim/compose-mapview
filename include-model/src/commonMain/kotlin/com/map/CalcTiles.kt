@@ -9,8 +9,8 @@ fun calcTiles(mapState: MapState, width: Int, height: Int): TilesGrid {
         TODO()
     }
 
-    fun Int.toGeo():Double {
-        val scale:Double = 1.0 + (mapState.zoom * 10)
+    fun Int.toGeo(): Double {
+        val scale: Double = 1.0 + (mapState.zoom * 10)
         return (this) / (scale * height)
     }
 
@@ -34,29 +34,24 @@ fun calcTiles(mapState: MapState, width: Int, height: Int): TilesGrid {
     val tilesX = (geoSize.x / TILE_SIZE.toGeo()).toInt() + 1
     val tilesY = (geoSize.y / TILE_SIZE.toGeo()).toInt() + 1
 
-    val startTileX: Int = ((topLeftGeo.x / geoSize.x) * calcZoom(zoomLevel)).toInt()
-    val startTileY:Int = ((topLeftGeo.y / geoSize.y) * calcZoom(zoomLevel)).toInt()
+    val MAX_TILES_AT_LEVEL = pow2(zoomLevel)
+    val startTileX: Int = ((topLeftGeo.x / geoSize.x) * MAX_TILES_AT_LEVEL).toInt()
+    val startTileY: Int = ((topLeftGeo.y / geoSize.y) * MAX_TILES_AT_LEVEL).toInt()
 
     val grid: List<List<DisplayTile>> = buildList {
         for (x in 0 until tilesX) {
             add(buildList {
                 for (y in 0 until tilesY) {
                     val tile = Tile(zoomLevel, startTileX + x, startTileY + y)
-                    add(DisplayTile(sizePx, x * sizePx, y * sizePx, tile))
+                    if( tile.x < MAX_TILES_AT_LEVEL && tile.y < MAX_TILES_AT_LEVEL) {
+                        add(DisplayTile(sizePx, x * sizePx, y * sizePx, tile))
+                    }
                 }
             })
         }
     }
     val result = TilesGrid(tilesX, tilesY, grid)
     return result
-
-    return TilesGrid(
-        2, 2,
-        listOf(
-            listOf(DisplayTile(200, 0, 0, Tile(1, 0, 0)), DisplayTile(200, 200, 0, Tile(1, 1, 0))),
-            listOf(DisplayTile(200, 0, 200, Tile(1, 0, 1)), DisplayTile(200, 200, 200, Tile(1, 1, 1))),
-        )
-    )
 }
 
 data class GeoPt(val x: Double, val y: Double)
@@ -65,24 +60,33 @@ data class Pt(val x: Int, val y: Int)
 infix fun GeoPt.delta(minus: GeoPt): GeoPt {
     return this - minus
 }
+
 operator fun GeoPt.minus(minus: GeoPt): GeoPt {
     return GeoPt(x - minus.x, y - minus.y)
 }
+
 operator fun GeoPt.plus(minus: GeoPt): GeoPt {
     return GeoPt(x + minus.x, y + minus.y)
 }
-fun calcZoomLevel(zoom: Double):Int {
+
+fun calcZoomLevel(zoom: Double): Int {
     return log(zoom, 2.0).toInt() + 1
     // 1.0 -> 1
     // 2.0 -> 1
     // 4.0 -> 2
     // 8.0 -> 3
 }
-fun calcZoom(zoomLevel:Int):Double {
-    return 2.0.pow(zoomLevel - 1)
-    when(zoomLevel) {
-        0 -> 1.0
-        1 -> 2.0
-        2 -> 4.0
+
+fun calcZoom(zoomLevel: Int): Double {
+    return pow2(zoomLevel - 1).toDouble()
+}
+
+/**
+ * 2^x
+ */
+fun pow2(x: Int): Int {
+    if (x < 0) {
+        return 0
     }
+    return 1 shl x
 }

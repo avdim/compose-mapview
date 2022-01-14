@@ -30,6 +30,8 @@ data class TilesGrid(
     val lengthY:Int,
     val matrix:List<List<DisplayTile>>,
 )
+//operator fun TilesGrid.get(x:Int, y:Int):DisplayTile = matrix.get(x).get(y)
+//operator fun ImageTilesGrid.get(x:Int, y:Int):ImageTile = matrix.get(x).get(y)
 
 data class ImageTilesGrid(
     val lengthX:Int,
@@ -37,8 +39,6 @@ data class ImageTilesGrid(
     val matrix:List<List<ImageTile>>,
 )
 
-operator fun TilesGrid.get(x:Int, y:Int):DisplayTile = matrix.get(x).get(y)
-operator fun ImageTilesGrid.get(x:Int, y:Int):ImageTile = matrix.get(x).get(y)
 
 suspend fun TilesGrid.downloadImages():ImageTilesGrid {
     return ImageTilesGrid(

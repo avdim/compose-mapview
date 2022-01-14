@@ -7,7 +7,7 @@ data class MapState(
     /**
      * 0.0 - (min zoom) .. 1.0 (max zoom)
      */
-    val zoom: Double = 0.20,
+    val zoom: Double = 0.07,
     /**
      * Latitude -90(South) .. 90(North)
      */

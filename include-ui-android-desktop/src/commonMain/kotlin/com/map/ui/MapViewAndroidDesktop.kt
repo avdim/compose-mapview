@@ -48,9 +48,8 @@ fun MapViewAndroidDesktop(
                 }
             }
     ) {
-        for (x in 0 until state.lengthX) {
-            for (y in 0 until state.lengthY) {
-                val t = state[x, y]
+        state.matrix.forEach {
+            it.forEach { t->
                 val topLeft = Offset(t.display.x.toFloat(), t.display.y.toFloat())
                 val dstSize = IntSize(t.display.size, t.display.size)
                 val dstOffset = IntOffset(t.display.x, t.display.y)
