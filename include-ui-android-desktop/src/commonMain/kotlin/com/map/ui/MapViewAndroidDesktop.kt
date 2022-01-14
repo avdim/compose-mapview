@@ -15,6 +15,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
+import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
@@ -32,6 +33,7 @@ fun MapViewAndroidDesktop(
     onZoom: (Double) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
+    var previousMousePos by remember { mutableStateOf<Offset?>(null) }
     val state by stateFlow.collectAsState()
     Canvas(
         Modifier.size(width.dp, height.dp)
@@ -46,12 +48,20 @@ fun MapViewAndroidDesktop(
                         if (scrollY != null && scrollY != 0f) {
                             onZoom(scrollY * getSensitivity())
                         }
-                    } else if (event.type == PointerEventType.Move && event.buttons.isPrimaryPressed) {
-                        val change = event.changes.firstOrNull()
-                        if(change != null) {
-                            val before = change.previousPosition
-                            val after = change.position
-                            onMove((before.x - after.x).ceilInt(), (before.y - after.y).ceilInt())
+                    } else if (event.type == PointerEventType.Move) {
+                        if (event.buttons.isPrimaryPressed) {
+                            val previous = previousMousePos
+                            val next = event.changes.firstOrNull()?.position
+                            if (previous != null && next != null) {
+                                val dx = (next.x - previous.x).toInt()
+                                val dy = (next.y - previous.y).toInt()
+                                if (dx != 0 || dy != 0) {
+                                    onMove(dx, dy)
+                                }
+                            }
+                            previousMousePos = next
+                        } else {
+                            previousMousePos = null
                         }
                     }
 
@@ -132,4 +142,3 @@ fun Miniature(
     }
 }
 
-fun Float.ceilInt() = (this + 0.5).toInt()

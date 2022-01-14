@@ -1,28 +1,24 @@
 package com.map
 
 import kotlin.math.log
-import kotlin.math.pow
 
-fun calcTiles(mapState: MapState, width: Int, height: Int): TilesGrid {
-    fun GeoPt.toDisplay(): Pt {
-        TODO()
-    }
+fun MapState.displayToGeo(displayLength:Int):Double {
+    val scale: Double = 1.0 + (zoom * 10)
+    val result = (displayLength) / (scale * height)
+    return result
+}
 
-    fun Int.toGeo(): Double {
-        val scale: Double = 1.0 + (mapState.zoom * 10)
-        return (this) / (scale * height)
-    }
+fun MapState.displayToGeo(displayPt: Pt):GeoPt {
+    val diff = GeoPt(displayToGeo((width / 2)), displayToGeo((height / 2)))
+    val x1 = displayToGeo((displayPt.x))
+    val y1 = displayToGeo((displayPt.y))
+    val result = GeoPt(x1, y1)
+    return result
+}
 
-    fun Pt.toGeo(): GeoPt {
-        val diff = GeoPt((width / 2).toGeo(), (height / 2).toGeo())
-        val x1 = (x - width / 2).toGeo()
-        val y1 = (y - height / 2).toGeo()
-        val result = mapState.center + GeoPt(x1, y1)
-        return result
-    }
-
-    val topLeftGeo = Pt(0, 0).toGeo()
-    val bottomRightGeo = Pt(width, height).toGeo()
+fun MapState.calcTiles(): TilesGrid {
+    val topLeftGeo = displayToGeo(Pt(0, 0))
+    val bottomRightGeo = displayToGeo(Pt(width, height))
     val geoSize = bottomRightGeo delta topLeftGeo
 
     val targetZoom = 1.0 / minOf(1.0, maxOf(geoSize.x, geoSize.y)) // 1 .. +Inf
@@ -30,8 +26,8 @@ fun calcTiles(mapState: MapState, width: Int, height: Int): TilesGrid {
     val tileScale = targetZoom / calcZoom(zoomLevel)
     val sizePx = (TILE_SIZE * tileScale).toInt()
 
-    val tilesX = (geoSize.x / TILE_SIZE.toGeo()).toInt() + 1
-    val tilesY = (geoSize.y / TILE_SIZE.toGeo()).toInt() + 1
+    val tilesX = (geoSize.x / displayToGeo(TILE_SIZE)).toInt() + 1
+    val tilesY = (geoSize.y / displayToGeo(TILE_SIZE)).toInt() + 1
 
     val MAX_TILES_AT_LEVEL = pow2(zoomLevel)
     val startTileX: Int = ((topLeftGeo.x / geoSize.x) * MAX_TILES_AT_LEVEL).toInt()
@@ -42,7 +38,7 @@ fun calcTiles(mapState: MapState, width: Int, height: Int): TilesGrid {
             add(buildList {
                 for (y in 0 until tilesY) {
                     val tile = Tile(zoomLevel, startTileX + x, startTileY + y)
-                    if( tile.x < MAX_TILES_AT_LEVEL && tile.y < MAX_TILES_AT_LEVEL) {
+                    if (tile.x < MAX_TILES_AT_LEVEL && tile.y < MAX_TILES_AT_LEVEL) {
                         add(DisplayTile(sizePx, x * sizePx, y * sizePx, tile))
                     }
                 }
@@ -64,8 +60,8 @@ operator fun GeoPt.minus(minus: GeoPt): GeoPt {
     return GeoPt(x - minus.x, y - minus.y)
 }
 
-operator fun GeoPt.plus(minus: GeoPt): GeoPt {
-    return GeoPt(x + minus.x, y + minus.y)
+operator fun GeoPt.plus(other: GeoPt): GeoPt {
+    return GeoPt(x + other.x, y + other.y)
 }
 
 fun calcZoomLevel(zoom: Double): Int {

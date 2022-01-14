@@ -1,23 +1,22 @@
 package com.map
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlin.js.JsExport
 
 @JsExport
 @Composable
-public fun MapView(width:Int = 600, height:Int = 700) {
-    val store: Store<MapState, MapIntent> = createMapStore()
+public fun MapView(width: Int = 600, height: Int = 700) {
+    val store: Store<MapState, MapIntent> = createMapStore(width, height)
 
     val tilesStateFlow = store.stateFlow.mapStateFlow(
         init = ImageTilesGrid(0, 0, emptyList())
     ) {
-        calcTiles(it, width, height).downloadImages()
+        it.calcTiles().downloadImages()
     }
-    PlatformMapView(width, height, tilesStateFlow, { store.send(MapIntent.Zoom(it)) }, { dx, dy -> store.send(MapIntent.Move(dx, dy))})
+    PlatformMapView(width, height, tilesStateFlow, { store.send(MapIntent.Zoom(it)) }) { dx, dy ->
+        store.send(MapIntent.Move(Pt(dx, dy)))
+    }
     Telemetry(store.stateFlow)
 }
 

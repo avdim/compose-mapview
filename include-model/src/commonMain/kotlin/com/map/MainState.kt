@@ -5,7 +5,10 @@ package com.map
  */
 data class MapState(
     /**
-     * 0.0 - (min zoom) .. 1.0 (max zoom)
+     * 0.1 = little planet
+     * 1.0 = no zoom;
+     * 10.0 = countries
+     * 100.0 = cities
      */
     val zoom: Double = 0.07,
 //    /**
@@ -17,21 +20,29 @@ data class MapState(
 //     */
 //    val lon: Double = 0.0,
 //
-    val center: GeoPt = GeoPt(0.5, 0.5)
+    val center: GeoPt = GeoPt(0.5, 0.5),
+    val mousePoint: GeoPt = GeoPt(0.4, 0.4),
+    val width: Int,
+    val height: Int,
 )
 
 sealed interface MapIntent {
     data class Zoom(val delta: Double) : MapIntent
-    data class Move(val dx: Int, val dy: Int) : MapIntent
+    data class Move(val pt: Pt) : MapIntent
 }
 
-fun createMapStore() = createStore(MapState()) { state: MapState, intent: MapIntent ->
+fun createMapStore(width: Int, height: Int) = createStore(MapState(width = width, height = height)) { state: MapState, intent: MapIntent ->
+    println("intent: $intent")
     when(intent) {
         is MapIntent.Zoom -> {
             state.copy(zoom = state.zoom + intent.delta)
         }
         is MapIntent.Move -> {
-            state.copy(center = state.center + GeoPt(intent.dx / 1000.0, intent.dy / 1000.0))
+            println("state.displayToGeo(intent.pt): ${state.displayToGeo(intent.pt)}")
+            state.copy(
+                center = state.center + state.displayToGeo(intent.pt),
+                mousePoint = state.mousePoint + state.displayToGeo(intent.pt)
+            )
         }
     }
 }
