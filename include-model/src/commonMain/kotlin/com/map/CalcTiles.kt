@@ -13,18 +13,13 @@ fun MapState.geoToDisplay(geoPt: GeoPt): Pt {
     )
 }
 
-fun MapState.displayToGeo(displayLength: Int): Double {
-    val scale: Double = scale
-    val result = (displayLength) / (scale * height)
-    return result
-}
+fun MapState.displayToGeo(displayLength: Int): Double =
+    displayLength / (scale * height)
 
 fun MapState.displayToGeo(displayPt: Pt): GeoPt {
-    val diff = GeoPt(displayToGeo((width / 2)), displayToGeo((height / 2)))
     val x1 = displayToGeo((displayPt.x))
     val y1 = displayToGeo((displayPt.y))
-    val result = GeoPt(x1, y1)
-    return result
+    return GeoPt(x1, y1)
 }
 
 fun MapState.calcTiles(): TilesGrid {
@@ -32,9 +27,9 @@ fun MapState.calcTiles(): TilesGrid {
     val bottomRightGeo = displayToGeo(Pt(width, height))
     val geoSize = bottomRightGeo delta topLeftGlobal
 
-    val targetZoom = 1.0 / minOf(1.0, maxOf(geoSize.x, geoSize.y)) // 1 .. +Inf
-    val zoomLevel = calcZoomLevel(targetZoom)
-    val tileScale = targetZoom / calcZoom(zoomLevel)
+//    val targetZoom = 1.0 / minOf(1.0, maxOf(geoSize.x, geoSize.y)) // 1 .. +Inf
+    val zoomLevel = calcZoomLevel(scale)
+    val tileScale = scale / calcZoom(zoomLevel)
     val sizePx = (TILE_SIZE * tileScale).toInt()
 
     val tilesX = (geoSize.x / displayToGeo(TILE_SIZE)).toInt() + 1

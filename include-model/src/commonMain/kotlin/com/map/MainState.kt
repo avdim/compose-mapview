@@ -21,7 +21,6 @@ data class MapState(
 //    val lon: Double = 0.0,
 //
     val topLeft: GeoPt = GeoPt(0.0, 0.0),
-    val mousePoint: GeoPt = GeoPt(0.4, 0.4),
     val width: Int,
     val height: Int,
 )
@@ -39,7 +38,6 @@ fun createMapStore(width: Int, height: Int) = createStore(MapState(width = width
         is MapIntent.Move -> {
             state.copy(
                 topLeft = state.topLeft + state.displayToGeo(intent.pt),
-                mousePoint = state.mousePoint + state.displayToGeo(intent.pt)
             )
         }
     }
