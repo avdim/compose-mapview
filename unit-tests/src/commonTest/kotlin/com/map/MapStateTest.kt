@@ -13,4 +13,10 @@ class MapStateTest {
         val convertedGeo = mapState.displayToGeo(displayPt)
         assertEquals(initGeo, convertedGeo)
     }
+
+    @Test
+    fun testMapSize() {
+        val state = MapState(10, 20)
+        println(state)
+    }
 }

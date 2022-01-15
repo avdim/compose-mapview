@@ -6,7 +6,7 @@ import kotlin.js.JsExport
 
 @JsExport
 @Composable
-public fun MapView(width: Int = 600, height: Int = 700) {
+public fun MapView(width: Int = 500, height: Int = 700) {
     val store: Store<MapState, MapIntent> = createMapStore(width, height)
 
     val tilesStateFlow = store.stateFlow.mapStateFlow(

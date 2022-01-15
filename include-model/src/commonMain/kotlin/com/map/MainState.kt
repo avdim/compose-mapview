@@ -31,9 +31,9 @@ data class MapState(
     val topLeft: GeoPt = GeoPt(0.0, 0.0)
 )
 
-fun MapState.toShortString():String = buildString {
+fun MapState.toShortString(): String = buildString {
     appendLine("width: $width")
-    appendLine("height: $width")
+    appendLine("height: $height")
     appendLine("scale: ${scale.toShortString()}")
     appendLine("topLeft: ${topLeft.toShortString()}")
 }
@@ -43,15 +43,16 @@ sealed interface MapIntent {
     data class Move(val pt: Pt) : MapIntent
 }
 
-fun createMapStore(width: Int, height: Int) = createStore(MapState(width = width, height = height)) { state: MapState, intent: MapIntent ->
-    when(intent) {
-        is MapIntent.Zoom -> {
-            state.copy(scale = state.scale + intent.delta)
-        }
-        is MapIntent.Move -> {
-            state.copy(
-                topLeft = state.topLeft + state.displayToGeo(intent.pt),
-            )
+fun createMapStore(width: Int, height: Int) =
+    createStore(MapState(width = width, height = height)) { state: MapState, intent: MapIntent ->
+        when (intent) {
+            is MapIntent.Zoom -> {
+                state.copy(scale = state.scale + intent.delta)
+            }
+            is MapIntent.Move -> {
+                state.copy(
+                    topLeft = state.topLeft + state.displayToGeo(intent.pt),
+                )
+            }
         }
     }
-}
