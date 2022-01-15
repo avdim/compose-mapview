@@ -1,17 +1,12 @@
 package com.map
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
-import java.io.InputStream
-import java.lang.Exception
-import java.net.HttpURLConnection
-import java.net.URL
 
 actual val ktorClient: HttpClient = HttpClient(CIO)
 
+actual suspend fun getImage(z: Int, x: Int, y: Int): Picture = downloadImageByCoordinates(z,x,y)
 actual suspend fun downloadImage(url: String): Picture {
     val byteArray: ByteArray = ktorClient.get<ByteArray>(url)
     return Picture(
