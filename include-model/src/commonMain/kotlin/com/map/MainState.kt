@@ -5,6 +5,14 @@ package com.map
  */
 data class MapState(
     /**
+     * display width in dp (pixels)
+     */
+    val width: Int,
+    /**
+     * display height in dp (pixels)
+     */
+    val height: Int,
+    /**
      * 0.1 = little planet
      * 1.0 = no zoom;
      * 10.0 = countries
@@ -20,9 +28,7 @@ data class MapState(
 //     */
 //    val lon: Double = 0.0,
 //
-    val topLeft: GeoPt = GeoPt(0.0, 0.0),
-    val width: Int,
-    val height: Int,
+    val topLeft: GeoPt = GeoPt(0.0, 0.0)
 )
 
 sealed interface MapIntent {

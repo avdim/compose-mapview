@@ -23,25 +23,24 @@ fun MapState.displayToGeo(displayPt: Pt): GeoPt {
 }
 
 fun MapState.calcTiles(): TilesGrid {
-    val topLeftGlobal = displayToGeo(Pt(0, 0))
-    val bottomRightGeo = displayToGeo(Pt(width, height))
-    val geoSize = bottomRightGeo delta topLeftGlobal
+    val visibleTopLeft = displayToGeo(Pt(0, 0))
+    val visibleTopRight = displayToGeo(Pt(width, height))
+    val visibleGeoSize = visibleTopRight delta visibleTopLeft
 
 //    val targetZoom = 1.0 / minOf(1.0, maxOf(geoSize.x, geoSize.y)) // 1 .. +Inf
     val zoomLevel = calcZoomLevel(scale)
     val tileScale = scale / calcZoom(zoomLevel)
     val sizePx = (TILE_SIZE * tileScale).toInt()
 
-    val tilesX = (geoSize.x / displayToGeo(TILE_SIZE)).toInt() + 1
-    val tilesY = (geoSize.y / displayToGeo(TILE_SIZE)).toInt() + 1
+    val tilesX = (visibleGeoSize.x / displayToGeo(TILE_SIZE)).toInt() + 1
+    val tilesY = (visibleGeoSize.y / displayToGeo(TILE_SIZE)).toInt() + 1
 
     val maxTilesAtLevel = pow2(zoomLevel)
-    val startTileX: Int = maxOf(0, ((topLeft.x / geoSize.x) * maxTilesAtLevel).toInt()) //todo bad maxOf
-    val startTileY: Int = maxOf(0, ((topLeft.y / geoSize.y) * maxTilesAtLevel).toInt())
+    val startTileX: Int = maxOf(0, ((topLeft.x / visibleGeoSize.x) * maxTilesAtLevel).toInt()) //todo bad maxOf
+    val startTileY: Int = maxOf(0, ((topLeft.y / visibleGeoSize.y) * maxTilesAtLevel).toInt())
 
-    val firstTileGeoX = startTileX * geoSize.x / maxTilesAtLevel
-    val firstTileGeoY = startTileY * geoSize.y / maxTilesAtLevel
-
+    val firstTileGeoX = startTileX * visibleGeoSize.x / maxTilesAtLevel
+    val firstTileGeoY = startTileY * visibleGeoSize.y / maxTilesAtLevel
     val firstTileGeo = GeoPt(firstTileGeoX, firstTileGeoY)
     val deltaDisplay = geoToDisplay(topLeft - firstTileGeo)
 
