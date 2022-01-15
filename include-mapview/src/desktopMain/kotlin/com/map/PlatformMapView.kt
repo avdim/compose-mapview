@@ -22,7 +22,6 @@ internal actual fun PlatformMapView(
     MapViewAndroidDesktop(width = width, height = height, stateFlow = stateFlow, onZoom = onZoom, onMove = onMove)
 }
 
-
 @Composable
 internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     val state by stateFlow.collectAsState()
