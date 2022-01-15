@@ -51,7 +51,7 @@ fun createMapStore(width: Int, height: Int) =
             }
             is MapIntent.Move -> {
                 state.copy(
-                    topLeft = state.topLeft + state.displayToGeo(intent.pt),
+                    topLeft = state.topLeft + state.displayLengthToGeo(intent.pt),
                 )
             }
         }

@@ -54,7 +54,7 @@ fun mkBitmap(z:Int, x:Int, y:Int):ByteArray {
     val ig2 = bi.createGraphics()
     val font = Font("TimesRoman", Font.BOLD, 20)
     ig2.font = font
-    val message = "$z / ($x/$y)"
+    val message = "$z  \n ($x, $y)"
     val fontMetrics = ig2.fontMetrics
     val stringWidth = fontMetrics.stringWidth(message)
     val stringHeight = fontMetrics.ascent

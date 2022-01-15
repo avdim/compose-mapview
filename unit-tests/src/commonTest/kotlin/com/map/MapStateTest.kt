@@ -10,7 +10,7 @@ class MapStateTest {
         val initGeo = GeoPt(0.5, 0.5)
         val displayPt = mapState.geoToDisplay(initGeo)
         assertEquals(Pt(50, 50), displayPt)
-        val convertedGeo = mapState.displayToGeo(displayPt)
+        val convertedGeo = mapState.displayLengthToGeo(displayPt)
         assertEquals(initGeo, convertedGeo)
     }
 
