@@ -3,6 +3,8 @@ package com.map
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
+import java.io.File
+import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
 actual fun createDownloadImageRepository(): ImageRepository =
@@ -11,7 +13,6 @@ actual fun createDownloadImageRepository(): ImageRepository =
     } else {
         createRealRepository()
     }
-
 
 private fun createRealRepository() = object : ImageRepository {
     val ktorClient: HttpClient = HttpClient(CIO)
@@ -39,16 +40,12 @@ private fun createFakeRepository() = object : ImageRepository {
             height = TILE_SIZE
         )
     }
-
 }
 
 actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
-
-    val cache: MutableMap<Tile, Picture> =
-        ConcurrentHashMap()//todo LRU cache как в докладе Тагира Валеева LinkedHashMap
-
+    val cache: MutableMap<Tile, Picture> = ConcurrentHashMap()//todo LRU cache как в video Тагира Валеева LinkedHashMap
     override suspend fun getImage(tile: Tile): Picture {
-        //todo вставать в блокировку по ключу или вешать обработчики на ожидание по ключу
+        //todo вставать в блокировку по ключу или вешать обработчики на ожидание по ключу как в видео Романа Елизарова, actor
         val fromCache = cache[tile]
         if (fromCache != null) {
             return fromCache
@@ -59,4 +56,68 @@ actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRep
     }
 }
 
-actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageRepository = TODO()
+actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
+    override suspend fun getImage(tile: Tile): Picture { TODO() }
+    private fun todoCache() {
+        val cachePath: String? = null
+        // for android val directory = context.cacheDir.absolutePath
+        // for desktop val cacheImagePath = System.getProperty("user.home")!! + File.separator + "Pictures/mapview" + File.separator
+
+//    for (source in list) {
+//        val name = getNameURL(source)
+//        val path = cachePath + getFileSeparator() + name
+//
+//        if (isFileExists(path + "info")) {
+//            addCachedMiniature(filePath = path, outList = result)
+//        } else {
+//            addFreshMiniature(source = source, outList = result, path = cachePath)
+//        }
+//
+//        result.last().id = result.size - 1
+//    }
+    }
+    fun addCachedMiniature(filePath: String, outList: MutableList<Picture>) {
+//            val info = readPictureInfoFromFile(filePath + cacheImagePostfix)
+//            val result: AbstractImageData = readAbstractImageDataFromFile(filePath)
+//            val picture = Picture(
+//                info.source,
+//                getNameURL(info.source),
+//                result,
+//                info.width,
+//                info.height
+//            )
+//            outList.add(picture)
+    }
+
+    //todo
+//val directory = File(cacheImagePath)
+//if (!directory.exists()) {
+//    directory.mkdirs()
+//}
+
+    fun cacheImage(path: String, picture: Picture) {
+        try {
+            File(path).writeBytes(picture.image)
+//        ImageIO.write(picture.image, "png", File(path))
+//
+//        val bw =
+//            BufferedWriter(
+//                OutputStreamWriter(
+//                    FileOutputStream(path + cacheImagePostfix),
+//                    StandardCharsets.UTF_8
+//                )
+//            )
+//
+//        bw.write(picture.url)
+//        bw.write("\r\n${picture.width}")
+//        bw.write("\r\n${picture.height}")
+//        bw.close()
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun isFileExists(path:String):Boolean = File(path).exists()
+    fun getFileSeparator():String= File.separator
+}
