@@ -16,6 +16,26 @@ val cache: MutableMap<String, Picture> = ConcurrentHashMap() //todo temp in memo
 
 actual suspend fun downloadImage(url: String): Picture {
     if (true) {
+        val bitmap =
+            if (url.contains("0/0/0")) {
+                TEMP_BITMAP_000
+            } else if(url.contains("1/0/0")) {
+                TEMP_BITMAP_100
+            } else if(url.contains("1/0/1")) {
+                TEMP_BITMAP_101
+            } else if(url.contains("1/1/0")) {
+                TEMP_BITMAP_110
+            } else if(url.contains("1/1/1")) {
+                TEMP_BITMAP_111
+            } else {
+                TEMP_BITMAP_000
+            }
+        return Picture(
+            url = url,
+            image =bitmap ,
+            width = TILE_SIZE,
+            height = TILE_SIZE
+        )
         return Picture(
             url = url,
             image = TEMP_BITMAP,

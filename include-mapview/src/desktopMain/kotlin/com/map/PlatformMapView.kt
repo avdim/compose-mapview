@@ -25,7 +25,7 @@ internal actual fun PlatformMapView(
 @Composable
 internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     val state by stateFlow.collectAsState()
-    Column(Modifier.background(Color.White)) {
+    Column(Modifier.background(Color(0x77ffFFff))) {
         Text(state.toShortString())
     }
 }
