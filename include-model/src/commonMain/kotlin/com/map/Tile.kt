@@ -48,7 +48,7 @@ suspend fun TilesGrid.downloadImages():ImageTilesGrid {
             it.map { displayTile->
                 getNetworkScope().async {
                     with(displayTile.tile) {
-                        val img = loadImage("https://api.maptiler.com/maps/streets/$z/$x/$y.png?key=${com.map.SECRET_API_KEY}")
+                        val img = downloadImage("https://api.maptiler.com/maps/streets/$z/$x/$y.png?key=${com.map.SECRET_API_KEY}")
                         ImageTile(img, displayTile)
                     }
                 }

@@ -61,6 +61,10 @@ fun MapState.calcTiles(): TilesGrid {
 }
 
 data class GeoPt(val x: Double, val y: Double)
+fun GeoPt.toShortString(): String {
+    return "x: ${x.toShortString()}, y: ${y.toShortString()}"
+}
+
 data class Pt(val x: Int, val y: Int)
 
 infix fun GeoPt.delta(minus: GeoPt): GeoPt {

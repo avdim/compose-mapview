@@ -28,7 +28,7 @@ private fun todoCache() {
         outList: MutableList<Picture>,
         path: String?
     ) {
-        val scaledPicture: Picture = loadImage(source)
+        val scaledPicture: Picture = downloadImage(source)
         outList.add(scaledPicture)
         cacheImage(path + getNameURL(source), scaledPicture)
     }

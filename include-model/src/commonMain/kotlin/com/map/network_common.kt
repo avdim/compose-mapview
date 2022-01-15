@@ -9,9 +9,9 @@ expect val ktorClient: HttpClient
 suspend fun loadImages(list: List<String>): List<Picture> {
     return list.map {
         getNetworkScope().async {
-            loadImage(it)
+            downloadImage(it)
         }
     }.awaitAll()
 }
 
-expect suspend fun loadImage(url: String): Picture
+expect suspend fun downloadImage(url: String): Picture

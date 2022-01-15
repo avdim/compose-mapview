@@ -1,9 +1,12 @@
 package com.map
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.map.ui.MapViewAndroidDesktop
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +26,8 @@ internal actual fun PlatformMapView(
 @Composable
 internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     val state by stateFlow.collectAsState()
-    Column {
-        Text(state.toString())
+    Column(Modifier.background(Color.White)) {
+        Text(state.toShortString())
     }
 }
 

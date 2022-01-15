@@ -14,8 +14,8 @@ actual val ktorClient: HttpClient = HttpClient(CIO)
 
 val cache: MutableMap<String, Picture> = ConcurrentHashMap() //todo temp in memory cache
 
-actual suspend fun loadImage(url: String): Picture {
-    if (false) {
+actual suspend fun downloadImage(url: String): Picture {
+    if (true) {
         return Picture(
             url = url,
             image = TEMP_BITMAP,

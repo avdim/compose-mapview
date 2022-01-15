@@ -12,7 +12,7 @@ import java.net.URL
 
 actual val ktorClient: HttpClient = HttpClient(CIO)
 
-actual suspend fun loadImage(url: String): Picture {
+actual suspend fun downloadImage(url: String): Picture {
     val byteArray: ByteArray = ktorClient.get<ByteArray>(url)
     return Picture(
         url = url,

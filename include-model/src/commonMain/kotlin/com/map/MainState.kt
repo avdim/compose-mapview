@@ -31,6 +31,13 @@ data class MapState(
     val topLeft: GeoPt = GeoPt(0.0, 0.0)
 )
 
+fun MapState.toShortString():String = buildString {
+    appendLine("width: $width")
+    appendLine("height: $width")
+    appendLine("scale: ${scale.toShortString()}")
+    appendLine("topLeft: ${topLeft.toShortString()}")
+}
+
 sealed interface MapIntent {
     data class Zoom(val delta: Double) : MapIntent
     data class Move(val pt: Pt) : MapIntent
