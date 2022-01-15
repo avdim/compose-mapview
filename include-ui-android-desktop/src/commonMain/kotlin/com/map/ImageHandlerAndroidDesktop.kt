@@ -23,15 +23,6 @@ private fun todoCache() {
 //        result.last().id = result.size - 1
 //    }
 //
-    suspend fun addFreshMiniature(
-        source: String,
-        outList: MutableList<Picture>,
-        path: String?
-    ) {
-        val scaledPicture: Picture = downloadImage(source)
-        outList.add(scaledPicture)
-        cacheImage(path + getNameURL(source), scaledPicture)
-    }
 
     fun addCachedMiniature(
         filePath: String,

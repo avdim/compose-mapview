@@ -8,7 +8,7 @@ import kotlinx.coroutines.awaitAll
  * doc here https://cloud.maptiler.com/maps/streets/
  */
 data class Tile(
-    val z:Int,
+    val zoom:Int,
     val x:Int,
     val y:Int
 )
@@ -38,22 +38,3 @@ data class ImageTilesGrid(
     val lengthY:Int,
     val matrix:List<List<ImageTile>>,
 )
-
-
-suspend fun TilesGrid.downloadImages():ImageTilesGrid {
-    return ImageTilesGrid(
-        lengthX = lengthX,
-        lengthY = lengthY,
-        matrix = matrix.map {
-            it.map { displayTile->
-                getNetworkScope().async {
-                    with(displayTile.tile) {
-
-                        val img = getImage(z,x,y)
-                        ImageTile(img, displayTile)
-                    }
-                }
-            }.awaitAll()
-        }
-    )
-}
