@@ -16,7 +16,7 @@ internal actual fun PlatformMapView(
     width: Int,
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Double) -> Unit,
+    onZoom: (Pt, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
 ){

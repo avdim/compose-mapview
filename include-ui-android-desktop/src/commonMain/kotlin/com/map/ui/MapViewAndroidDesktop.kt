@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.map.*
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 @Composable
@@ -33,7 +35,7 @@ fun MapViewAndroidDesktop(
     width: Int,
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Double) -> Unit,
+    onZoom: (Pt, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
@@ -52,7 +54,7 @@ fun MapViewAndroidDesktop(
                     if (event.type == PointerEventType.Scroll) {
                         val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
                         if (scrollY != null && scrollY != 0f) {
-                            onZoom(scrollY * getSensitivity())
+                            onZoom(current?.toPt() ?: Pt(width / 2, height / 2), scrollY * getSensitivity())
                         }
                     } else if (event.type == PointerEventType.Move) {
                         if (event.buttons.isPrimaryPressed) {
@@ -166,3 +168,4 @@ fun Miniature(
     }
 }
 
+fun Offset.toPt(): Pt = Pt(ceil(x).roundToInt(), ceil(y).roundToInt())

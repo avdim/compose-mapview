@@ -20,7 +20,7 @@ fun main() = application {
         title = "Map View",
         state = WindowState(
             position = WindowPosition.Aligned(Alignment.Center),
-            size = getPreferredWindowSize(800, 1000)
+            size = getPreferredWindowSize(1400, 1000)
         ),
         icon = icon
     ) {

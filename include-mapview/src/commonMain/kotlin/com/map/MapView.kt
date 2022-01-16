@@ -23,7 +23,7 @@ public fun MapView(width: Int = 800, height: Int = 500) {
         width = width,
         height = height,
         stateFlow = tilesStateFlow,
-        onZoom = { store.send(MapIntent.Zoom(Pt(width / 2, height / 2), it)) },
+        onZoom = { pt, change -> store.send(MapIntent.Zoom(pt, change)) },
         onClick = { store.send(MapIntent.Zoom(it, 2.0)) }
     ) { dx, dy ->
         store.send(MapIntent.Move(Pt(-dx, -dy)))
@@ -36,7 +36,7 @@ internal expect fun PlatformMapView(
     width: Int,
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Double) -> Unit,
+    onZoom: (Pt, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
 )
