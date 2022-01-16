@@ -35,6 +35,7 @@ fun MapState.toShortString(): String = buildString {
     appendLine("width: $width")
     appendLine("height: $height")
     appendLine("scale: ${scale.toShortString()}")
+    appendLine("zoom: $zoom")
     appendLine("topLeft: ${topLeft.toShortString()}")
 }
 
@@ -47,38 +48,49 @@ fun createMapStore(width: Int, height: Int) =
     createStore(MapState(width = width, height = height)) { state: MapState, intent: MapIntent ->
         when (intent) {
             is MapIntent.Zoom -> {
-                var scale = state.scale + intent.delta
+                var multiply = (1 + intent.delta)
+                if (multiply < 0.5) {
+                    multiply = 0.5
+                } else if (multiply > 2.0) {
+                    multiply = 2.0
+                }
+                var scale = state.scale * multiply
                 if (scale < 1.0) {
                     scale = 1.0
                 }
+                val maxScale = 1234.0 //todo
+                if (scale > maxScale) {
+                    scale = maxScale
+                }
                 state.copy(scale = scale)
+                    .correctY()
             }
             is MapIntent.Move -> {
-                var topLeft = state.topLeft + state.displayLengthToGeo(intent.pt)
-                if (topLeft.y < 0) {
-                    topLeft = topLeft.copy(y = 0.0)
-                }
-                topLeft = topLeft.correctTopLeft()
-                val maxY = 1 - 1 / state.scale
-                if (topLeft.y > maxY) {
-                    topLeft = topLeft.copy(y = maxY)
-                }
-                state.copy(
-                    topLeft = topLeft,
-                )
+                val topLeft = state.topLeft + state.displayLengthToGeo(intent.pt)
+                state.copy(topLeft = topLeft)
+                    .correctX().correctY()
             }
         }
     }
 
-fun GeoPt.correctTopLeft(): GeoPt =
+fun MapState.correctY(): MapState {
+    val minGeoY = 0.0
+    val maxGeoY: Double = 1 - 1 / scale
+    return if (topLeft.y < minGeoY) {
+        copy(topLeft = topLeft.copy(y = minGeoY))
+    } else if (topLeft.y > maxGeoY) {
+        copy(topLeft = topLeft.copy(y = maxGeoY))
+    } else {
+        this
+    }
+}
+
+fun MapState.correctX(): MapState = copy(topLeft = topLeft.correctX())
+fun GeoPt.correctX(): GeoPt =
     if (x < 0) {
-        copy(x = x + 1).correctTopLeft()
+        copy(x = x + 1).correctX()//todo recursion
     } else if (x > 1) {
-        copy(x = x - 1).correctTopLeft()
-    } else if (y < 0) {
-        copy(y = y + 1).correctTopLeft()
-    } else if (y > 1) {
-        copy(y = y - 1).correctTopLeft()
+        copy(x = x - 1).correctX()
     } else {
         this
     }

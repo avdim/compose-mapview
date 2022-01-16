@@ -20,8 +20,14 @@ fun MapState.displayToGeo(displayPt: Pt): GeoPt {
     return topLeft + GeoPt(x1, y1)
 }
 
+val MapState.zoom:Int get() {
+    return minOf(
+        MAX_ZOOM,//todo на максимально зуме плохо работает
+        ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
+    )
+}
+
 fun MapState.calcTiles(): TilesGrid {
-    val zoom = ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
     val maxIndex = pow2(zoom)
     val tileSize: Int = geoLengthToDisplay(1.0) / maxIndex
     TILE_SIZE/2 .. TILE_SIZE
