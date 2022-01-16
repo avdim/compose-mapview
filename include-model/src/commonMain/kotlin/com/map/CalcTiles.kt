@@ -1,5 +1,9 @@
 package com.map
 
+import kotlin.math.ceil
+import kotlin.math.log2
+import kotlin.math.roundToInt
+
 fun MapState.geoLengthToDisplay(geoLength: Double): Int {
     return (height * geoLength * scale).toInt()
 }
@@ -17,18 +21,19 @@ fun MapState.displayToGeo(displayPt: Pt): GeoPt {
 }
 
 fun MapState.calcTiles(): TilesGrid {
-    val z = 1
-    val n = pow2(z)
-    val tileSize: Int = geoLengthToDisplay(1.0) / n // todo +1 ?
+    val zoom = ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
+    val maxIndex = pow2(zoom)
+    val tileSize: Int = geoLengthToDisplay(1.0) / maxIndex
+    TILE_SIZE/2 .. TILE_SIZE
 
-    val minI = (topLeft.x * n).toInt()
-    val minJ = (topLeft.y * n).toInt()
+    val minI = (topLeft.x * maxIndex).toInt()
+    val minJ = (topLeft.y * maxIndex).toInt()
 
     var tilesX = 0 //todo redundant
     var tilesY = 0 //todo redundant
     val grid: List<List<DisplayTile>> = buildList {
         for (i in minI until Int.MAX_VALUE) {
-            val geoX = i.toDouble() / n
+            val geoX = i.toDouble() / maxIndex
             val displayX = geoXToDisplay(geoX)
             if (displayX > width) {
                 break
@@ -37,13 +42,13 @@ fun MapState.calcTiles(): TilesGrid {
             add(buildList {
                 tilesY = 0
                 for (j in minJ until Int.MAX_VALUE) {
-                    val geoY = j.toDouble() / n
+                    val geoY = j.toDouble() / maxIndex
                     val displayY = geoYToDisplay(geoY)
                     if (displayY > height) {
                         break
                     }
                     tilesY++
-                    val tile = Tile(z, i % n, j % n)
+                    val tile = Tile(zoom, i % maxIndex, j % maxIndex)
                     add(DisplayTile(tileSize, displayX, displayY, tile))
                 }
             })
