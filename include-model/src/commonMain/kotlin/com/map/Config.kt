@@ -1,6 +1,7 @@
 package com.map
 
 val TILE_SIZE = 512
+val MIN_ZOOM = 0
 val MAX_ZOOM = 22
 val SCROLL_SENSITIVITY_DESKTOP = 0.05
 val USE_FAKE_REPOSITORY_ON_DEKSTOP = false

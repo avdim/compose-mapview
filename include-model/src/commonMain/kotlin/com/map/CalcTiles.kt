@@ -23,7 +23,10 @@ fun MapState.displayToGeo(displayPt: Pt): GeoPt {
 val MapState.zoom:Int get() {
     return minOf(
         MAX_ZOOM,
-        ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
+        maxOf(
+            MIN_ZOOM,
+            ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
+        )
     )
 }
 
