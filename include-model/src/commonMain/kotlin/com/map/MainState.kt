@@ -47,12 +47,24 @@ fun createMapStore(width: Int, height: Int) =
     createStore(MapState(width = width, height = height)) { state: MapState, intent: MapIntent ->
         when (intent) {
             is MapIntent.Zoom -> {
-                state.copy(scale = state.scale + intent.delta)
+                var scale = state.scale + intent.delta
+                if (scale < 1.0) {
+                    scale = 1.0
+                }
+                state.copy(scale = scale)
             }
             is MapIntent.Move -> {
-                val sum = state.topLeft + state.displayLengthToGeo(intent.pt)
+                var topLeft = state.topLeft + state.displayLengthToGeo(intent.pt)
+                if (topLeft.y < 0) {
+                    topLeft = topLeft.copy(y = 0.0)
+                }
+                topLeft = topLeft.correctTopLeft()
+                val maxY = 1 - 1 / state.scale
+                if (topLeft.y > maxY) {
+                    topLeft = topLeft.copy(y = maxY)
+                }
                 state.copy(
-                    topLeft = sum.correctTopLeft(),
+                    topLeft = topLeft,
                 )
             }
         }
