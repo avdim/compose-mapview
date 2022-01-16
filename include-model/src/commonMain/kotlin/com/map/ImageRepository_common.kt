@@ -9,3 +9,5 @@ fun createImageRepository() = decorateWithInMemoryCache(decorateWithDiskCache(cr
 expect fun createDownloadImageRepository():ImageRepository
 expect fun decorateWithInMemoryCache(imageRepository: ImageRepository):ImageRepository
 expect fun decorateWithDiskCache(imageRepository: ImageRepository):ImageRepository
+
+val Tile.tileUrl get() = "https://api.maptiler.com/maps/streets/$zoom/$x/$y.png?key=$SECRET_API_KEY"

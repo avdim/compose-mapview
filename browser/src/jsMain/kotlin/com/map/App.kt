@@ -20,11 +20,7 @@ fun main() {
     val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
     ctx.fillStyle = "green";
     ctx.fillRect(0.0, 0.0, 1000.0, 1000.0)
-    val img = Image() // Create new img element
-    img.onload = {
-        ctx.drawImage(image = img, dx = -50.0, dy = 10.0, dw = 100.0, dh = 50.0)
-    }
-    img.src = composeImg
+
 }
 
 fun <T : Any> Document.createElement(localName: String, kClass: KClass<T>): T = createElement(localName) as T //todo inline
