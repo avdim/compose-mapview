@@ -22,24 +22,25 @@ fun MapState.displayToGeo(displayPt: Pt): GeoPt {
 
 val MapState.zoom:Int get() {
     return minOf(
-        MAX_ZOOM,//todo на максимально зуме плохо работает
+        MAX_ZOOM,
         ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
     )
 }
 
-fun MapState.calcTiles(): TilesGrid {
-    val maxIndex = pow2(zoom)
-    val tileSize: Int = geoLengthToDisplay(1.0) / maxIndex
-    TILE_SIZE/2 .. TILE_SIZE
+val MapState.minScale get():Double = 1.0
+val MapState.maxScale get():Double = (TILE_SIZE.toDouble() / height) * pow2(MAX_ZOOM)
+val MapState.maxTileIndex: Int get() = pow2(zoom)
+val MapState.tileSize:Int get() = geoLengthToDisplay(1.0) / maxTileIndex
 
-    val minI = (topLeft.x * maxIndex).toInt()
-    val minJ = (topLeft.y * maxIndex).toInt()
+fun MapState.calcTiles(): TilesGrid {
+    val minI = (topLeft.x * maxTileIndex).toInt()
+    val minJ = (topLeft.y * maxTileIndex).toInt()
 
     var tilesX = 0 //todo redundant
     var tilesY = 0 //todo redundant
     val grid: List<List<DisplayTile>> = buildList {
         for (i in minI until Int.MAX_VALUE) {
-            val geoX = i.toDouble() / maxIndex
+            val geoX = i.toDouble() / maxTileIndex
             val displayX = geoXToDisplay(geoX)
             if (displayX > width) {
                 break
@@ -48,13 +49,13 @@ fun MapState.calcTiles(): TilesGrid {
             add(buildList {
                 tilesY = 0
                 for (j in minJ until Int.MAX_VALUE) {
-                    val geoY = j.toDouble() / maxIndex
+                    val geoY = j.toDouble() / maxTileIndex
                     val displayY = geoYToDisplay(geoY)
                     if (displayY > height) {
                         break
                     }
                     tilesY++
-                    val tile = Tile(zoom, i % maxIndex, j % maxIndex)
+                    val tile = Tile(zoom, i % maxTileIndex, j % maxTileIndex)
                     add(DisplayTile(tileSize, displayX, displayY, tile))
                 }
             })

@@ -55,12 +55,11 @@ fun createMapStore(width: Int, height: Int) =
                     multiply = 2.0
                 }
                 var scale = state.scale * multiply
-                if (scale < 1.0) {
-                    scale = 1.0
+                if (scale < state.minScale) {
+                    scale = state.minScale
                 }
-                val maxScale = 1234.0 //todo
-                if (scale > maxScale) {
-                    scale = maxScale
+                if (scale > state.maxScale) {
+                    scale = state.maxScale
                 }
                 state.copy(scale = scale)
                     .correctY()
