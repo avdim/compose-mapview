@@ -54,7 +54,7 @@ fun MapViewAndroidDesktop(
                     if (event.type == PointerEventType.Scroll) {
                         val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
                         if (scrollY != null && scrollY != 0f) {
-                            onZoom(current?.toPt() ?: Pt(width / 2, height / 2), scrollY * getSensitivity())
+                            onZoom(current?.toPt() ?: Pt(width / 2, height / 2), -scrollY * getSensitivity())
                         }
                     } else if (event.type == PointerEventType.Move) {
                         if (event.buttons.isPrimaryPressed) {

@@ -16,14 +16,6 @@ import kotlin.math.roundToInt
 
 actual typealias AbstractImageData = ByteArray //BufferedImage
 
-actual fun Picture.scale(width: Int, height: Int): Picture = this
-//    copy(
-//        width = width,
-//        height = height,
-//        image = scaleBitmapAspectRatio(image, width, height)
-//    )
-
-
 fun scaleBitmapAspectRatio(
     bitmap: BufferedImage,
     width: Int,

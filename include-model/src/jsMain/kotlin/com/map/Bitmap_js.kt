@@ -9,7 +9,3 @@ actual typealias AbstractImageData = ImageBitmapContainer
 class ImageBitmapContainer(
     val imageBitmap: ImageBitmap
 )
-
-actual fun Picture.scale(width: Int, height: Int): Picture {
-    return this //todo scale
-}
