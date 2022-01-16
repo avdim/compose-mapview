@@ -1,5 +1,10 @@
 package com.map
 
+object Config {
+    val CLICK_DURATION_MS: Long = 350
+    val CLICK_AREA_RADIUS_PX: Int = 3
+}
+
 val TILE_SIZE = 512
 val MIN_ZOOM = 0
 val MAX_ZOOM = 22

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.map.*
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.sqrt
 
 @Composable
 fun MapViewAndroidDesktop(
@@ -36,8 +37,9 @@ fun MapViewAndroidDesktop(
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
-    var previousMouseDownPos by remember { mutableStateOf<Offset?>(null) }
-    var previousPointerPos by remember { mutableStateOf<Offset?>(null) }
+    var previousMoveDownPos by remember { mutableStateOf<Offset?>(null) }
+    var previousPressTime by remember { mutableStateOf(0L) }
+    var previousPressPos by remember { mutableStateOf<Offset?>(null) }
     val state by stateFlow.collectAsState()
     Canvas(
         Modifier.size(width.dp, height.dp)
@@ -47,9 +49,6 @@ fun MapViewAndroidDesktop(
                         awaitPointerEvent()
                     }
                     val current = event.changes.firstOrNull()?.position
-                    if (current != null) {
-                        previousPointerPos = current
-                    }
                     if (event.type == PointerEventType.Scroll) {
                         val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
                         if (scrollY != null && scrollY != 0f) {
@@ -57,7 +56,7 @@ fun MapViewAndroidDesktop(
                         }
                     } else if (event.type == PointerEventType.Move) {
                         if (event.buttons.isPrimaryPressed) {
-                            val previous = previousMouseDownPos
+                            val previous = previousMoveDownPos
                             if (previous != null && current != null) {
                                 val dx = (current.x - previous.x).toInt()
                                 val dy = (current.y - previous.y).toInt()
@@ -65,15 +64,28 @@ fun MapViewAndroidDesktop(
                                     onMove(dx, dy)
                                 }
                             }
-                            previousMouseDownPos = current
+                            previousMoveDownPos = current
                         } else {
-                            previousMouseDownPos = null
+                            previousMoveDownPos = null
                         }
                     }
-                }
-            }.clickable {
-                previousPointerPos?.let {
-                    onClick(Pt(it.x.toInt(), it.y.toInt()))
+                    if (event.type == PointerEventType.Press) {
+                        previousPressTime = timeMs()
+                        previousPressPos = current
+                    }
+                    if (event.type == PointerEventType.Release) {
+                        if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
+                            val previous = previousPressPos
+                            if (current != null && previous != null) {
+                                val dx = current.x - previous.x
+                                val dy = current.y - previous.y
+                                val distance = sqrt(dx * dx + dy * dy)
+                                if (distance < Config.CLICK_AREA_RADIUS_PX) {
+                                    onClick(Pt(current.x.toInt(), current.y.toInt()))
+                                }
+                            }
+                        }
+                    }
                 }
             }
     ) {
