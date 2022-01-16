@@ -86,11 +86,4 @@ fun MapState.correctY(): MapState {
 }
 
 fun MapState.correctX(): MapState = copy(topLeft = topLeft.correctX())
-fun GeoPt.correctX(): GeoPt =
-    if (x < 0) {
-        copy(x = x + 1).correctX()//todo recursion
-    } else if (x > 1) {
-        copy(x = x - 1).correctX()
-    } else {
-        this
-    }
+fun GeoPt.correctX(): GeoPt = copy(x = x.mod(1.0))
