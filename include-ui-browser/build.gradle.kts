@@ -14,7 +14,7 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             dependencies {
-//                implementation("com.map:model:1.0")
+                implementation("com.map:model:1.0")
                 implementation(compose.runtime)
                 implementation(compose.web.core)
 //                implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0 //todo

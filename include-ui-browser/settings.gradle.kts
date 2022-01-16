@@ -14,3 +14,10 @@ pluginManagement {
         id("org.jetbrains.compose").version(composeVersion)
     }
 }
+
+//Workaround for task ":include-mapview:jsTestPackageJson"
+includeBuild("../include-model") {
+    dependencySubstitution {
+        substitute(module("com.map:model")).using(project(":"))
+    }
+}

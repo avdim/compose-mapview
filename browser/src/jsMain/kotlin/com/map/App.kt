@@ -16,10 +16,10 @@ import kotlin.reflect.KClass
 fun main() {
     println("Hello Compose Web")
     ComposeCounterApp("root")
-    val canvas = document.getElementById("map-canvas") as HTMLCanvasElement
-    val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
-    ctx.fillStyle = "green";
-    ctx.fillRect(0.0, 0.0, 1000.0, 1000.0)
+//    val canvas = document.getElementById("map-canvas") as HTMLCanvasElement
+//    val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
+//    ctx.fillStyle = "green"
+//    ctx.fillRect(0.0, 0.0, 1000.0, 1000.0)
 
 }
 
@@ -31,7 +31,7 @@ fun ComposeCounterApp(rootId: String) {
     val composition = renderComposable(rootElementId = rootId) {
         MapView()
     }
-    if (false) {
+    if (false) {//todo
         composition.dispose()
     }
 }

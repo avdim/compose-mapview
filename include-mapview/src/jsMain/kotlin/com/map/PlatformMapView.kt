@@ -15,6 +15,7 @@ internal actual fun PlatformMapView(
     onZoom: (Double) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
+    MapViewBrowser(width = width, height = height, stateFlow = stateFlow, onZoom = onZoom, onMove = onMove)
     val store = createStore(0.0) { s, intent: Double ->
         s + intent
     }
