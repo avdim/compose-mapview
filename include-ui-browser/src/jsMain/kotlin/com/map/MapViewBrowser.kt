@@ -2,13 +2,13 @@ package com.map
 
 import androidx.compose.runtime.*
 import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.flow.StateFlow
-import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
-import org.jetbrains.compose.web.dom.Text
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.Element
-import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.*
+import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventListener
+import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.MouseEvent
 import kotlin.math.ceil
 
@@ -22,6 +22,7 @@ public fun MapViewBrowser(
     onZoom: (Double) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
+    var previousTouchPos by remember { mutableStateOf<Pt?>(null) }
     var isMouseDown by remember { mutableStateOf(false) }
     var previousMousePos by remember { mutableStateOf<Pt?>(null) }
     val state by stateFlow.collectAsState()
@@ -40,17 +41,24 @@ public fun MapViewBrowser(
                     onZoom(it.deltaY * SCROLL_SENSITIVITY_BROWSER)
                 }
 
-                canvas.addEventListener(type = "mousedown", callback = {
+                val activeListeners: MutableList<ListenerData> = mutableListOf()
+                fun <T : Event> regListener(target: EventTarget, type: String, lambda: (T) -> Unit) {
+                    val callback = EventListener {
+                        lambda(it as T)
+                    }
+                    target.addEventListener(type, callback = callback)
+                    activeListeners.add(ListenerData(target, type, callback))
+                }
+                regListener<MouseEvent>(canvas, "mousedown") {
                     isMouseDown = true
-                })
-                document.addEventListener(type = "mouseup", callback = {
+                }
+                regListener<MouseEvent>(document, "mouseup") {
                     isMouseDown = false
-                })
-                canvas.addEventListener(type = "mousemove", callback = { event ->
-                    event as MouseEvent
+                }
+                regListener<MouseEvent>(canvas, "mousemove") { it ->
                     if (isMouseDown) {
                         val previous = previousMousePos
-                        val next = Pt(ceil(event.x).toInt(), ceil(event.y).toInt())
+                        val next = Pt(ceil(it.x).toInt(), ceil(it.y).toInt())
                         if (previous != null) {
                             val dx = (next.x - previous.x).toInt()
                             val dy = (next.y - previous.y).toInt()
@@ -62,13 +70,31 @@ public fun MapViewBrowser(
                     } else {
                         previousMousePos = null
                     }
-                })
-
+                }
+                regListener<TouchEvent>(canvas, "touchmove") {
+                    if (it.changedTouches.length > 0) {
+                        val touch: Touch = it.changedTouches[0]!!
+                        val previous = previousTouchPos
+                        val next = Pt(touch.screenX, touch.screenY)
+                        if (previous != null) {
+                            val dx = next.x - previous.x
+                            val dy = next.y - previous.y
+                            if (dx != 0 || dy != 0) {
+                                onMove(dx, dy)
+                            }
+                        }
+                        previousTouchPos = next
+                    }
+                }
+                regListener<TouchEvent>(document, "touchend") {
+                    previousTouchPos = null
+                }
                 onDispose {
-                    //clear mouse handlers
-                    canvas.onmousemove = {}
-                    canvas.onwheel = {}
-                    println("canvas dispose")
+                    //clear event handlers
+                    activeListeners.forEach {
+                        it.target.removeEventListener(it.type, it.callback)
+                    }
+                    println("MapView disposed")
                 }
             }
             DomSideEffect(state) { element: Element ->
@@ -91,3 +117,5 @@ public fun MapViewBrowser(
         }
     )
 }
+
+private class ListenerData(val target: EventTarget, val type: String, val callback: EventListener)
