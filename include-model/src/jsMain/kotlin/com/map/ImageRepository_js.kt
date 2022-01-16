@@ -49,7 +49,7 @@ actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRep
 }
 
 actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
-    // Для js пока не сделал дисковое хранилище
+    // Для js дисковый кэш не нужен. Браузер и так кэширует картинки. Поэтому просто прокидываем вызов дальше.
     override suspend fun getImage(tile: Tile): Picture = imageRepository.getImage(tile)
 }
 
