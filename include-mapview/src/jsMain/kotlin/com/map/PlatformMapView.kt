@@ -13,7 +13,7 @@ internal actual fun PlatformMapView(
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Double) -> Unit,
-    onZoomAnimate: (Double) -> Unit,
+    onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
     MapViewBrowser(
@@ -21,7 +21,7 @@ internal actual fun PlatformMapView(
         height = height,
         stateFlow = stateFlow,
         onZoom = onZoom,
-        onZoomAnimate = onZoomAnimate,
+        onClick = onClick,
         onMove = onMove
     )
     val store = createStore(0.0) { s, intent: Double ->

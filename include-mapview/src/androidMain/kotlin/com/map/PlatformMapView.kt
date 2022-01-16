@@ -15,7 +15,7 @@ internal actual fun PlatformMapView(
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Double) -> Unit,
-    onZoomAnimate: (Double) -> Unit,
+    onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
 ){
     MapViewAndroidDesktop(
@@ -23,7 +23,7 @@ internal actual fun PlatformMapView(
         height = height,
         stateFlow = stateFlow,
         onZoom = onZoom,
-        onZoomAnimate = onZoomAnimate,
+        onClick = onClick,
         onMove = onMove
     )
 }

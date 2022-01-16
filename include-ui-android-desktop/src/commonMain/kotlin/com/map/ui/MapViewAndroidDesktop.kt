@@ -16,11 +16,9 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
-import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
@@ -28,7 +26,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.map.*
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.math.ceil
 
 @Composable
 fun MapViewAndroidDesktop(
@@ -36,10 +33,11 @@ fun MapViewAndroidDesktop(
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Double) -> Unit,
-    onZoomAnimate: (Double) -> Unit,
+    onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
-    var previousMousePos by remember { mutableStateOf<Offset?>(null) }
+    var previousMouseDownPos by remember { mutableStateOf<Offset?>(null) }
+    var previousPointerPos by remember { mutableStateOf<Offset?>(null) }
     val state by stateFlow.collectAsState()
     Canvas(
         Modifier.size(width.dp, height.dp)
@@ -48,29 +46,34 @@ fun MapViewAndroidDesktop(
                     val event = awaitPointerEventScope {
                         awaitPointerEvent()
                     }
+                    val current = event.changes.firstOrNull()?.position
+                    if (current != null) {
+                        previousPointerPos = current
+                    }
                     if (event.type == PointerEventType.Scroll) {
-                        val scrollX = event.changes.firstOrNull()?.scrollDelta?.x
                         val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
                         if (scrollY != null && scrollY != 0f) {
                             onZoom(scrollY * getSensitivity())
                         }
                     } else if (event.type == PointerEventType.Move) {
                         if (event.buttons.isPrimaryPressed) {
-                            val previous = previousMousePos
-                            val next = event.changes.firstOrNull()?.position
-                            if (previous != null && next != null) {
-                                val dx = (next.x - previous.x).toInt()
-                                val dy = (next.y - previous.y).toInt()
+                            val previous = previousMouseDownPos
+                            if (previous != null && current != null) {
+                                val dx = (current.x - previous.x).toInt()
+                                val dy = (current.y - previous.y).toInt()
                                 if (dx != 0 || dy != 0) {
                                     onMove(dx, dy)
                                 }
                             }
-                            previousMousePos = next
+                            previousMouseDownPos = current
                         } else {
-                            previousMousePos = null
+                            previousMouseDownPos = null
                         }
                     }
-
+                }
+            }.clickable {
+                previousPointerPos?.let {
+                    onClick(Pt(it.x.toInt(), it.y.toInt()))
                 }
             }
     ) {
