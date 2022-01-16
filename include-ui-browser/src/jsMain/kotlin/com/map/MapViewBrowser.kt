@@ -39,16 +39,18 @@ public fun MapViewBrowser(
                     it.preventDefault()//cancel page scrolling
                     onZoom(it.deltaY * SCROLL_SENSITIVITY_BROWSER)
                 }
+
                 canvas.addEventListener(type = "mousedown", callback = {
                     isMouseDown = true
                 })
                 document.addEventListener(type = "mouseup", callback = {
                     isMouseDown = false
                 })
-                canvas.onmousemove = {
+                canvas.addEventListener(type = "mousemove", callback = { event ->
+                    event as MouseEvent
                     if (isMouseDown) {
                         val previous = previousMousePos
-                        val next = Pt(ceil(it.x).toInt(), ceil(it.y).toInt())
+                        val next = Pt(ceil(event.x).toInt(), ceil(event.y).toInt())
                         if (previous != null) {
                             val dx = (next.x - previous.x).toInt()
                             val dy = (next.y - previous.y).toInt()
@@ -60,12 +62,7 @@ public fun MapViewBrowser(
                     } else {
                         previousMousePos = null
                     }
-                }
-                canvas.ondrag = {
-                    val dx:Double = it.asDynamic().movementX
-                    val dy:Double = it.asDynamic().movementY
-                    onMove(ceil(dx).toInt(), ceil(dy).toInt())
-                }
+                })
 
                 onDispose {
                     //clear mouse handlers
