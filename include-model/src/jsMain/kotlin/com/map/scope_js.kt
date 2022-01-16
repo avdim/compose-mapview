@@ -5,4 +5,4 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 
 actual fun getAppScope(): CoroutineScope = MainScope()
-actual fun getNetworkScope(): CoroutineScope = CoroutineScope(Dispatchers.Default)
+actual fun getBackgroundScope(): CoroutineScope = CoroutineScope(Dispatchers.Default)

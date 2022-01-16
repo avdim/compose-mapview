@@ -4,7 +4,7 @@ interface ImageRepository {
     suspend fun getImage(tile: Tile): Picture
 }
 
-fun createImageRepository() = decorateWithInMemoryCache(createDownloadImageRepository())
+fun createImageRepository() = decorateWithInMemoryCache(decorateWithDiskCache(createDownloadImageRepository()))
 
 expect fun createDownloadImageRepository():ImageRepository
 expect fun decorateWithInMemoryCache(imageRepository: ImageRepository):ImageRepository

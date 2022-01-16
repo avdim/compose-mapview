@@ -3,6 +3,7 @@ package com.map
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
+import kotlinx.coroutines.launch
 import java.awt.Color
 import java.awt.Font
 import java.awt.image.BufferedImage
@@ -10,6 +11,7 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import javax.imageio.ImageIO
+import kotlin.io.path.createTempDirectory
 
 actual fun createDownloadImageRepository(): ImageRepository =
     if (USE_FAKE_REPOSITORY_ON_DEKSTOP) {
@@ -47,7 +49,7 @@ private fun createFakeRepository() = object : ImageRepository {
 }
 
 @Synchronized
-fun mkBitmap(z:Int, x:Int, y:Int):ByteArray {
+fun mkBitmap(z: Int, x: Int, y: Int): ByteArray {
     val width = 512
     val height = 512
 
@@ -63,14 +65,14 @@ fun mkBitmap(z:Int, x:Int, y:Int):ByteArray {
     val stringHeight = fontMetrics.ascent
     ig2.paint = Color.black
     ig2.drawString(message, (width - stringWidth) / 2, height / 2 + stringHeight / 4)
-    ig2.drawRect(1,1,510, 510)
+    ig2.drawRect(1, 1, 510, 510)
     ig2.drawOval(3, 3, 3, 3)
     ig2.drawOval(512 - 3, 3, 3, 3)
     ig2.drawOval(3, 512 - 3, 3, 3)
     ig2.drawOval(512 - 3, 512 - 3, 3, 3)
 
     val tempFile = File("/dev/shm/temp.png")
-    if(!tempFile.exists()) {
+    if (!tempFile.exists()) {
         tempFile.createNewFile()
     }
     ImageIO.write(bi, "PNG", tempFile)
@@ -93,7 +95,69 @@ actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRep
 }
 
 actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
-    override suspend fun getImage(tile: Tile): Picture { TODO() }
+
+    val cacheDir: File? //todo переделать на nio.Path для неблокирующих операций
+
+    init {
+        // Для HOME директории MacOS требует разрешения.
+        // Чтобы не просить разрешений созданим кэш во временной директории.
+        val tmpDirStr = System.getProperty("java.io.tmpdir")
+        val fakeStr =
+            if (USE_FAKE_REPOSITORY_ON_DEKSTOP) "-fake" else "" // Если работает с фальшивими данными, созданим дургую директорию
+        val resultCacheDir = File(tmpDirStr).resolve(CACHE_DIR_NAME + fakeStr)
+        cacheDir = try {
+            resultCacheDir.mkdirs()
+            resultCacheDir
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            println("Can't create cache dir $resultCacheDir")
+            println("Will work without disk cache")
+            null
+        }
+    }
+
+    override suspend fun getImage(tile: Tile): Picture {
+        if (cacheDir == null) {
+            return imageRepository.getImage(tile)
+        }
+        val file = with(tile) {
+            cacheDir.resolve("tile-$zoom-$x-$y.png")
+        }
+        //todo вставать в synchronized блокировку по ключу tile
+        val bytes: ByteArray? =
+            if (file.exists()) {
+                try {
+                    file.readBytes()
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                    println("Can't read file $file")
+                    println("Will work without disk cache")
+                    null
+                }
+            } else {
+                null
+            }
+        if (bytes == null) {
+            val image = imageRepository.getImage(tile)
+            getBackgroundScope().launch {
+                // save image
+                try {
+                    file.writeBytes(image.image)
+                } catch (t: Throwable) {
+                    println("Can't save image to file $file")
+                    println("Will work without disk cache")
+                }
+            }
+            return image
+        }
+        return Picture(
+            "remove",
+            bytes,
+            TILE_SIZE,
+            TILE_SIZE
+        )
+    }
+
     private fun todoCache() {
         val cachePath: String? = null
         // for android val directory = context.cacheDir.absolutePath
@@ -112,6 +176,7 @@ actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageReposit
 //        result.last().id = result.size - 1
 //    }
     }
+
     fun addCachedMiniature(filePath: String, outList: MutableList<Picture>) {
 //            val info = readPictureInfoFromFile(filePath + cacheImagePostfix)
 //            val result: AbstractImageData = readAbstractImageDataFromFile(filePath)
@@ -154,8 +219,8 @@ actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageReposit
         }
     }
 
-    fun isFileExists(path:String):Boolean = File(path).exists()
-    fun getFileSeparator():String= File.separator
+    fun isFileExists(path: String): Boolean = File(path).exists()
+    fun getFileSeparator(): String = File.separator
 }
 
 fun loadFullImageBlocking(source: String): Picture {

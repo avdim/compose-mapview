@@ -17,5 +17,5 @@ fun launchAppScope(block: suspend () -> Unit) {
 }
 
 expect fun getAppScope(): CoroutineScope
-expect fun getNetworkScope(): CoroutineScope
+expect fun getBackgroundScope(): CoroutineScope
 

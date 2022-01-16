@@ -41,7 +41,7 @@ private suspend fun TilesGrid.downloadImages(imageRepository: ImageRepository):I
         lengthY = lengthY,
         matrix = matrix.map {
             it.map { displayTile->
-                getNetworkScope().async {
+                getBackgroundScope().async {
                     ImageTile(
                         pic = imageRepository.getImage(displayTile.tile),
                         display = displayTile
