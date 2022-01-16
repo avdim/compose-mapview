@@ -6,7 +6,7 @@ fun MapState.geoLengthToDisplay(geoLength: Double): Int {
 
 fun MapState.geoXToDisplay(x: Double): Int = geoLengthToDisplay(x - topLeft.x)
 fun MapState.geoYToDisplay(y: Double): Int = geoLengthToDisplay(y - topLeft.y)
-fun MapState.geoToDisplay(geoPt: GeoPt): Pt = Pt(geoXToDisplay(geoPt.x), geoYToDisplay(geoPt.y),)
+fun MapState.geoToDisplay(geoPt: GeoPt): Pt = Pt(geoXToDisplay(geoPt.x), geoYToDisplay(geoPt.y))
 fun MapState.displayLengthToGeo(displayLength: Int): Double = displayLength / (scale * height)
 fun MapState.displayLengthToGeo(pt: Pt): GeoPt = GeoPt(displayLengthToGeo(pt.x), displayLengthToGeo(pt.y))
 
@@ -43,7 +43,7 @@ fun MapState.calcTiles(): TilesGrid {
                         break
                     }
                     tilesY++
-                    val tile = Tile(z, i, j)
+                    val tile = Tile(z, i % n, j % n)
                     add(DisplayTile(tileSize, displayX, displayY, tile))
                 }
             })
@@ -54,6 +54,7 @@ fun MapState.calcTiles(): TilesGrid {
 }
 
 data class GeoPt(val x: Double, val y: Double)
+
 fun GeoPt.toShortString(): String {
     return "x: ${x.toShortString()}, y: ${y.toShortString()}"
 }

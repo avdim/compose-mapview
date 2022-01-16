@@ -4,7 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 
-actual val ktorClient: HttpClient = HttpClient(CIO)
+val ktorClient: HttpClient = HttpClient(CIO)
 
 actual suspend fun getImage(z: Int, x: Int, y: Int): Picture = downloadImageByCoordinates(z,x,y)
 actual suspend fun downloadImage(url: String): Picture {

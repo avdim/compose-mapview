@@ -50,9 +50,23 @@ fun createMapStore(width: Int, height: Int) =
                 state.copy(scale = state.scale + intent.delta)
             }
             is MapIntent.Move -> {
+                val sum = state.topLeft + state.displayLengthToGeo(intent.pt)
                 state.copy(
-                    topLeft = state.topLeft + state.displayLengthToGeo(intent.pt),
+                    topLeft = sum.correctTopLeft(),
                 )
             }
         }
+    }
+
+fun GeoPt.correctTopLeft(): GeoPt =
+    if (x < 0) {
+        copy(x = x + 1).correctTopLeft()
+    } else if (x > 1) {
+        copy(x = x - 1).correctTopLeft()
+    } else if (y < 0) {
+        copy(y = y + 1).correctTopLeft()
+    } else if (y > 1) {
+        copy(y = y - 1).correctTopLeft()
+    } else {
+        this
     }
