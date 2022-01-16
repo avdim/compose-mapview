@@ -2,7 +2,6 @@ package com.map
 
 import androidx.compose.runtime.*
 import kotlinx.browser.document
-import kotlinx.browser.window
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.*
@@ -25,7 +24,10 @@ public fun MapViewBrowser(
 ) {
     var previousTouchPos by remember { mutableStateOf<Pt?>(null) }
     var isMouseDown by remember { mutableStateOf(false) }
-    var previousMousePos by remember { mutableStateOf<Pt?>(null) }
+    var previousMouseDownTime by remember { mutableStateOf(0L) }
+    var previousMouseMoveDownPos by remember { mutableStateOf<Pt?>(null) }
+    var previousMouseMovePos by remember { mutableStateOf(Pt(width / 2, height / 2)) }
+    var previousMouseDownPos by remember { mutableStateOf<Pt?>(null) }
     val state by stateFlow.collectAsState()
     TagElement(
         elementBuilder = ElementBuilder.createBuilder("canvas"),
@@ -39,7 +41,7 @@ public fun MapViewBrowser(
                 val canvas = element as HTMLCanvasElement
                 canvas.onwheel = {
                     it.preventDefault()//cancel page scrolling
-                    onZoom(it.deltaY * SCROLL_SENSITIVITY_BROWSER)
+                    onZoom(previousMouseMovePos, it.deltaY * SCROLL_SENSITIVITY_BROWSER)
                 }
 
                 val activeListeners: MutableList<ListenerData> = mutableListOf()
@@ -52,14 +54,23 @@ public fun MapViewBrowser(
                 }
                 regListener<MouseEvent>(canvas, "mousedown") {
                     isMouseDown = true
+                    previousMouseDownPos = it.toPt()
+                    previousMouseDownTime = timeMs()
                 }
                 regListener<MouseEvent>(document, "mouseup") {
                     isMouseDown = false
+                    if (timeMs() - previousMouseDownTime < Config.CLICK_DURATION_MS) {
+                        val clickDistance = previousMouseDownPos?.distanceTo(it.toPt())
+                        if (clickDistance != null && clickDistance < Config.CLICK_AREA_RADIUS_PX) {
+                            onClick(it.toPt())
+                        }
+                    }
                 }
-                regListener<MouseEvent>(canvas, "mousemove") { it ->
+                regListener<MouseEvent>(canvas, "mousemove") {
+                    previousMouseMovePos = it.toPt()
                     if (isMouseDown) {
-                        val previous = previousMousePos
-                        val next = Pt(ceil(it.x).toInt(), ceil(it.y).toInt())
+                        val previous = previousMouseMoveDownPos
+                        val next = it.toPt()
                         if (previous != null) {
                             val dx = (next.x - previous.x).toInt()
                             val dy = (next.y - previous.y).toInt()
@@ -67,9 +78,9 @@ public fun MapViewBrowser(
                                 onMove(dx, dy)
                             }
                         }
-                        previousMousePos = next
+                        previousMouseMoveDownPos = next
                     } else {
-                        previousMousePos = null
+                        previousMouseMoveDownPos = null
                     }
                 }
                 regListener<TouchEvent>(canvas, "touchmove") {
@@ -89,9 +100,6 @@ public fun MapViewBrowser(
                 }
                 regListener<TouchEvent>(document, "touchend") {
                     previousTouchPos = null
-                }
-                regListener<MouseEvent>(canvas, "click") {
-                    onClick(Pt(it.x.toInt(), it.y.toInt()))
                 }
                 onDispose {
                     //clear event handlers
@@ -123,3 +131,5 @@ public fun MapViewBrowser(
 }
 
 private class ListenerData(val target: EventTarget, val type: String, val callback: EventListener)
+
+fun MouseEvent.toPt(): Pt = Pt(ceil(x).toInt(), ceil(y).toInt())

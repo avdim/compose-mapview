@@ -83,7 +83,7 @@ fun MapViewAndroidDesktop(
                                 val dy = current.y - previous.y
                                 val distance = sqrt(dx * dx + dy * dy)
                                 if (distance < Config.CLICK_AREA_RADIUS_PX) {
-                                    onClick(Pt(current.x.toInt(), current.y.toInt()))
+                                    onClick(current.toPt())
                                 }
                             }
                         }

@@ -3,6 +3,7 @@ package com.map
 import kotlin.math.ceil
 import kotlin.math.log2
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 fun MapState.geoLengthToDisplay(geoLength: Double): Int {
     return (height * geoLength * scale).toInt()
@@ -20,20 +21,21 @@ fun MapState.displayToGeo(displayPt: Pt): GeoPt {
     return topLeft + GeoPt(x1, y1)
 }
 
-val MapState.zoom:Int get() {
-    return minOf(
-        MAX_ZOOM,
-        maxOf(
-            MIN_ZOOM,
-            ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
+val MapState.zoom: Int
+    get() {
+        return minOf(
+            MAX_ZOOM,
+            maxOf(
+                MIN_ZOOM,
+                ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
+            )
         )
-    )
-}
+    }
 
 val MapState.minScale get():Double = 1.0
 val MapState.maxScale get():Double = (TILE_SIZE.toDouble() / height) * pow2(MAX_ZOOM)
 val MapState.maxTileIndex: Int get() = pow2(zoom)
-val MapState.tileSize:Int get() = geoLengthToDisplay(1.0) / maxTileIndex
+val MapState.tileSize: Int get() = geoLengthToDisplay(1.0) / maxTileIndex
 
 fun MapState.calcTiles(): TilesGrid {
     val minI = (topLeft.x * maxTileIndex).toInt()
@@ -77,6 +79,11 @@ fun GeoPt.toShortString(): String {
 data class Pt(val x: Int, val y: Int)
 
 operator fun Pt.minus(other: Pt): Pt = Pt(this.x - other.x, this.y - other.y)
+fun Pt.distanceTo(other: Pt): Double {
+    val dx = other.x - x
+    val dy = other.y - y
+    return sqrt(dx * dx.toDouble() + dy * dy.toDouble())
+}
 
 operator fun GeoPt.minus(minus: GeoPt): GeoPt {
     return GeoPt(x - minus.x, y - minus.y)
