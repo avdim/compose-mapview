@@ -36,6 +36,7 @@ fun MapViewAndroidDesktop(
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Double) -> Unit,
+    onZoomAnimate: (Double) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
     var previousMousePos by remember { mutableStateOf<Offset?>(null) }

@@ -20,6 +20,7 @@ public fun MapViewBrowser(
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Double) -> Unit,
+    onZoomAnimate: (Double) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
     var previousTouchPos by remember { mutableStateOf<Pt?>(null) }
@@ -88,6 +89,9 @@ public fun MapViewBrowser(
                 }
                 regListener<TouchEvent>(document, "touchend") {
                     previousTouchPos = null
+                }
+                regListener<Event>(canvas, "click") {
+                    onZoomAnimate(2.0)
                 }
                 onDispose {
                     //clear event handlers

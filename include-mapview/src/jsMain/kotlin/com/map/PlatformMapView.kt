@@ -13,9 +13,17 @@ internal actual fun PlatformMapView(
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Double) -> Unit,
+    onZoomAnimate: (Double) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
-    MapViewBrowser(width = width, height = height, stateFlow = stateFlow, onZoom = onZoom, onMove = onMove)
+    MapViewBrowser(
+        width = width,
+        height = height,
+        stateFlow = stateFlow,
+        onZoom = onZoom,
+        onZoomAnimate = onZoomAnimate,
+        onMove = onMove
+    )
     val store = createStore(0.0) { s, intent: Double ->
         s + intent
     }
@@ -28,10 +36,5 @@ internal actual fun PlatformMapView(
 @Composable
 internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     val state by stateFlow.collectAsState()
-    Text(state.toString())
-//    Column {
-//        Text("zoom: ${state.zoom}")
-//        Text("lat: ${state.lat}, lon: ${state.lon}")
-//        Text(state.toString())
-//    }
+    Text(state.toShortString())
 }

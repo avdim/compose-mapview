@@ -1,6 +1,8 @@
 package com.map
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
@@ -17,7 +19,13 @@ public fun MapView(width: Int = 800, height: Int = 500) {
     ) {
         it.calcTiles().downloadImages(imageRepository)//todo не очевиден return тип
     }
-    PlatformMapView(width, height, tilesStateFlow, { store.send(MapIntent.Zoom(it)) }) { dx, dy ->
+    PlatformMapView(
+        width = width,
+        height = height,
+        stateFlow = tilesStateFlow,
+        onZoom = { store.send(MapIntent.Zoom(it)) },
+        onZoomAnimate = { store.send(MapIntent.Zoom(it)) }
+    ) { dx, dy ->
         store.send(MapIntent.Move(Pt(-dx, -dy)))
     }
     Telemetry(store.stateFlow)
@@ -29,6 +37,7 @@ internal expect fun PlatformMapView(
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Double) -> Unit,
+    onZoomAnimate: (Double) -> Unit,
     onMove: (Int, Int) -> Unit
 )
 
