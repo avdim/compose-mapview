@@ -64,17 +64,23 @@ fun createMapStore(width: Int, height: Int) =
                 val scaledState = state.copy(scale = scale)
                 val geoDelta = state.displayToGeo(intent.pt) - scaledState.displayToGeo(intent.pt)
                 scaledState.copy(topLeft = scaledState.topLeft + geoDelta)
-                    .correctX().correctY()
+                    .correctGeoXY()
             }
             is MapIntent.Move -> {
                 val topLeft = state.topLeft + state.displayLengthToGeo(intent.pt)
                 state.copy(topLeft = topLeft)
-                    .correctX().correctY()
+                    .correctGeoXY()
             }
         }
     }
 
-fun MapState.correctY(): MapState {
+/**
+ * Корректируем координаты, чтобы они не выходили за край карты.
+ */
+fun MapState.correctGeoXY(): MapState =
+    correctGeoX().correctGeoY()
+
+fun MapState.correctGeoY(): MapState {
     val minGeoY = 0.0
     val maxGeoY: Double = 1 - 1 / scale
     return if (topLeft.y < minGeoY) {
@@ -86,4 +92,4 @@ fun MapState.correctY(): MapState {
     }
 }
 
-fun MapState.correctX(): MapState = copy(topLeft = topLeft.copy(x = topLeft.x.mod(1.0)))
+fun MapState.correctGeoX(): MapState = copy(topLeft = topLeft.copy(x = topLeft.x.mod(1.0)))
