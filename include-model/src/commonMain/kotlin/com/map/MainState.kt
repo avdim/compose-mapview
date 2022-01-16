@@ -61,8 +61,10 @@ fun createMapStore(width: Int, height: Int) =
                 if (scale > state.maxScale) {
                     scale = state.maxScale
                 }
-                state.copy(scale = scale)
-                    .correctY()
+                val scaledState = state.copy(scale = scale)
+                val geoDelta = state.displayToGeo(intent.pt) - scaledState.displayToGeo(intent.pt)
+                scaledState.copy(topLeft = scaledState.topLeft + geoDelta)
+                    .correctX().correctY()
             }
             is MapIntent.Move -> {
                 val topLeft = state.topLeft + state.displayLengthToGeo(intent.pt)
@@ -84,5 +86,4 @@ fun MapState.correctY(): MapState {
     }
 }
 
-fun MapState.correctX(): MapState = copy(topLeft = topLeft.correctX())
-fun GeoPt.correctX(): GeoPt = copy(x = x.mod(1.0))
+fun MapState.correctX(): MapState = copy(topLeft = topLeft.copy(x = topLeft.x.mod(1.0)))

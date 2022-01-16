@@ -76,6 +76,8 @@ fun GeoPt.toShortString(): String {
 
 data class Pt(val x: Int, val y: Int)
 
+operator fun Pt.minus(other: Pt): Pt = Pt(this.x - other.x, this.y - other.y)
+
 operator fun GeoPt.minus(minus: GeoPt): GeoPt {
     return GeoPt(x - minus.x, y - minus.y)
 }
