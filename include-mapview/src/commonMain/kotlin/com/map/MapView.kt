@@ -12,8 +12,7 @@ import kotlin.js.JsExport
 @Composable
 public fun MapView(width: Int = 800, height: Int = 500) {
     val store: Store<MapState, MapIntent> = createMapStore(width, height)
-    val imageRepository = createImageRepository()
-
+    val imageRepository = createImageRepositoryComposable()
     val tilesStateFlow = store.stateFlow.mapStateFlow(
         init = ImageTilesGrid(0, 0, emptyList())
     ) {
@@ -30,6 +29,14 @@ public fun MapView(width: Int = 800, height: Int = 500) {
     }
     Telemetry(store.stateFlow)
 }
+
+/**
+ * Создать репозиторий для получения tile картинок.
+ * В зависимости от платформы будет обёрнут в Декоратор для кэша на диск и (или) in-memory кэш.
+ * Эта функция с аннотацией Composable, чтобы можно было получить android Context
+ */
+@Composable
+internal expect fun createImageRepositoryComposable():ImageRepository
 
 @Composable
 internal expect fun PlatformMapView(

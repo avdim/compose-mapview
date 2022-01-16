@@ -8,6 +8,12 @@ import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
+internal actual fun createImageRepositoryComposable():ImageRepository {
+    // Для js дисковый кэш не нужен. Браузер и так кэширует картинки.
+    return decorateWithInMemoryCache(createDownloadImageRepository())
+}
+
+@Composable
 internal actual fun PlatformMapView(
     width: Int,
     height: Int,

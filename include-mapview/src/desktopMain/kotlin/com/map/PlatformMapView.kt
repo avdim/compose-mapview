@@ -12,6 +12,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
+internal actual fun createImageRepositoryComposable():ImageRepository {
+    return decorateWithInMemoryCache(decorateWithDiskCache(createDownloadImageRepository()))
+}
+
+@Composable
 internal actual fun PlatformMapView(
     width: Int,
     height: Int,

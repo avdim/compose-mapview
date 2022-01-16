@@ -35,7 +35,7 @@ private fun createRealRepository() = object : ImageRepository {
     }
 }
 
-actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
+fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
     val cache: MutableMap<Tile, Picture> = HashMap()
     override suspend fun getImage(tile: Tile): Picture {
         val fromCache = cache[tile]
@@ -46,11 +46,6 @@ actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRep
         cache[tile] = result
         return result
     }
-}
-
-actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
-    // Для js дисковый кэш не нужен. Браузер и так кэширует картинки. Поэтому просто прокидываем вызов дальше.
-    override suspend fun getImage(tile: Tile): Picture = imageRepository.getImage(tile)
 }
 
 external fun createImageBitmap(data: Blob):Promise<ImageBitmap>

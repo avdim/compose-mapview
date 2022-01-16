@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.imageio.ImageIO
 import kotlin.io.path.createTempDirectory
 
-actual fun createDownloadImageRepository(): ImageRepository =
+fun createDownloadImageRepository(): ImageRepository =
     if (USE_FAKE_REPOSITORY_ON_DEKSTOP) {
         createFakeRepository()
     } else {
@@ -43,6 +43,7 @@ private fun createFakeRepository() = object : ImageRepository {
             width = TILE_SIZE,
             height = TILE_SIZE
         )
+        //BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)
     }
 }
 
@@ -78,7 +79,7 @@ fun mkBitmap(z: Int, x: Int, y: Int): ByteArray {
     return tempFile.readBytes()
 }
 
-actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
+fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
     val cache: MutableMap<Tile, Picture> = ConcurrentHashMap()//todo LRU cache как в video Тагира Валеева LinkedHashMap
     override suspend fun getImage(tile: Tile): Picture {
         //todo вставать в блокировку по ключу или вешать обработчики на ожидание по ключу как в видео Романа Елизарова, actor
@@ -92,9 +93,10 @@ actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRep
     }
 }
 
-actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
+fun decorateWithDiskCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
 
     val cacheDir: File? //todo переделать на nio.Path для неблокирующих операций
+    //val cacheDir = System.getProperty("user.home")!! + File.separator + "map-view-cache" + File.separator
 
     init {
         // Для HOME директории MacOS требует разрешения.
@@ -158,7 +160,6 @@ actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageReposit
 
     private fun todoCache() {
         val cachePath: String? = null
-        // for android val directory = context.cacheDir.absolutePath
         // for desktop val cacheImagePath = System.getProperty("user.home")!! + File.separator + "Pictures/mapview" + File.separator
 
 //    for (source in list) {
@@ -188,12 +189,6 @@ actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageReposit
 //            outList.add(picture)
     }
 
-    //todo
-//val directory = File(cacheImagePath)
-//if (!directory.exists()) {
-//    directory.mkdirs()
-//}
-
     fun cacheImage(path: String, picture: Picture) {
         try {
             File(path).writeBytes(picture.image)
@@ -216,32 +211,4 @@ actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageReposit
             e.printStackTrace()
         }
     }
-
-    fun isFileExists(path: String): Boolean = File(path).exists()
-    fun getFileSeparator(): String = File.separator
-}
-
-fun loadFullImageBlocking(source: String): Picture {
-    TODO()
-//    try {
-//        val url = URL(source)
-//        val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-//        connection.connectTimeout = 5000
-//        connection.connect()
-//
-//        val input: InputStream = connection.inputStream
-//        val bitmap: BufferedImage? = ImageIO.read(input)
-//        if (bitmap != null) {
-//            return Picture(
-//                url = source,
-//                image = bitmap,
-//                width = bitmap.width,
-//                height = bitmap.height
-//            )
-//        }
-//    } catch (e: Exception) {
-//        e.printStackTrace()
-//    }
-//
-//    return Picture(url = source, image = BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
 }

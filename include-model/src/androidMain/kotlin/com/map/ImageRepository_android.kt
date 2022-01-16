@@ -4,12 +4,13 @@ import android.content.Context
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
-actual fun createDownloadImageRepository(): ImageRepository = createRealRepository()
+fun createDownloadImageRepository(): ImageRepository = createRealRepository()
 
 private fun createRealRepository() = object : ImageRepository {
     val ktorClient: HttpClient = HttpClient(CIO)
@@ -23,9 +24,29 @@ private fun createRealRepository() = object : ImageRepository {
             height = TILE_SIZE
         )
     }
+/*    private fun loadFullImageBlocking(url: String): Picture {
+    try {
+        val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+        connection.connectTimeout = 5000
+        connection.connect()
+        val input: InputStream = connection.inputStream
+        val bitmap: Bitmap? = BitmapFactory.decodeStream(input)
+        if (bitmap != null) {
+            return Picture(
+                url = url,
+                image = bitmap,
+                width = bitmap.width,
+                height = bitmap.height
+            )
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return Picture(url = url, image = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+    }*/
 }
 
-actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
+fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
     val cache: MutableMap<Tile, Picture> = ConcurrentHashMap()//todo LRU cache как в video Тагира Валеева LinkedHashMap
     override suspend fun getImage(tile: Tile): Picture {
         //todo вставать в блокировку по ключу или вешать обработчики на ожидание по ключу как в видео Романа Елизарова, actor
@@ -39,41 +60,51 @@ actual fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRep
     }
 }
 
-actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
-    override suspend fun getImage(tile: Tile): Picture { TODO() }
+fun decorateWithDiskCache(context:Context, imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
+    val cacheDir:File = context.cacheDir
 
-    fun isFileExists(path:String):Boolean = File(path).exists()
-    fun getFileSeparator():String= File.separator
-    fun cacheImage(path: String, picture: Picture) {
-        try {
-            FileOutputStream(path).write(picture.image)
-//        FileOutputStream(path).use { out ->
-//            picture.image.compress(Bitmap.CompressFormat.PNG, 100, out)
-//        }
-//
-//        val bw =
-//            BufferedWriter(
-//                OutputStreamWriter(
-//                    FileOutputStream(path + cacheImagePostfix), StandardCharsets.UTF_8
-//                )
-//            )
-//
-//        bw.write(picture.url)
-//        bw.write("\r\n${picture.width}")
-//        bw.write("\r\n${picture.height}")
-//        bw.close()
-
-        } catch (e: IOException) {
-            e.printStackTrace()
+    override suspend fun getImage(tile: Tile): Picture {
+        val file = with(tile) {
+            cacheDir.resolve("map-view-tile-$zoom-$x-$y.png")
         }
+        //todo вставать в synchronized блокировку по ключу tile
+        val bytes: ByteArray? =
+            if (file.exists()) {
+                try {
+                    file.readBytes()
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                    println("Can't read file $file")
+                    println("Will work without disk cache")
+                    null
+                }
+            } else {
+                null
+            }
+        if (bytes == null) {
+            val image = imageRepository.getImage(tile)
+            getBackgroundScope().launch {
+                // save image
+                try {
+                    file.writeBytes(image.image)
+                } catch (t: Throwable) {
+                    println("Can't save image to file $file")
+                    println("Will work without disk cache")
+                }
+            }
+            return image
+        }
+        return Picture(
+            "remove",
+            bytes,
+            TILE_SIZE,
+            TILE_SIZE
+        )
     }
 
     fun clearCache(context: Context) {
-
         val directory = File(context.cacheDir.absolutePath)
-
         val files: Array<File>? = directory.listFiles()
-
         if (files != null) {
             for (file in files) {
                 if (file.isDirectory)
@@ -84,28 +115,3 @@ actual fun decorateWithDiskCache(imageRepository: ImageRepository): ImageReposit
         }
     }
 }
-
-private fun loadFullImageBlocking(url: String): Picture {
-//    try {
-//        val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
-//        connection.connectTimeout = 5000
-//        connection.connect()
-//
-//        val input: InputStream = connection.inputStream
-//        val bitmap: Bitmap? = BitmapFactory.decodeStream(input)
-//        if (bitmap != null) {
-//            return Picture(
-//                url = url,
-//                image = bitmap,
-//                width = bitmap.width,
-//                height = bitmap.height
-//            )
-//        }
-//    } catch (e: Exception) {
-//        e.printStackTrace()
-//    }
-
-    TODO()
-//    return Picture(url = url, image = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
-}
-
