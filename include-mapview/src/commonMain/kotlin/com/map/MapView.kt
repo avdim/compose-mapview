@@ -23,8 +23,8 @@ public fun MapView(width: Int = 800, height: Int = 500) {
         width = width,
         height = height,
         stateFlow = tilesStateFlow,
-        onZoom = { store.send(MapIntent.Zoom(it)) },
-        onClick = { println("click on $it") }
+        onZoom = { store.send(MapIntent.Zoom(Pt(width / 2, height / 2), it)) },
+        onClick = { store.send(MapIntent.Zoom(it, 2.0)) }
     ) { dx, dy ->
         store.send(MapIntent.Move(Pt(-dx, -dy)))
     }
