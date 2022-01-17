@@ -116,7 +116,7 @@ public fun MapViewBrowser(
                 state.matrix.forEach {
                     it.forEach { t ->
                         ctx.drawImage(
-                            image = t.pic.getImageBitmap(),
+                            image = t.image.get(),
                             dx = t.display.x.toDouble(),
                             dy = t.display.y.toDouble(),
                             dw = t.display.size.toDouble(),
@@ -133,3 +133,4 @@ public fun MapViewBrowser(
 private class ListenerData(val target: EventTarget, val type: String, val callback: EventListener)
 
 fun MouseEvent.toPt(): Pt = Pt(ceil(x).toInt(), ceil(y).toInt())
+fun GpuOptimizedImage.get() = platformSpecificData

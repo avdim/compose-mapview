@@ -11,6 +11,7 @@ import javax.imageio.ImageIO
 
 actual fun ImageBitmap.toByteArray(): ByteArray = toAwtImage().toByteArray()
 actual fun ByteArray.toImageBitmap(): ImageBitmap = Image.makeFromEncoded(this).toComposeImageBitmap()
+actual fun GpuOptimizedImage.get():ImageBitmap = platformSpecificData
 
 fun BufferedImage.toByteArray(): ByteArray {
     val baos = ByteArrayOutputStream()

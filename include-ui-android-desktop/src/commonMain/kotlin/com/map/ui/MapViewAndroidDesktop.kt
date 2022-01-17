@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -97,7 +96,7 @@ fun MapViewAndroidDesktop(
                 val topLeft = Offset(t.display.x.toFloat(), t.display.y.toFloat())
                 val dstSize = IntSize(t.display.size, t.display.size)
                 val dstOffset = IntOffset(t.display.x, t.display.y)
-                drawImage(t.pic.getImageBitmap(), dstOffset = dstOffset, dstSize = dstSize)
+                drawImage(t.image.get(), dstOffset = dstOffset, dstSize = dstSize)
             }
         }
         drawPath(path = Path().apply {
@@ -123,9 +122,7 @@ fun ScrollableArea() {
             var index = 1
             Column {
                 for (picture in state.pictures) {
-                    Miniature(
-                        picture = picture
-                    )
+
                     Spacer(modifier = Modifier.height(5.dp))
                     index++
                 }
@@ -139,36 +136,4 @@ fun ScrollableArea() {
     }
 }
 
-@Composable
-fun Miniature(
-    picture: GpuOptimizedImage
-) {
-    val infoButtonHover = remember { mutableStateOf(false) }
-    Card(
-        backgroundColor = MiniatureColor,
-        modifier = Modifier.padding(start = 10.dp, end = 18.dp).height(150.dp)
-            .fillMaxWidth(),
-        shape = RectangleShape
-    ) {
-        Row(modifier = Modifier.padding(end = 30.dp)) {
-            Clickable(
-                onClick = {
-
-                }
-            ) {
-                Image(
-                    picture.getImageBitmap(),
-                    contentDescription = null,
-                    modifier = Modifier.height(70.dp)
-                        .width(90.dp)
-                        .padding(start = 1.dp, top = 1.dp, end = 1.dp, bottom = 1.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
-    }
-}
-
 fun Offset.toPt(): Pt = Pt(ceil(x).roundToInt(), ceil(y).roundToInt())
-
-fun GpuOptimizedImage.getImageBitmap():ImageBitmap = platformSpecificData as ImageBitmap

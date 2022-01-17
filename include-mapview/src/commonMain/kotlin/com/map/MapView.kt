@@ -54,7 +54,7 @@ private suspend fun TilesGrid.downloadImages(imageRepository: TileContentReposit
         it.map { displayTile ->
             getBackgroundScope().async {
                 ImageTile(
-                    pic = imageRepository.getTileContent(displayTile.tile),
+                    image = imageRepository.getTileContent(displayTile.tile),
                     display = displayTile
                 )
             }

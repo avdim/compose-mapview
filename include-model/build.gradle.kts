@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
+    id("org.jetbrains.compose")
 }
 
 version = "1.0"
@@ -18,17 +19,20 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(compose.runtime)
                 api(ktorCore)
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation(ktorCIO)
+                api(compose.foundation)
             }
         }
         val desktopMain by getting {
             dependencies {
                 implementation(ktorCIO)
+                api(compose.foundation)
             }
         }
         val jsMain by getting {

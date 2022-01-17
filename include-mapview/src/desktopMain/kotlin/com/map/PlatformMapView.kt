@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.map.ui.MapViewAndroidDesktop
-import io.ktor.client.*
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
