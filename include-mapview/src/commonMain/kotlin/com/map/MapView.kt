@@ -19,36 +19,19 @@ public fun MapView(width: Int = 800, height: Int = 500) {
             is SideEffect.LoadTile -> {
                 viewScope.launch {
                     val tileContent = imageRepository.getTileContent(sideEffect.tile.tile)
-                    store.send(GridIntent.TileLoaded(ImageTile(tileContent, sideEffect.tile)))
+                    store.send(GridIntent.TileLoaded(ImageTile(tileContent, sideEffect.tile, sideEffect.order)))
                 }
             }
         }
     }
     viewScope.launch {
-        mapStore.stateFlow.collect { state->
+        mapStore.stateFlow.collect { state ->
             val grid = state.calcTiles()
             grid.matrix.forEach { displayTile ->
                 gridStore.send(GridIntent.LoadTile(displayTile))
             }
         }
     }
-
-//    val displayStateFlow = MutableStateFlow(ImageTilesGrid(emptyList()))
-//    viewScope.launch {
-//        mapStore.stateFlow.collect { state->
-//            val grid = state.calcTiles()
-//            grid.matrix.forEach { displayTile ->
-//                gridStore.send(GridIntent.LoadTile(displayTile))
-//                launch {
-//                    val tileContent = imageRepository.getTileContent(displayTile.tile)
-//                    //todo многопоточка
-//                    displayStateFlow.value = displayStateFlow.value.run {
-//                        copy(matrix = (matrix + ImageTile(tileContent, displayTile)).takeLast(10))
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     PlatformMapView(
         width = width,
@@ -68,7 +51,7 @@ public fun MapView(width: Int = 800, height: Int = 500) {
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope):TileContentRepository<GpuOptimizedImage>
+internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage>
 
 @Composable
 internal expect fun PlatformMapView(

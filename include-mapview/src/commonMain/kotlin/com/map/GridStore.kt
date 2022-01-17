@@ -3,7 +3,7 @@ package com.map
 import kotlinx.coroutines.CoroutineScope
 
 sealed interface SideEffect {
-    class LoadTile(val tile: DisplayTile):SideEffect
+    class LoadTile(val tile: DisplayTile, val order: Int):SideEffect
 }
 
 sealed interface GridIntent {
@@ -19,11 +19,11 @@ fun CoroutineScope.createGridStore(
 ) { state, intent: GridIntent ->
     when (intent) {
         is GridIntent.LoadTile -> {
-            state
-                .addSideEffect(SideEffect.LoadTile(intent.tile))
+            state.copy(nextOrder = state.nextOrder + 1)
+                .addSideEffect(SideEffect.LoadTile(intent.tile, state.nextOrder))
         }
         is GridIntent.TileLoaded -> {
-            state.copy(matrix = (state.matrix + intent.tile).takeLast(20))
+            state.copy(matrix = (state.matrix + intent.tile).sortedBy { it.order }.takeLast(20))//todo 20
                 .noSideEffects()
         }
     }
