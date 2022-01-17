@@ -9,11 +9,11 @@ data class MapState(
     /**
      * display width in dp (pixels)
      */
-    val width: Int,
+    val width: Int = 100,
     /**
      * display height in dp (pixels)
      */
-    val height: Int,
+    val height: Int = 100,
     /**
      * 0.1 = little planet
      * 1.0 = no zoom;
@@ -44,11 +44,15 @@ fun MapState.toShortString(): String = buildString {
 sealed interface MapIntent {
     data class Zoom(val pt: Pt, val delta: Double) : MapIntent
     data class Move(val pt: Pt) : MapIntent
+    data class SetSize(val width: Int, val height: Int) : MapIntent
 }
 
-fun CoroutineScope.createMapStore(width: Int, height: Int) =
-    createStore(MapState(width = width, height = height)) { state: MapState, intent: MapIntent ->
+fun CoroutineScope.createMapStore() =
+    createStore(MapState()) { state: MapState, intent: MapIntent ->
         when (intent) {
+            is MapIntent.SetSize -> {
+                state.copy(width = intent.width, height = intent.height)
+            }
             is MapIntent.Zoom -> {
                 var multiply = (1 + intent.delta)
                 if (multiply < 0.5) {

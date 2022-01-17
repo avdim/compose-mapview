@@ -19,6 +19,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
@@ -34,13 +35,13 @@ import kotlin.math.sqrt
 
 @Composable
 fun MapViewAndroidDesktop(
+    modifier: Modifier,
     touchScreen:Boolean,
-    width: Int,
-    height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Pt, Double) -> Unit,
+    onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
-    onMove: (Int, Int) -> Unit
+    onMove: (Int, Int) -> Unit,
+    updateSize: (width: Int, height: Int) -> Unit
 ) {
     var previousMoveDownPos by remember { mutableStateOf<Offset?>(null) }
     var previousPressTime by remember { mutableStateOf(0L) }
@@ -56,7 +57,7 @@ fun MapViewAndroidDesktop(
             if (event.type == PointerEventType.Scroll) {
                 val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
                 if (scrollY != null && scrollY != 0f) {
-                    onZoom(current?.toPt() ?: Pt(width / 2, height / 2), -scrollY * getSensitivity())
+                    onZoom(current?.toPt(), -scrollY * getSensitivity())
                 }
             }
             when(event.type) {
@@ -100,25 +101,28 @@ fun MapViewAndroidDesktop(
     val transformableState = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
         previousMoveDownPos = null
         onMove(offsetChange.x.roundToInt(), offsetChange.y.roundToInt())
-        onZoom(Pt(width / 2, height / 2), zoomChange.toDouble() - 1)
+        onZoom(null, zoomChange.toDouble() - 1)
     }
 
     fun Modifier.applyAndroidGestureHandler() =
         transformable(transformableState)
 
     Canvas(
-        Modifier.size(width.dp, height.dp)
+        modifier.fillMaxSize()
             .applyAndroidGestureHandler()
             .applyDesktopPointerInput()
     ) {
-        state.matrix.forEach { t ->
-            val size = IntSize(t.display.size, t.display.size)
-            val position = IntOffset(t.display.x, t.display.y)
-            drawImage(t.image.get(), dstOffset = position, dstSize = size)
+        updateSize(size.width.toInt(), size.height.toInt())
+        clipRect() {
+            state.matrix.forEach { t ->
+                val size = IntSize(t.display.size, t.display.size)
+                val position = IntOffset(t.display.x, t.display.y)
+                drawImage(t.image.get(), dstOffset = position, dstSize = size)
+            }
         }
         drawPath(path = Path().apply {
-            addRect(Rect(0f, 0f, width.toFloat(), height.toFloat()))
-        }, color = Color.Red, style = Stroke(2f))
+            addRect(Rect(0f, 0f, size.width, size.height))
+        }, color = Color.Red, style = Stroke(4f))
     }
 //    ScrollableArea(state)
 }

@@ -15,13 +15,15 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope):Til
 
 @Composable
 internal actual fun PlatformMapView(
-    width: Int,
-    height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Pt, Double) -> Unit,
+    onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
-    onMove: (Int, Int) -> Unit
+    onMove: (Int, Int) -> Unit,
+    updateSize: (width: Int, height: Int) -> Unit
 ) {
+    val width = 1000
+    val height = 800
+    updateSize(width, height)
     MapViewBrowser(
         width = width,
         height = height,

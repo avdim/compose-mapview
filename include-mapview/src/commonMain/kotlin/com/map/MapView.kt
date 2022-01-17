@@ -8,12 +8,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 
 @Composable
-public fun MapView(width: Int = 800, height: Int = 500) {
+public fun MapView() {
     val viewScope = rememberCoroutineScope()
     val ioScope = CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO())
-    val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore(width, height)
+    val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore()
     val imageRepository = createImageRepositoryComposable(ioScope)
 
+    //todo val alpha: Float by animateFloatAsState(if (enabled) 1f else 0.5f)
     val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
         when (sideEffect) {
             is SideEffect.LoadTile -> {
@@ -38,14 +39,16 @@ public fun MapView(width: Int = 800, height: Int = 500) {
     }
 
     PlatformMapView(
-        width = width,
-        height = height,
         stateFlow = gridStore.stateFlow,
-        onZoom = { pt, change -> mapStore.send(MapIntent.Zoom(pt, change)) },
-        onClick = { mapStore.send(MapIntent.Zoom(it, 0.8)) }
-    ) { dx, dy ->
-        mapStore.send(MapIntent.Move(Pt(-dx, -dy)))
-    }
+        onZoom = { pt, change ->
+            mapStore.send(
+                MapIntent.Zoom(pt ?: Pt(mapStore.state.width / 2, mapStore.state.height / 2), change)
+            )
+        },
+        onClick = { mapStore.send(MapIntent.Zoom(it, 0.8)) },
+        onMove = { dx, dy -> mapStore.send(MapIntent.Move(Pt(-dx, -dy))) },
+        updateSize = { w, h -> mapStore.send(MapIntent.SetSize(w, h)) }
+    )
     Telemetry(mapStore.stateFlow)
 }
 
@@ -59,12 +62,11 @@ internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): Ti
 
 @Composable
 internal expect fun PlatformMapView(
-    width: Int,
-    height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Pt, Double) -> Unit,
+    onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
-    onMove: (Int, Int) -> Unit
+    onMove: (Int, Int) -> Unit,
+    updateSize: (width: Int, height: Int) -> Unit
 )
 
 @Composable

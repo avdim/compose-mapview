@@ -1,8 +1,10 @@
 package com.map
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.map.ui.MapViewAndroidDesktop
 import io.ktor.client.*
@@ -24,21 +26,20 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): Ti
 
 @Composable
 internal actual fun PlatformMapView(
-    width: Int,
-    height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Pt, Double) -> Unit,
+    onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
-    onMove: (Int, Int) -> Unit
+    onMove: (Int, Int) -> Unit,
+    updateSize: (width: Int, height: Int) -> Unit
 ) {
     MapViewAndroidDesktop(
+        modifier = Modifier.fillMaxSize(),
         touchScreen = true,
-        width = width,
-        height = height,
         stateFlow = stateFlow,
         onZoom = onZoom,
         onClick = onClick,
-        onMove = onMove
+        onMove = onMove,
+        updateSize = updateSize,
     )
 }
 

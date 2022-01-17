@@ -17,7 +17,7 @@ public fun MapViewBrowser(
     width: Int,
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Pt, Double) -> Unit,
+    onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
 ) {
