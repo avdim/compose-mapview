@@ -32,6 +32,7 @@ internal actual fun PlatformMapView(
     onMove: (Int, Int) -> Unit
 ) {
     MapViewAndroidDesktop(
+        touchScreen = true,
         width = width,
         height = height,
         stateFlow = stateFlow,

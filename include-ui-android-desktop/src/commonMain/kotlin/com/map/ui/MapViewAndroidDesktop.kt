@@ -3,6 +3,8 @@
 package com.map.ui
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.*
@@ -32,6 +34,7 @@ import kotlin.math.sqrt
 
 @Composable
 fun MapViewAndroidDesktop(
+    touchScreen:Boolean,
     width: Int,
     height: Int,
     stateFlow: StateFlow<ImageTilesGrid>,
@@ -55,41 +58,47 @@ fun MapViewAndroidDesktop(
                 if (scrollY != null && scrollY != 0f) {
                     onZoom(current?.toPt() ?: Pt(width / 2, height / 2), -scrollY * getSensitivity())
                 }
-            } else if (event.type == PointerEventType.Move) {
-                if (event.buttons.isPrimaryPressed) {
-                    val previous = previousMoveDownPos
-                    if (previous != null && current != null) {
-                        val dx = (current.x - previous.x).toInt()
-                        val dy = (current.y - previous.y).toInt()
-                        if (dx != 0 || dy != 0) {
-                            onMove(dx, dy)
+            }
+            when(event.type) {
+                PointerEventType.Move -> {
+                    if (event.buttons.isPrimaryPressed || touchScreen) {
+                        val previous = previousMoveDownPos
+                        if (previous != null && current != null) {
+                            val dx = (current.x - previous.x).toInt()
+                            val dy = (current.y - previous.y).toInt()
+                            if (dx != 0 || dy != 0) {
+                                onMove(dx, dy)
+                            }
                         }
+                        previousMoveDownPos = current
+                    } else {
+                        previousMoveDownPos = null
                     }
-                    previousMoveDownPos = current
-                } else {
-                    previousMoveDownPos = null
                 }
-            }
-            if (event.type == PointerEventType.Press) {
-                previousPressTime = timeMs()
-                previousPressPos = current
-            }
-            if (event.type == PointerEventType.Release) {
-                if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
-                    val previous = previousPressPos
-                    if (current != null && previous != null) {
-                        val dx = current.x - previous.x
-                        val dy = current.y - previous.y
-                        val distance = sqrt(dx * dx + dy * dy)
-                        if (distance < Config.CLICK_AREA_RADIUS_PX) {
-                            onClick(current.toPt())
+                PointerEventType.Press -> {
+                    previousPressTime = timeMs()
+                    previousPressPos = current
+                    previousMoveDownPos = current
+                }
+                PointerEventType.Release -> {
+                    if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
+                        val previous = previousPressPos
+                        if (current != null && previous != null) {
+                            val dx = current.x - previous.x
+                            val dy = current.y - previous.y
+                            val distance = sqrt(dx * dx + dy * dy)
+                            if (distance < Config.CLICK_AREA_RADIUS_PX) {
+                                onClick(current.toPt())
+                            }
                         }
                     }
+                    previousMoveDownPos = null
                 }
             }
         }
     }
     val transformableState = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
+        previousMoveDownPos = null
         onMove(offsetChange.x.roundToInt(), offsetChange.y.roundToInt())
         onZoom(Pt(width / 2, height / 2), zoomChange.toDouble() - 1)
     }
@@ -97,9 +106,6 @@ fun MapViewAndroidDesktop(
     fun Modifier.applyAndroidGestureHandler() =
         transformable(transformableState)
 
-    if(false)
-    TransformableSample()
-    else
     Canvas(
         Modifier.size(width.dp, height.dp)
             .applyAndroidGestureHandler()
@@ -145,36 +151,6 @@ fun TransformableSample() {
             .background(Color.Blue)
             .fillMaxSize()
     )
-}
-
-@Composable
-fun ScrollableArea() {
-    data class MainState(
-        val pictures: List<GpuOptimizedImage>
-    )
-
-    val state: MainState = MainState(listOf())
-    Box(
-        modifier = Modifier.fillMaxSize()
-            .padding(end = 8.dp)
-    ) {
-        val stateVertical = rememberScrollState(0)
-        Column(modifier = Modifier.verticalScroll(stateVertical)) {
-            var index = 1
-            Column {
-                for (picture in state.pictures) {
-
-                    Spacer(modifier = Modifier.height(5.dp))
-                    index++
-                }
-            }
-        }
-//        VerticalScrollbar(// Desktop
-//            adapter = rememberScrollbarAdapter(stateVertical),
-//            modifier = Modifier.align(Alignment.CenterEnd)
-//                .fillMaxHeight()
-//        )
-    }
 }
 
 fun Offset.toPt(): Pt = Pt(ceil(x).roundToInt(), ceil(y).roundToInt())

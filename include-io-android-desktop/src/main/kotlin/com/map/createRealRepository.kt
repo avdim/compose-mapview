@@ -8,7 +8,7 @@ import kotlin.random.Random
 fun createRealRepository(ktorClient: HttpClient) = object : TileContentRepository<ByteArray> {
     override suspend fun getTileContent(tile: Tile): ByteArray {
         println("LOAD START $tile ${System.currentTimeMillis() % 1000000}")
-        if (Random.nextInt(4) == 1) {
+        if (Random.nextInt(10) == 0) { //todo remove
             throw Exception("check network")
         }
         val result = ktorClient.get<ByteArray>(tile.tileUrl)
