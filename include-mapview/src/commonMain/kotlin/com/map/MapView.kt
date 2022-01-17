@@ -4,9 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlin.js.JsExport
 
-@JsExport
 @Composable
 public fun MapView(width: Int = 800, height: Int = 500) {
     val viewScope = rememberCoroutineScope()

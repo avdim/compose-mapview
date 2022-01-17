@@ -12,7 +12,6 @@ import org.w3c.dom.events.MouseEvent
 import kotlin.math.ceil
 
 
-@JsExport
 @Composable
 public fun MapViewBrowser(
     width: Int,

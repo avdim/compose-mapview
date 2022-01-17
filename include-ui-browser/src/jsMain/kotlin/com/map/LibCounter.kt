@@ -11,7 +11,6 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLCanvasElement
 
-@JsExport
 @Composable
 public fun LibJSCounter(stateFlow: StateFlow<Double>, sendIntent: (Double) -> Unit) {
     val state: State<Double> = stateFlow.collectAsState()
