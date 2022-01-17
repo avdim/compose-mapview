@@ -14,8 +14,6 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 //import com.map.view.DragHandler
 
-actual typealias AbstractImageData = ByteArray //BufferedImage
-
 fun scaleBitmapAspectRatio(
     bitmap: BufferedImage,
     width: Int,

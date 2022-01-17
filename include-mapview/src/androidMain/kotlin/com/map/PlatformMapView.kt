@@ -11,17 +11,17 @@ import androidx.compose.ui.platform.LocalContext
 import com.map.ui.MapViewAndroidDesktop
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 
 /**
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
-@ReadOnlyComposable
 @Composable
-internal actual fun createImageRepositoryComposable(): ImageRepository {
-    //todo спросить у команды Compose
-    // Можно ли использовать @ReadOnlyComposable, который внутри вызывает property LocalContext.current, тоже помеченный как @ReadOnlyComposable ?
-    val androidContext = LocalContext.current
-    return decorateWithInMemoryCache(decorateWithDiskCache(androidContext, createDownloadImageRepository()))
+internal actual fun createImageRepositoryComposable(): TileContentRepository<GpuOptimizedImage> {
+    return createRealRepository()
+        .decorateWithDiskCache(LocalContext.current.cacheDir)
+        .adapter { GpuOptimizedImage(it.toImageBitmap()) }
+        .decorateWithInMemoryCache()
 }
 
 @Composable

@@ -2,7 +2,7 @@ package com.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
-import com.map.common.R
+import com.map.ui.R
 
 @Composable
 fun icEmpty() = painterResource(R.raw.empty)

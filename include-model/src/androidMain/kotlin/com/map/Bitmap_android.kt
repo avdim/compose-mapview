@@ -1,5 +1,6 @@
 package com.map
 
+//import androidx.compose.ui.layout.ContentScale
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.*
@@ -7,11 +8,6 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
-//import androidx.compose.ui.layout.ContentScale
-import kotlin.math.pow
-import kotlin.math.roundToInt
-
-actual typealias AbstractImageData = ByteArray //Bitmap
 
 fun scaleBitmapAspectRatio(
     bitmap: Bitmap,

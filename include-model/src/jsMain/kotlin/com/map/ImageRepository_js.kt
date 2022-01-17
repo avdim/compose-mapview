@@ -9,12 +9,10 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.js.Promise
 
-fun createDownloadImageRepository(): ImageRepository = createRealRepository()
+fun createDownloadImageRepository(): TileContentRepository<GpuOptimizedImage> = createRealRepository()
 
-private fun createRealRepository() = object : ImageRepository {
-    val ktorClient: HttpClient = HttpClient()
-
-    override suspend fun getImage(tile: Tile): Picture {
+private fun createRealRepository() = object : TileContentRepository<GpuOptimizedImage> {
+    override suspend fun getTileContent(tile: Tile): GpuOptimizedImage {
         val promise: Promise<ImageBitmap> = suspendCoroutine { continuation ->
             val img = Image() // Create new img element
             img.onload = {
@@ -24,24 +22,23 @@ private fun createRealRepository() = object : ImageRepository {
             }
             img.src = tile.tileUrl
         }
-        return Picture(
-            image = ImageBitmapContainer(promise.await())
-        )
+        return GpuOptimizedImage(promise.await())
     }
 }
 
-fun decorateWithInMemoryCache(imageRepository: ImageRepository): ImageRepository = object : ImageRepository {
-    val cache: MutableMap<Tile, Picture> = HashMap()
-    override suspend fun getImage(tile: Tile): Picture {
-        val fromCache = cache[tile]
-        if (fromCache != null) {
-            return fromCache
+fun decorateWithInMemoryCache(imageRepository: TileContentRepository<GpuOptimizedImage>): TileContentRepository<GpuOptimizedImage> =
+    object : TileContentRepository<GpuOptimizedImage> {
+        val cache: MutableMap<Tile, GpuOptimizedImage> = HashMap()
+        override suspend fun getTileContent(tile: Tile): GpuOptimizedImage {
+            val fromCache = cache[tile]
+            if (fromCache != null) {
+                return fromCache
+            }
+            val result = imageRepository.getTileContent(tile)
+            cache[tile] = result
+            return result
         }
-        val result = imageRepository.getImage(tile)
-        cache[tile] = result
-        return result
     }
-}
 
-external fun createImageBitmap(data: Blob):Promise<ImageBitmap>
-external fun createImageBitmap(data: Image):Promise<ImageBitmap>
+external fun createImageBitmap(data: Blob): Promise<ImageBitmap>
+external fun createImageBitmap(data: Image): Promise<ImageBitmap>

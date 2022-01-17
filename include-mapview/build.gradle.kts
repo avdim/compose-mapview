@@ -27,11 +27,13 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation("com.map:io-android-desktop:1.0")
                 implementation("com.map:ui-android-desktop:1.0")
             }
         }
         val desktopMain by getting {
             dependencies {
+                implementation("com.map:io-android-desktop:1.0")
                 implementation("com.map:ui-android-desktop:1.0")
                 implementation(compose.desktop.common)
             }

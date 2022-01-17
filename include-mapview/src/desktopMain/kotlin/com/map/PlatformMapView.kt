@@ -8,12 +8,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.map.ui.MapViewAndroidDesktop
-import kotlinx.coroutines.flow.Flow
+import io.ktor.client.*
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 
 @Composable
-internal actual fun createImageRepositoryComposable():ImageRepository {
-    return decorateWithInMemoryCache(decorateWithDiskCache(createDownloadImageRepository()))
+internal actual fun createImageRepositoryComposable():TileContentRepository<GpuOptimizedImage> {
+    // Для HOME директории MacOS требует разрешения.
+    // Чтобы не просить разрешений созданим кэш во временной директории.
+    val cacheDir = File(System.getProperty("java.io.tmpdir")).resolve(CACHE_DIR_NAME)
+    return createRealRepository()
+        .decorateWithDiskCache(cacheDir)
+        .adapter { GpuOptimizedImage(it.toImageBitmap()) }
+        .decorateWithInMemoryCache()
 }
 
 @Composable

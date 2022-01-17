@@ -116,7 +116,7 @@ public fun MapViewBrowser(
                 state.matrix.forEach {
                     it.forEach { t ->
                         ctx.drawImage(
-                            image = t.pic.image.imageBitmap,
+                            image = t.pic.getImageBitmap(),
                             dx = t.display.x.toDouble(),
                             dy = t.display.y.toDouble(),
                             dw = t.display.size.toDouble(),

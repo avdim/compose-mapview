@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -96,7 +97,7 @@ fun MapViewAndroidDesktop(
                 val topLeft = Offset(t.display.x.toFloat(), t.display.y.toFloat())
                 val dstSize = IntSize(t.display.size, t.display.size)
                 val dstOffset = IntOffset(t.display.x, t.display.y)
-                drawImage(t.pic.toImageBitmap(), dstOffset = dstOffset, dstSize = dstSize)
+                drawImage(t.pic.getImageBitmap(), dstOffset = dstOffset, dstSize = dstSize)
             }
         }
         drawPath(path = Path().apply {
@@ -109,7 +110,7 @@ fun MapViewAndroidDesktop(
 @Composable
 fun ScrollableArea() {
     data class MainState(
-        val pictures: List<Picture>
+        val pictures: List<GpuOptimizedImage>
     )
 
     val state: MainState = MainState(listOf())
@@ -140,7 +141,7 @@ fun ScrollableArea() {
 
 @Composable
 fun Miniature(
-    picture: Picture
+    picture: GpuOptimizedImage
 ) {
     val infoButtonHover = remember { mutableStateOf(false) }
     Card(
@@ -156,7 +157,7 @@ fun Miniature(
                 }
             ) {
                 Image(
-                    picture.toImageBitmap(),
+                    picture.getImageBitmap(),
                     contentDescription = null,
                     modifier = Modifier.height(70.dp)
                         .width(90.dp)
@@ -169,3 +170,5 @@ fun Miniature(
 }
 
 fun Offset.toPt(): Pt = Pt(ceil(x).roundToInt(), ceil(y).roundToInt())
+
+fun GpuOptimizedImage.getImageBitmap():ImageBitmap = platformSpecificData as ImageBitmap

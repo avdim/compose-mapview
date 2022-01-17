@@ -28,6 +28,11 @@ includeBuild("include-model") {
         substitute(module("com.map:model")).using(project(":"))
     }
 }
+includeBuild("include-io-android-desktop") {
+    dependencySubstitution {
+        substitute(module("com.map:io-android-desktop")).using(project(":"))
+    }
+}
 includeBuild("include-ui-android-desktop") {
     dependencySubstitution {
         substitute(module("com.map:ui-android-desktop")).using(project(":"))
