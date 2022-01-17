@@ -41,7 +41,7 @@ fun MapState.calcTiles(): TilesGrid {
     val minI = (topLeft.x * maxTileIndex).toInt()
     val minJ = (topLeft.y * maxTileIndex).toInt()
 
-    val tiles: List<DisplayTile> = buildList {
+    val tiles: List<Pair<DisplayTile, Tile>> = buildList {
         for (i in minI until Int.MAX_VALUE) {
             val geoX = i.toDouble() / maxTileIndex
             val displayX = geoXToDisplay(geoX)
@@ -55,7 +55,7 @@ fun MapState.calcTiles(): TilesGrid {
                     break
                 }
                 val tile = Tile(zoom, i % maxTileIndex, j % maxTileIndex)
-                add(DisplayTile(tileSize, displayX, displayY, tile))
+                add(DisplayTile(tileSize, displayX, displayY) to tile)
             }
         }
     }

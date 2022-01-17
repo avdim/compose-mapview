@@ -3,9 +3,7 @@ package com.map
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 
 @Composable
 public fun MapView(modifier: DisplayModifier) {
@@ -14,15 +12,27 @@ public fun MapView(modifier: DisplayModifier) {
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore()
     val imageRepository = createImageRepositoryComposable(ioScope)
 
+    val originalTiles:MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()
+
     val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
         when (sideEffect) {
             is SideEffect.LoadTile -> {
                 ioScope.launch {
                     try {
-                        val tileContent = imageRepository.getTileContent(sideEffect.tile.tile)
-                        store.send(GridIntent.TileLoaded(ImageTile(tileContent, sideEffect.tile)))
+                        launch {
+                            delay(10)
+                            if (!originalTiles.containsKey(sideEffect.tile)) {
+                                val image = originalTiles.searchCropAndPut(sideEffect.tile)
+                                if (image != null) {
+                                    store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
+                                }
+                            }
+                        }
+                        val image = imageRepository.getTileContent(sideEffect.tile)
+                        originalTiles[sideEffect.tile] = image
+                        store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
-                        println("fail to load tile ${sideEffect.tile}, $t")
+                        println("fail to load tile ${sideEffect.displayTile}, $t")
                     }
                 }
             }
@@ -31,9 +41,7 @@ public fun MapView(modifier: DisplayModifier) {
     viewScope.launch {
         mapStore.stateFlow.collect { state ->
             val grid = state.calcTiles()
-            grid.matrix.forEach { displayTile ->
-                gridStore.send(GridIntent.LoadTile(displayTile))
-            }
+            gridStore.send(GridIntent.NewTiles(grid))
         }
     }
 
@@ -74,3 +82,7 @@ internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): Ti
 
 @Composable
 internal expect fun Telemetry(stateFlow: StateFlow<MapState>)
+
+fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile:Tile):GpuOptimizedImage? {
+    return null
+}

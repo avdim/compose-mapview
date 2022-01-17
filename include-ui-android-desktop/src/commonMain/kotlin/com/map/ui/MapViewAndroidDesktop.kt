@@ -132,10 +132,12 @@ fun MapViewAndroidDesktop(
     ) {
         updateSize(size.width.toInt(), size.height.toInt())
         clipRect() {
-            state.matrix.forEach { t ->
-                val size = IntSize(t.display.size, t.display.size)
-                val position = IntOffset(t.display.x, t.display.y)
-                drawImage(t.image.get(), dstOffset = position, dstSize = size)
+            state.matrix.forEach { (t, img) ->
+                if (img != null) {
+                    val size = IntSize(t.size, t.size)
+                    val position = IntOffset(t.x, t.y)
+                    drawImage(img.get(), dstOffset = position, dstSize = size)
+                }
             }
         }
         drawPath(path = Path().apply {

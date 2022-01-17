@@ -13,11 +13,10 @@ data class Tile(
 data class DisplayTile(
     val size: Int,
     val x: Int,
-    val y: Int,
-    val tile: Tile
+    val y: Int
 )
 
 data class TilesGrid(
-    val matrix:List<DisplayTile>,
+    val matrix:List<Pair<DisplayTile, Tile>>,
 )
 
