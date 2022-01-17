@@ -17,9 +17,13 @@ public fun MapView(width: Int = 800, height: Int = 500) {
     val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
         when (sideEffect) {
             is SideEffect.LoadTile -> {
-                viewScope.launch {
-                    val tileContent = imageRepository.getTileContent(sideEffect.tile.tile)
-                    store.send(GridIntent.TileLoaded(ImageTile(tileContent, sideEffect.tile, sideEffect.order)))
+                ioScope.launch {
+                    try {
+                        val tileContent = imageRepository.getTileContent(sideEffect.tile.tile)
+                        store.send(GridIntent.TileLoaded(ImageTile(tileContent, sideEffect.tile, sideEffect.order)))
+                    } catch (t: Throwable) {
+                        println("fail to load tile ${sideEffect.tile}, $t")
+                    }
                 }
             }
         }

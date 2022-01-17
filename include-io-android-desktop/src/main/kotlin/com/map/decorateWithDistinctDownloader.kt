@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 private sealed interface Message<T> {
     class StartDownload<T>(val tile: Tile, val deferred: CompletableDeferred<T>) : Message<T>
     class DownloadComplete<T>(val tile: Tile, val result: T) : Message<T>
+    class DownloadFail<T>(val tile: Tile, val exception: Throwable) : Message<T>
 }
 
 /**
@@ -19,7 +20,6 @@ fun <T> TileContentRepository<T>.decorateWithDistinctDownloader(
 ): TileContentRepository<T> {
     val origin = this
     val actor = scope.actor<Message<T>> {
-        // Внутри Actor-а state потоко-безопасный
         // Вся модификация происходит только с одного потока (корутины)
         // Можно работать с mutable переменными без синхронизации
         val currentRequests: MutableMap<Tile, MutableList<CompletableDeferred<T>>> = mutableMapOf()
@@ -29,10 +29,17 @@ fun <T> TileContentRepository<T>.decorateWithDistinctDownloader(
                 is Message.StartDownload<T> -> {
                     val tileHandlers = currentRequests.getOrPut(message.tile) {
                         val newHandlers = mutableListOf<CompletableDeferred<T>>()
-                        scope.launch {//todo вынести из actor
-                            channel.send(
-                                Message.DownloadComplete(message.tile, origin.getTileContent(message.tile))
-                            )
+                        scope.launch {
+                            // Этот код запускается вне actor-а и тут нельзя напрямую менять mutable state
+                            // Но можно пробрасывать сообщения обратно в actor
+                            try {
+                                val result = origin.getTileContent(message.tile)
+                                channel.send(
+                                    Message.DownloadComplete(message.tile, result)
+                                )
+                            } catch (t: Throwable) {
+                                channel.send(Message.DownloadFail(message.tile, t))
+                            }
                         }
                         newHandlers
                     }
@@ -41,6 +48,13 @@ fun <T> TileContentRepository<T>.decorateWithDistinctDownloader(
                 is Message.DownloadComplete<T> -> {
                     currentRequests.remove(message.tile)?.forEach {
                         it.complete(message.result)
+                    }
+                }
+                is Message.DownloadFail<T> -> {
+                    val exceptionInfo = "decorateWithDistinctDownloader, fail to load tile ${message.tile}"
+                    val exception = Exception(exceptionInfo, message.exception)
+                    currentRequests.remove(message.tile)?.forEach {
+                        it.completeExceptionally(exception)
                     }
                 }
             }
