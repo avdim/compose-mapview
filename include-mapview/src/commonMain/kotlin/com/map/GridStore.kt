@@ -24,7 +24,7 @@ fun CoroutineScope.createGridStore(
             state.addSideEffect(SideEffect.LoadTile(intent.tile, nextOrder++))
         }
         is GridIntent.TileLoaded -> {
-            state.copy(matrix = (state.matrix + intent.tile).sortedBy { it.order }.takeLast(40))//todo take last
+            state.copy(matrix = (state.matrix + intent.tile).sortedBy { it.order }.takeLast(60))//todo take last
                 .noSideEffects()
         }
     }
