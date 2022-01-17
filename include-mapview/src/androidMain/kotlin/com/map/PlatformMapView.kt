@@ -1,6 +1,5 @@
 package com.map
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -8,13 +7,8 @@ import androidx.compose.ui.platform.LocalContext
 import com.map.ui.MapViewAndroidDesktop
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.engine.okhttp.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import java.io.File
 
 /**
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
@@ -24,7 +18,7 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): Ti
     return createRealRepository(HttpClient(CIO))
         .decorateWithDiskCache(ioScope, LocalContext.current.cacheDir)
         .adapter { GpuOptimizedImage(it.toImageBitmap()) }
-        .distinctDownloadDecorator(ioScope)
+        .decorateWithDistinctDownloader(ioScope)
         .decorateWithInMemoryCache()
 }
 

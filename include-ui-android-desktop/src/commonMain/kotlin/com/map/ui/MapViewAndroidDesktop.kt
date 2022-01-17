@@ -103,6 +103,7 @@ fun MapViewAndroidDesktop(
     Canvas(
         Modifier.size(width.dp, height.dp)
             .applyAndroidGestureHandler()
+            .applyDesktopPointerInput()
     ) {
         state.matrix.forEach { t ->
             val size = IntSize(t.display.size, t.display.size)
