@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.launch
 
@@ -41,7 +42,6 @@ fun <T> TileContentRepository<T>.distinctDownloadDecorator(
                                 Message.DownloadComplete(message.tile, origin.getTileContent(message.tile))
                             )
                         }
-                        origin.getTileContent(message.tile)
                         newHandlers
                     }
                     tileHandlers.add(message.deferred)

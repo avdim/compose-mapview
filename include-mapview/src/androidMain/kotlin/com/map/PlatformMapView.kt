@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.map.ui.MapViewAndroidDesktop
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.okhttp.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
