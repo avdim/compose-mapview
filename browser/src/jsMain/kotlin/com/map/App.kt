@@ -29,7 +29,7 @@ fun Document.createCanvas(style: String) =
 
 fun ComposeCounterApp(rootId: String) {
     val composition = renderComposable(rootElementId = rootId) {
-        MapView(size(100, 800))
+        MapView(size(1000, 800))
     }
     if (false) {//todo
         composition.dispose()

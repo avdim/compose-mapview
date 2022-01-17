@@ -20,11 +20,13 @@ public fun MapView(modifier: DisplayModifier) {
                 ioScope.launch {
                     try {
                         launch {
-                            delay(10)
                             if (!originalTiles.containsKey(sideEffect.tile)) {
-                                val image = originalTiles.searchCropAndPut(sideEffect.tile)
-                                if (image != null) {
-                                    store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
+                                delay(10)
+                                if (!originalTiles.containsKey(sideEffect.tile)) {
+                                    val image = originalTiles.searchCropAndPut(sideEffect.tile)
+                                    if (image != null) {
+                                        store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
+                                    }
                                 }
                             }
                         }
@@ -86,3 +88,5 @@ internal expect fun Telemetry(stateFlow: StateFlow<MapState>)
 fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile:Tile):GpuOptimizedImage? {
     return null
 }
+
+//expect fun GpuOptimizedImage.crop():GpuOptimizedImage
