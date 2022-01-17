@@ -21,7 +21,7 @@ public fun MapView(modifier: DisplayModifier) {
                 ioScope.launch {
                     try {
                         val tileContent = imageRepository.getTileContent(sideEffect.tile.tile)
-                        store.send(GridIntent.TileLoaded(ImageTile(tileContent, sideEffect.tile, sideEffect.order)))
+                        store.send(GridIntent.TileLoaded(ImageTile(tileContent, sideEffect.tile)))
                     } catch (t: Throwable) {
                         println("fail to load tile ${sideEffect.tile}, $t")
                     }

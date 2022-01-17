@@ -12,6 +12,5 @@ data class ImageTilesGrid(
 )
 data class ImageTile(
     val image: GpuOptimizedImage,
-    val display: DisplayTile,
-    val order:Int
+    val display: DisplayTile
 )
