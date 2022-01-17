@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.collect
 @Composable
 public fun MapView(width: Int = 800, height: Int = 500) {
     val viewScope = rememberCoroutineScope()
-    val ioScope = rememberCoroutineScope { getDispatcherIO() }
+    val ioScope = CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO())
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore(width, height)
     val imageRepository = createImageRepositoryComposable(ioScope)
 
