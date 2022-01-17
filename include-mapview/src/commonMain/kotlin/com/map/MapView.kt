@@ -14,7 +14,6 @@ public fun MapView(modifier: DisplayModifier) {
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore()
     val imageRepository = createImageRepositoryComposable(ioScope)
 
-    //todo val alpha: Float by animateFloatAsState(if (enabled) 1f else 0.5f)
     val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
         when (sideEffect) {
             is SideEffect.LoadTile -> {
