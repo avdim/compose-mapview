@@ -7,6 +7,9 @@ plugins {
 }
 
 version = "1.0-SNAPSHOT"
+val KTOR_VERSION = "1.6.7"
+val ktorCore = "io.ktor:ktor-client-core:${KTOR_VERSION}"
+val ktorCIO = "io.ktor:ktor-client-cio:${KTOR_VERSION}"
 
 kotlin {
     android()
@@ -30,13 +33,15 @@ kotlin {
             dependencies {
                 implementation("com.map:io-android-desktop:1.0")
                 implementation("com.map:ui-android-desktop:1.0")
+                implementation(ktorCIO)
             }
         }
         val desktopMain by getting {
             dependencies {
                 implementation("com.map:io-android-desktop:1.0")
                 implementation("com.map:ui-android-desktop:1.0")
-                implementation(compose.desktop.common)
+                implementation(ktorCIO)
+                implementation(compose.desktop.common)//todo delete?
             }
         }
         val jsMain by getting {

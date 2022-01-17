@@ -8,7 +8,6 @@ version = "1.0"
 
 val KTOR_VERSION = "1.6.7"
 val ktorCore = "io.ktor:ktor-client-core:${KTOR_VERSION}"
-val ktorCIO = "io.ktor:ktor-client-cio:${KTOR_VERSION}"
 
 kotlin {
     android()
@@ -25,13 +24,11 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation(ktorCIO)
                 api(compose.foundation)
             }
         }
         val desktopMain by getting {
             dependencies {
-                implementation(ktorCIO)
                 api(compose.foundation)
             }
         }
