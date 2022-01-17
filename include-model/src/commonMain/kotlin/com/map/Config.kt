@@ -1,8 +1,8 @@
 package com.map
 
 object Config {
-    val CLICK_DURATION_MS: Long = 350
-    val CLICK_AREA_RADIUS_PX: Int = 3
+    val CLICK_DURATION_MS: Long = 300
+    val CLICK_AREA_RADIUS_PX: Int = 7
 }
 
 val TILE_SIZE = 512

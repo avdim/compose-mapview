@@ -3,10 +3,7 @@
 package com.map.ui
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
-import androidx.compose.foundation.gestures.forEachGesture
-import androidx.compose.foundation.gestures.rememberTransformableState
-import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,7 +33,7 @@ import kotlin.math.sqrt
 @Composable
 fun MapViewAndroidDesktop(
     modifier: Modifier,
-    touchScreen:Boolean,
+    touchScreen: Boolean,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
@@ -60,7 +57,7 @@ fun MapViewAndroidDesktop(
                     onZoom(current?.toPt(), -scrollY * getSensitivity())
                 }
             }
-            when(event.type) {
+            when (event.type) {
                 PointerEventType.Move -> {
                     if (event.buttons.isPrimaryPressed || touchScreen) {
                         val previous = previousMoveDownPos
@@ -82,22 +79,23 @@ fun MapViewAndroidDesktop(
                     previousMoveDownPos = current
                 }
                 PointerEventType.Release -> {
-                    if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
-                        val previous = previousPressPos
-                        if (current != null && previous != null) {
-                            val dx = current.x - previous.x
-                            val dy = current.y - previous.y
-                            val distance = sqrt(dx * dx + dy * dy)
-                            if (distance < Config.CLICK_AREA_RADIUS_PX) {
-                                onClick(current.toPt())
+                    if(!touchScreen) {
+                        if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
+                            val previous = previousPressPos
+                            if (current != null && previous != null) {
+                                if (current.distanceTo(previous) < Config.CLICK_AREA_RADIUS_PX) {
+                                    onClick(current.toPt())
+                                }
                             }
                         }
                     }
+                    previousPressTime = timeMs()
                     previousMoveDownPos = null
                 }
             }
         }
     }
+
     val transformableState = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
         previousMoveDownPos = null
         onMove(offsetChange.x.roundToInt(), offsetChange.y.roundToInt())
@@ -106,6 +104,20 @@ fun MapViewAndroidDesktop(
 
     fun Modifier.applyAndroidGestureHandler() =
         transformable(transformableState)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
+                            val previous = previousPressPos
+                            if (previous != null && previous.distanceTo(it) < Config.CLICK_AREA_RADIUS_PX) {
+                                onClick(it.toPt())
+                            }
+                        }
+                        previousPressTime = timeMs()
+                        previousMoveDownPos = null
+                    }
+                )
+            }
 
     Canvas(
         modifier.fillMaxSize()
@@ -158,3 +170,8 @@ fun TransformableSample() {
 }
 
 fun Offset.toPt(): Pt = Pt(ceil(x).roundToInt(), ceil(y).roundToInt())
+fun Offset.distanceTo(other: Offset): Double {
+    val dx = other.x - x
+    val dy = other.y - y
+    return sqrt(dx * dx + dy * dy).toDouble()
+}
