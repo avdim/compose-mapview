@@ -8,9 +8,10 @@ package com.map
 expect class GpuOptimizedImage
 
 data class ImageTilesGrid(
-    val matrix:List<List<ImageTile>>,
+    val matrix:List<ImageTile> = emptyList(),
 )
 data class ImageTile(
     val image: GpuOptimizedImage,
-    val display: DisplayTile
+    val display: DisplayTile,
+//    val order:Int
 )

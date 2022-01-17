@@ -70,6 +70,7 @@ fun <STATE, INTENT, EFFECT> CoroutineScope.createStoreWithSideEffect(
 
 fun <STATE:Any, EFFECT> STATE.noSideEffects() = ReducerResult(this, emptyList<EFFECT>())
 fun <STATE:Any, EFFECT> STATE.addSideEffects(sideEffects: List<EFFECT>) = ReducerResult(this, sideEffects)
+fun <STATE : Any, EFFECT> STATE.addSideEffect(effect: EFFECT) = addSideEffects(listOf(effect))
 
 fun <T, R> StateFlow<T>.mapStateFlow(scope: CoroutineScope, init:R, transform: suspend (T) -> R): StateFlow<R> {
     val result = MutableStateFlow(init)

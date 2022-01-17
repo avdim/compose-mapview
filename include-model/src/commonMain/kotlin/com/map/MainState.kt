@@ -42,7 +42,7 @@ fun MapState.toShortString(): String = buildString {
 }
 
 sealed interface MapIntent {
-    data class Zoom(val pt:Pt, val delta: Double) : MapIntent
+    data class Zoom(val pt: Pt, val delta: Double) : MapIntent
     data class Move(val pt: Pt) : MapIntent
 }
 

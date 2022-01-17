@@ -112,16 +112,14 @@ public fun MapViewBrowser(
                 val canvas = element as HTMLCanvasElement
                 val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
                 ctx.fillStyle = "green"//todo
-                state.matrix.forEach {
-                    it.forEach { t ->
-                        ctx.drawImage(
-                            image = t.image.get(),
-                            dx = t.display.x.toDouble(),
-                            dy = t.display.y.toDouble(),
-                            dw = t.display.size.toDouble(),
-                            dh = t.display.size.toDouble()
-                        )
-                    }
+                state.matrix.forEach { t ->
+                    ctx.drawImage(
+                        image = t.image.get(),
+                        dx = t.display.x.toDouble(),
+                        dy = t.display.y.toDouble(),
+                        dw = t.display.size.toDouble(),
+                        dh = t.display.size.toDouble()
+                    )
                 }
                 ctx.rect(0.0, 0.0, width.toDouble(), height.toDouble())//todo
             }

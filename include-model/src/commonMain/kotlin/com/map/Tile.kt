@@ -18,6 +18,6 @@ data class DisplayTile(
 )
 
 data class TilesGrid(
-    val matrix:List<List<DisplayTile>>,
+    val matrix:List<DisplayTile>,
 )
 

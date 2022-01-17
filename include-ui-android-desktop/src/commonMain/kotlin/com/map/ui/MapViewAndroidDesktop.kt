@@ -4,7 +4,6 @@ package com.map.ui
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -15,12 +14,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -91,13 +88,10 @@ fun MapViewAndroidDesktop(
                 }
             }
     ) {
-        state.matrix.forEach {
-            it.forEach { t ->
-                val topLeft = Offset(t.display.x.toFloat(), t.display.y.toFloat())
-                val dstSize = IntSize(t.display.size, t.display.size)
-                val dstOffset = IntOffset(t.display.x, t.display.y)
-                drawImage(t.image.get(), dstOffset = dstOffset, dstSize = dstSize)
-            }
+        state.matrix.forEach { t ->
+            val size = IntSize(t.display.size, t.display.size)
+            val position = IntOffset(t.display.x, t.display.y)
+            drawImage(t.image.get(), dstOffset = position, dstSize = size)
         }
         drawPath(path = Path().apply {
             addRect(Rect(0f, 0f, width.toFloat(), height.toFloat()))
