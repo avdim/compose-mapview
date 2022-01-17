@@ -30,13 +30,6 @@ internal actual fun PlatformMapView(
         onClick = onClick,
         onMove = onMove
     )
-    val store = createStore(0.0) { s, intent: Double ->
-        s + intent
-    }
-    val stateFlow: StateFlow<Double> = store.stateFlow
-    LibJSCounter(stateFlow) {
-        store.send(it)
-    }
 }
 
 @Composable

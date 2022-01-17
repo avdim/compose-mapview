@@ -1,15 +1,9 @@
 package com.map
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.request.*
-import kotlinx.coroutines.launch
 import java.awt.Color
 import java.awt.Font
 import java.awt.image.BufferedImage
 import java.io.File
-import java.io.IOException
-import java.util.concurrent.ConcurrentHashMap
 import javax.imageio.ImageIO
 
 @Synchronized

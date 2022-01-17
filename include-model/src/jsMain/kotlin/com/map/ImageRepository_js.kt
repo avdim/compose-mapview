@@ -1,6 +1,5 @@
 package com.map
 
-import io.ktor.client.*
 import kotlinx.coroutines.await
 import org.w3c.dom.Image
 import org.w3c.dom.ImageBitmap

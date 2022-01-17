@@ -6,9 +6,6 @@ plugins {
 
 version = "1.0"
 
-val KTOR_VERSION = "1.6.7"
-val ktorCore = "io.ktor:ktor-client-core:${KTOR_VERSION}"
-
 kotlin {
     android()
     jvm("desktop")
@@ -19,7 +16,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(compose.runtime)
-                api(ktorCore)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
         val androidMain by getting {
