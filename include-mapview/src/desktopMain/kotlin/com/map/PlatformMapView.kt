@@ -22,6 +22,7 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope):Til
     return createRealRepository(HttpClient(CIO))
         .decorateWithDiskCache(ioScope, cacheDir)
         .adapter { GpuOptimizedImage(it.toImageBitmap()) }
+        .distinctDownloadDecorator(ioScope)
         .decorateWithInMemoryCache()
 }
 
