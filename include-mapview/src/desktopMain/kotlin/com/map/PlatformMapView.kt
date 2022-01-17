@@ -27,8 +27,11 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope):Til
         .decorateWithInMemoryCache()
 }
 
+actual typealias DisplayModifier = Modifier
+
 @Composable
 internal actual fun PlatformMapView(
+    modifier: DisplayModifier,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
@@ -36,7 +39,7 @@ internal actual fun PlatformMapView(
     updateSize: (width: Int, height: Int) -> Unit
 ){
     MapViewAndroidDesktop(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         touchScreen = false,
         stateFlow = stateFlow,
         onZoom = onZoom,

@@ -11,6 +11,8 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.fillMaxSize
 
 fun main() = application {
     val icon = painterResource("images/ic_imageviewer_round.png")
@@ -24,7 +26,7 @@ fun main() = application {
         ),
         icon = icon
     ) {
-        MapView()
+        MapView(Modifier.fillMaxSize())
     }
 }
 

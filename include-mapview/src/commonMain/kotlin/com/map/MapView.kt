@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 
 @Composable
-public fun MapView() {
+public fun MapView(modifier: DisplayModifier) {
     val viewScope = rememberCoroutineScope()
     val ioScope = CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO())
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore()
@@ -39,6 +39,7 @@ public fun MapView() {
     }
 
     PlatformMapView(
+        modifier = modifier,
         stateFlow = gridStore.stateFlow,
         onZoom = { pt, change ->
             mapStore.send(
@@ -52,6 +53,18 @@ public fun MapView() {
     Telemetry(mapStore.stateFlow)
 }
 
+expect interface DisplayModifier
+
+@Composable
+internal expect fun PlatformMapView(
+    modifier: DisplayModifier,
+    stateFlow: StateFlow<ImageTilesGrid>,
+    onZoom: (Pt?, Double) -> Unit,
+    onClick: (Pt) -> Unit,
+    onMove: (Int, Int) -> Unit,
+    updateSize: (width: Int, height: Int) -> Unit
+)
+
 /**
  * Создать репозиторий для получения tile картинок.
  * В зависимости от платформы будет обёрнут в Декоратор для кэша на диск и (или) in-memory кэш.
@@ -59,15 +72,6 @@ public fun MapView() {
  */
 @Composable
 internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage>
-
-@Composable
-internal expect fun PlatformMapView(
-    stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Pt?, Double) -> Unit,
-    onClick: (Pt) -> Unit,
-    onMove: (Int, Int) -> Unit,
-    updateSize: (width: Int, height: Int) -> Unit
-)
 
 @Composable
 internal expect fun Telemetry(stateFlow: StateFlow<MapState>)

@@ -24,8 +24,11 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): Ti
         .decorateWithInMemoryCache()
 }
 
+actual typealias DisplayModifier = Modifier
+
 @Composable
 internal actual fun PlatformMapView(
+    modifier: DisplayModifier,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
