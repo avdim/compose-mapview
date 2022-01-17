@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap
 fun <T> TileContentRepository<T>.decorateWithInMemoryCache(): TileContentRepository<T> {
     val origin = this
     return object : TileContentRepository<T> {
-        val cache: MutableMap<Tile, T> = ConcurrentHashMap() //todo LRU cache
+        val cache: MutableMap<Tile, T> = ConcurrentHashMap() //todo LRU cache LinkedHashMap
 
         override suspend fun getTileContent(tile: Tile): T {
             val fromCache = cache[tile]

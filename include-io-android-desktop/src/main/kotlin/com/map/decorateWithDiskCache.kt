@@ -42,8 +42,8 @@ fun TileContentRepository<ByteArray>.decorateWithDiskCache(backgroundScope: Coro
                 } else {
                     null
                 }
-            if (fromCache != null) {
-                return fromCache
+            val result = if (fromCache != null) {
+                fromCache
             } else {
                 val image = origin.getTileContent(tile)
                 backgroundScope.launch {
@@ -55,8 +55,9 @@ fun TileContentRepository<ByteArray>.decorateWithDiskCache(backgroundScope: Coro
                         println("Will work without disk cache")
                     }
                 }
-                return image
+                image
             }
+            return result
         }
 
 

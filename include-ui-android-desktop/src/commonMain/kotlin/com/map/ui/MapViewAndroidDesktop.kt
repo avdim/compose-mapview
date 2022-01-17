@@ -93,6 +93,7 @@ fun MapViewAndroidDesktop(
         onMove(offsetChange.x.roundToInt(), offsetChange.y.roundToInt())
         onZoom(Pt(width / 2, height / 2), zoomChange.toDouble() - 1)
     }
+
     fun Modifier.applyAndroidGestureHandler() =
         transformable(transformableState)
 
