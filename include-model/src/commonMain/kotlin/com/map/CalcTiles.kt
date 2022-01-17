@@ -35,7 +35,7 @@ val MapState.zoom: Int
 val MapState.minScale get():Double = 1.0
 val MapState.maxScale get():Double = (TILE_SIZE.toDouble() / height) * pow2(MAX_ZOOM)
 val MapState.maxTileIndex: Int get() = pow2(zoom)
-val MapState.tileSize: Int get() = geoLengthToDisplay(1.0) / maxTileIndex
+val MapState.tileSize: Int get() = geoLengthToDisplay(1.0) / maxTileIndex + 1
 
 fun MapState.calcTiles(): TilesGrid {
     val minI = (topLeft.x * maxTileIndex).toInt()
