@@ -3,6 +3,8 @@
 package com.map.ui
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,6 +17,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
@@ -40,53 +43,65 @@ fun MapViewAndroidDesktop(
     var previousPressTime by remember { mutableStateOf(0L) }
     var previousPressPos by remember { mutableStateOf<Offset?>(null) }
     val state by stateFlow.collectAsState()
-    Canvas(
-        Modifier.size(width.dp, height.dp)
-            .pointerInput(Unit) {
-                while (true) {
-                    val event = awaitPointerEventScope {
-                        awaitPointerEvent()
-                    }
-                    val current = event.changes.firstOrNull()?.position
-                    if (event.type == PointerEventType.Scroll) {
-                        val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
-                        if (scrollY != null && scrollY != 0f) {
-                            onZoom(current?.toPt() ?: Pt(width / 2, height / 2), -scrollY * getSensitivity())
-                        }
-                    } else if (event.type == PointerEventType.Move) {
-                        if (event.buttons.isPrimaryPressed) {
-                            val previous = previousMoveDownPos
-                            if (previous != null && current != null) {
-                                val dx = (current.x - previous.x).toInt()
-                                val dy = (current.y - previous.y).toInt()
-                                if (dx != 0 || dy != 0) {
-                                    onMove(dx, dy)
-                                }
-                            }
-                            previousMoveDownPos = current
-                        } else {
-                            previousMoveDownPos = null
+
+    fun Modifier.applyDesktopPointerInput() = pointerInput(Unit) {
+        while (true) {
+            val event = awaitPointerEventScope {
+                awaitPointerEvent()
+            }
+            val current = event.changes.firstOrNull()?.position
+            if (event.type == PointerEventType.Scroll) {
+                val scrollY: Float? = event.changes.firstOrNull()?.scrollDelta?.y
+                if (scrollY != null && scrollY != 0f) {
+                    onZoom(current?.toPt() ?: Pt(width / 2, height / 2), -scrollY * getSensitivity())
+                }
+            } else if (event.type == PointerEventType.Move) {
+                if (event.buttons.isPrimaryPressed) {
+                    val previous = previousMoveDownPos
+                    if (previous != null && current != null) {
+                        val dx = (current.x - previous.x).toInt()
+                        val dy = (current.y - previous.y).toInt()
+                        if (dx != 0 || dy != 0) {
+                            onMove(dx, dy)
                         }
                     }
-                    if (event.type == PointerEventType.Press) {
-                        previousPressTime = timeMs()
-                        previousPressPos = current
-                    }
-                    if (event.type == PointerEventType.Release) {
-                        if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
-                            val previous = previousPressPos
-                            if (current != null && previous != null) {
-                                val dx = current.x - previous.x
-                                val dy = current.y - previous.y
-                                val distance = sqrt(dx * dx + dy * dy)
-                                if (distance < Config.CLICK_AREA_RADIUS_PX) {
-                                    onClick(current.toPt())
-                                }
-                            }
+                    previousMoveDownPos = current
+                } else {
+                    previousMoveDownPos = null
+                }
+            }
+            if (event.type == PointerEventType.Press) {
+                previousPressTime = timeMs()
+                previousPressPos = current
+            }
+            if (event.type == PointerEventType.Release) {
+                if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
+                    val previous = previousPressPos
+                    if (current != null && previous != null) {
+                        val dx = current.x - previous.x
+                        val dy = current.y - previous.y
+                        val distance = sqrt(dx * dx + dy * dy)
+                        if (distance < Config.CLICK_AREA_RADIUS_PX) {
+                            onClick(current.toPt())
                         }
                     }
                 }
             }
+        }
+    }
+    val transformableState = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
+        onMove(offsetChange.x.roundToInt(), offsetChange.y.roundToInt())
+        onZoom(Pt(width / 2, height / 2), zoomChange.toDouble() - 1)
+    }
+    fun Modifier.applyAndroidGestureHandler() =
+        transformable(transformableState)
+
+    if(false)
+    TransformableSample()
+    else
+    Canvas(
+        Modifier.size(width.dp, height.dp)
+            .applyAndroidGestureHandler()
     ) {
         state.matrix.forEach { t ->
             val size = IntSize(t.display.size, t.display.size)
@@ -98,6 +113,36 @@ fun MapViewAndroidDesktop(
         }, color = Color.Red, style = Stroke(2f))
     }
 //    ScrollableArea(state)
+}
+
+@Composable
+fun TransformableSample() {
+    // set up all transformation states
+    var scale by remember { mutableStateOf(1f) }
+    var rotation by remember { mutableStateOf(0f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    val state = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
+        scale *= zoomChange
+        rotation += rotationChange
+        offset += offsetChange
+    }
+    Box(
+        Modifier
+            // apply other transformations like rotation and zoom
+            // on the pizza slice emoji
+            .graphicsLayer(
+                scaleX = scale,
+                scaleY = scale,
+                rotationZ = rotation,
+                translationX = offset.x,
+                translationY = offset.y
+            )
+            // add transformable to listen to multitouch transformation events
+            // after offset
+            .transformable(state = state)
+            .background(Color.Blue)
+            .fillMaxSize()
+    )
 }
 
 @Composable

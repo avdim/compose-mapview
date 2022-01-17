@@ -11,6 +11,8 @@ sealed interface GridIntent {
     class TileLoaded(val tile: ImageTile):GridIntent
 }
 
+private var nextOrder: Int = 0
+
 fun CoroutineScope.createGridStore(
     effectHandler: (store: Store<ImageTilesGrid, GridIntent>, SideEffect) -> Unit
 ) = createStoreWithSideEffect(
@@ -19,11 +21,10 @@ fun CoroutineScope.createGridStore(
 ) { state, intent: GridIntent ->
     when (intent) {
         is GridIntent.LoadTile -> {
-            state.copy(nextOrder = state.nextOrder + 1)
-                .addSideEffect(SideEffect.LoadTile(intent.tile, state.nextOrder))
+            state.addSideEffect(SideEffect.LoadTile(intent.tile, nextOrder++))
         }
         is GridIntent.TileLoaded -> {
-            state.copy(matrix = (state.matrix + intent.tile).sortedBy { it.order }.takeLast(20))//todo 20
+            state.copy(matrix = (state.matrix + intent.tile).sortedBy { it.order }.takeLast(40))//todo take last
                 .noSideEffects()
         }
     }

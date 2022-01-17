@@ -38,7 +38,7 @@ public fun MapView(width: Int = 800, height: Int = 500) {
         height = height,
         stateFlow = gridStore.stateFlow,
         onZoom = { pt, change -> mapStore.send(MapIntent.Zoom(pt, change)) },
-        onClick = { mapStore.send(MapIntent.Zoom(it, 2.0)) }
+        onClick = { mapStore.send(MapIntent.Zoom(it, 0.8)) }
     ) { dx, dy ->
         mapStore.send(MapIntent.Move(Pt(-dx, -dy)))
     }
