@@ -32,7 +32,7 @@ import kotlin.math.sqrt
 @Composable
 fun MapViewAndroidDesktop(
     modifier: Modifier,
-    touchScreen: Boolean,
+    isInTouchMode: Boolean,
     stateFlow: StateFlow<ImageTilesGrid>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
@@ -58,7 +58,7 @@ fun MapViewAndroidDesktop(
             }
             when (event.type) {
                 PointerEventType.Move -> {
-                    if (event.buttons.isPrimaryPressed || touchScreen) {
+                    if (event.buttons.isPrimaryPressed || isInTouchMode) {
                         val previous = previousMoveDownPos
                         if (previous != null && current != null) {
                             val dx = (current.x - previous.x).toInt()
@@ -78,7 +78,7 @@ fun MapViewAndroidDesktop(
                     previousMoveDownPos = current
                 }
                 PointerEventType.Release -> {
-                    if (!touchScreen) {
+                    if (!isInTouchMode) {
                         if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
                             val previous = previousPressPos
                             if (current != null && previous != null) {
@@ -123,7 +123,7 @@ fun MapViewAndroidDesktop(
     Canvas(
         modifier.applyPointerInput()
             .run {
-                if (touchScreen) {
+                if (isInTouchMode) {
                     applyTouchScreenHandlers()
                 } else {
                     this

@@ -2,7 +2,6 @@ package com.map
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
@@ -40,7 +39,7 @@ internal actual fun PlatformMapView(
 ){
     MapViewAndroidDesktop(
         modifier = modifier,
-        touchScreen = false,
+        isInTouchMode = false,
         stateFlow = stateFlow,
         onZoom = onZoom,
         onClick = onClick,
