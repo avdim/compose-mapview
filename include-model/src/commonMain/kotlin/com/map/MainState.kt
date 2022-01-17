@@ -1,5 +1,7 @@
 package com.map
 
+import kotlinx.coroutines.CoroutineScope
+
 /**
  * sample in js http://jsfiddle.net/84P9r/
  */
@@ -44,7 +46,7 @@ sealed interface MapIntent {
     data class Move(val pt: Pt) : MapIntent
 }
 
-fun createMapStore(width: Int, height: Int) =
+fun CoroutineScope.createMapStore(width: Int, height: Int) =
     createStore(MapState(width = width, height = height)) { state: MapState, intent: MapIntent ->
         when (intent) {
             is MapIntent.Zoom -> {

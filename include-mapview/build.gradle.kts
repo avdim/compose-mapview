@@ -23,6 +23,7 @@ kotlin {
             dependencies {
                 implementation("com.map:model:1.0")
                 implementation(compose.runtime)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
         val androidMain by getting {

@@ -1,5 +1,6 @@
 package com.map
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,7 @@ interface Store<STATE, INTENT> {
 /**
  * Самая простая реализация MVI архитектуры для слоя представления.
  */
-fun <STATE, INTENT> createStore(init: STATE, reducer: Reducer<STATE, INTENT>): Store<STATE, INTENT> {
+fun <STATE, INTENT> CoroutineScope.createStore(init: STATE, reducer: Reducer<STATE, INTENT>): Store<STATE, INTENT> {
     val mutableStateFlow = MutableStateFlow(init)
     val channel: Channel<INTENT> = Channel(Channel.UNLIMITED)
 
@@ -25,7 +26,7 @@ fun <STATE, INTENT> createStore(init: STATE, reducer: Reducer<STATE, INTENT>): S
         init {
             //https://m.habr.com/ru/company/kaspersky/blog/513364/
             //or alternative in jvm use fun CoroutineScope.actor(...)
-            APP_SCOPE.launch {
+            launch {
                 channel.consumeAsFlow().collect { intent ->
                     mutableStateFlow.value = reducer(mutableStateFlow.value, intent)
                 }
@@ -49,7 +50,7 @@ data class ReducerResult<STATE, EFFECT>(val state: STATE, val sideEffects: List<
 /**
  * MVI по типу ELM с обработкой SideEffect-ов
  */
-fun <STATE, INTENT, EFFECT> createStoreWithSideEffect(
+fun <STATE, INTENT, EFFECT> CoroutineScope.createStoreWithSideEffect(
     init: STATE,
     effectHandler: (store: Store<STATE, INTENT>, sideEffect: EFFECT) -> Unit,
     reducer: ReducerSE<STATE, INTENT, EFFECT>
@@ -70,9 +71,9 @@ fun <STATE, INTENT, EFFECT> createStoreWithSideEffect(
 fun <STATE:Any, EFFECT> STATE.noSideEffects() = ReducerResult(this, emptyList<EFFECT>())
 fun <STATE:Any, EFFECT> STATE.addSideEffects(sideEffects: List<EFFECT>) = ReducerResult(this, sideEffects)
 
-fun <T, R> StateFlow<T>.mapStateFlow(init:R, transform: suspend (T) -> R): StateFlow<R> {
+fun <T, R> StateFlow<T>.mapStateFlow(scope: CoroutineScope, init:R, transform: suspend (T) -> R): StateFlow<R> {
     val result = MutableStateFlow(init)
-    APP_SCOPE.launch {
+    scope.launch {
         collect {
             result.value = transform(it)
         }

@@ -3,6 +3,6 @@ package com.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlin.coroutines.CoroutineContext
 
-actual fun getAppScope(): CoroutineScope = MainScope()
-actual fun getBackgroundScope(): CoroutineScope = CoroutineScope(Dispatchers.Default)
+actual fun getDispatcherIO(): CoroutineContext = Dispatchers.Default

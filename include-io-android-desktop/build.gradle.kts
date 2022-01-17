@@ -1,6 +1,5 @@
 plugins {
-    id("com.android.library")
-    kotlin("multiplatform")
+    kotlin("jvm")
 }
 
 version = "1.0"
@@ -9,50 +8,9 @@ val KTOR_VERSION = "1.6.7"
 val ktorCore = "io.ktor:ktor-client-core:${KTOR_VERSION}"
 val ktorCIO = "io.ktor:ktor-client-cio:${KTOR_VERSION}"
 
-kotlin {
-    android()
-    jvm("desktop")
-    sourceSets {
-        val shareAndroidDesktop by creating {
-            dependencies {
-                implementation("com.map:model:1.0")
-                api(ktorCore)
-            }
-        }
-        val androidMain by getting {
-            dependsOn(shareAndroidDesktop)
-            dependencies {
-                implementation(ktorCIO)
-            }
-        }
-        val desktopMain by getting {
-            dependsOn(shareAndroidDesktop)
-            dependencies {
-                implementation(ktorCIO)
-            }
-        }
-    }
-}
-
-android {
-    compileSdk = 31
-
-    defaultConfig {
-        minSdk = 21
-        targetSdk = 31
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    sourceSets {
-        named("main") {
-            manifest.srcFile("src/androidMain/AndroidManifest.xml")
-            res.srcDirs("src/androidMain/res")
-        }
-    }
+dependencies {
+    implementation("com.map:model:1.0")
+    implementation(ktorCIO)
 }
 
 repositories {

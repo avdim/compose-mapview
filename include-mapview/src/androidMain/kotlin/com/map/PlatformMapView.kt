@@ -3,12 +3,12 @@ package com.map
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.map.ui.MapViewAndroidDesktop
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
@@ -17,9 +17,9 @@ import java.io.File
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal actual fun createImageRepositoryComposable(): TileContentRepository<GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage> {
     return createRealRepository()
-        .decorateWithDiskCache(LocalContext.current.cacheDir)
+        .decorateWithDiskCache(ioScope, LocalContext.current.cacheDir)
         .adapter { GpuOptimizedImage(it.toImageBitmap()) }
         .decorateWithInMemoryCache()
 }

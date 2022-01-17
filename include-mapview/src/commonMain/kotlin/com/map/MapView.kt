@@ -1,31 +1,34 @@
 package com.map
 
 import androidx.compose.runtime.Composable
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.js.JsExport
 
 @JsExport
 @Composable
 public fun MapView(width: Int = 800, height: Int = 500) {
-    val store: Store<MapState, MapIntent> = createMapStore(width, height)
-    val imageRepository = createImageRepositoryComposable()
-    val tilesStateFlow = store.stateFlow.mapStateFlow(
+    val viewScope = rememberCoroutineScope()
+    val ioScope = rememberCoroutineScope { getDispatcherIO() }
+    val mviStore: Store<MapState, MapIntent> = viewScope.createMapStore(width, height)
+    val imageRepository = createImageRepositoryComposable(ioScope)
+    val tilesStateFlow = mviStore.stateFlow.mapStateFlow(
+        scope = viewScope,
         init = ImageTilesGrid(emptyList())
     ) {
-        it.calcTiles().downloadImages(imageRepository)//todo не очевиден return тип
+        it.calcTiles().downloadImages(ioScope, imageRepository)//todo не очевиден return тип
     }
     PlatformMapView(
         width = width,
         height = height,
         stateFlow = tilesStateFlow,
-        onZoom = { pt, change -> store.send(MapIntent.Zoom(pt, change)) },
-        onClick = { store.send(MapIntent.Zoom(it, 2.0)) }
+        onZoom = { pt, change -> mviStore.send(MapIntent.Zoom(pt, change)) },
+        onClick = { mviStore.send(MapIntent.Zoom(it, 2.0)) }
     ) { dx, dy ->
-        store.send(MapIntent.Move(Pt(-dx, -dy)))
+        mviStore.send(MapIntent.Move(Pt(-dx, -dy)))
     }
-    Telemetry(store.stateFlow)
+    Telemetry(mviStore.stateFlow)
 }
 
 /**
@@ -34,7 +37,7 @@ public fun MapView(width: Int = 800, height: Int = 500) {
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal expect fun createImageRepositoryComposable():TileContentRepository<GpuOptimizedImage>
+internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope):TileContentRepository<GpuOptimizedImage>
 
 @Composable
 internal expect fun PlatformMapView(
@@ -49,10 +52,10 @@ internal expect fun PlatformMapView(
 @Composable
 internal expect fun Telemetry(stateFlow: StateFlow<MapState>)
 
-private suspend fun TilesGrid.downloadImages(imageRepository: TileContentRepository<GpuOptimizedImage>):ImageTilesGrid {
+private suspend fun TilesGrid.downloadImages(scope:CoroutineScope, imageRepository: TileContentRepository<GpuOptimizedImage>):ImageTilesGrid {
     val matrix1: List<List<ImageTile>> = matrix.map {
         it.map { displayTile ->
-            getBackgroundScope().async {
+            scope.async {
                 ImageTile(
                     image = imageRepository.getTileContent(displayTile.tile),
                     display = displayTile
