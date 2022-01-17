@@ -23,7 +23,6 @@ import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import com.map.*
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.ceil
@@ -45,7 +44,7 @@ fun MapViewAndroidDesktop(
     var previousPressPos by remember { mutableStateOf<Offset?>(null) }
     val state by stateFlow.collectAsState()
 
-    fun Modifier.applyDesktopPointerInput() = pointerInput(Unit) {
+    fun Modifier.applyPointerInput() = pointerInput(Unit) {
         while (true) {
             val event = awaitPointerEventScope {
                 awaitPointerEvent()
@@ -79,7 +78,7 @@ fun MapViewAndroidDesktop(
                     previousMoveDownPos = current
                 }
                 PointerEventType.Release -> {
-                    if(!touchScreen) {
+                    if (!touchScreen) {
                         if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
                             val previous = previousPressPos
                             if (current != null && previous != null) {
@@ -102,27 +101,34 @@ fun MapViewAndroidDesktop(
         onZoom(null, zoomChange.toDouble() - 1)
     }
 
-    fun Modifier.applyAndroidGestureHandler() =
-        transformable(transformableState)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = {
-                        if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
-                            val previous = previousPressPos
-                            if (previous != null && previous.distanceTo(it) < Config.CLICK_AREA_RADIUS_PX) {
-                                onClick(it.toPt())
-                            }
+    fun Modifier.applyTouchScreenHandlers(): Modifier {
+        return transformable(
+            transformableState
+        ).pointerInput(Unit) {
+            detectTapGestures(
+                onTap = {
+                    if (timeMs() - previousPressTime < Config.CLICK_DURATION_MS) {
+                        val previous = previousPressPos
+                        if (previous != null && previous.distanceTo(it) < Config.CLICK_AREA_RADIUS_PX) {
+                            onClick(it.toPt())
                         }
-                        previousPressTime = timeMs()
-                        previousMoveDownPos = null
                     }
-                )
-            }
+                    previousPressTime = timeMs()
+                    previousMoveDownPos = null
+                }
+            )
+        }
+    }
 
     Canvas(
-        modifier.fillMaxSize()
-            .applyAndroidGestureHandler()
-            .applyDesktopPointerInput()
+        modifier.applyPointerInput()
+            .run {
+                if (touchScreen) {
+                    applyTouchScreenHandlers()
+                } else {
+                    this
+                }
+            }
     ) {
         updateSize(size.width.toInt(), size.height.toInt())
         clipRect() {
