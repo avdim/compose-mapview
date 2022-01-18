@@ -2,32 +2,29 @@ package com.map
 
 import kotlinx.coroutines.*
 
-
-fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
+fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
     scope: CoroutineScope,
     maxParallelRequests: Int = 10,
     waitBufferCapacity: Int = 50,
     delayBeforeRequestMs: Long = 50 // Если карта быстро изменяется, то загружать сразу нет смысла
-): TileContentRepository<T> {
+): ContentRepository<K, T> {
     val origin = this
 
-    /**
-     * Чтобы не имееть дело с mutable состоянием, воспользуемся immutable состоянием внутри Store
-     */
+    // Потокобезопасное immutable состояние
     data class State(
-        val fifo: CollectionAddRemove<ElementWait<T>> = createStack(waitBufferCapacity),
+        val stack: CollectionAddRemove<ElementWait<K, T>> = createStack(waitBufferCapacity),
         val currentRequests: Int = 0
     )
 
-    val store = scope.createStoreWithSideEffect<State, Intent<T>, SideEffect2<T>>(
+    val store = scope.createStoreWithSideEffect<State, Intent<K, T>, SideEffect2<K, T>>(
         init = State(),
-        effectHandler = { store, effect: SideEffect2<T> ->
+        effectHandler = { store, effect: SideEffect2<K, T> ->
             when (effect) {
-                is SideEffect2.Load<T> -> {
+                is SideEffect2.Load<K, T> -> {
                     effect.waitElements.forEach { element ->
                         scope.launch {
                             try {
-                                val result = origin.getTileContent(element.tile)
+                                val result = origin.loadContent(element.key)
                                 element.deferred.complete(result)
                             } catch (t: Throwable) {
                                 val message = "caught exception in decorateWithLimitRequestsInParallel"
@@ -38,7 +35,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
                         }
                     }
                 }
-                is SideEffect2.Delay<T> -> {
+                is SideEffect2.Delay<K, T> -> {
                     scope.launch {
                         delay(delayBeforeRequestMs)
                         store.send(Intent.AfterDelay())
@@ -46,23 +43,23 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
                 }
             }
         }
-    ) { state, intent: Intent<T> ->
+    ) { state, intent: Intent<K, T> ->
         // Модификация состояния происходит только в этой функции и исполняется в одном потоке
         when (intent) {
             is Intent.NewElement -> {
-                val (fifo, removed) = state.fifo.add(intent.wait)
+                val (fifo, removed) = state.stack.add(intent.wait)
                 removed?.let {
                     println("drop")//TODO
                     scope.launch {
                         it.deferred.completeExceptionally(Exception("cancelled in decorateWithLimitRequestsInParallel"))
                     }
                 }
-                state.copy(fifo = fifo).addSideEffect(SideEffect2.Delay())
+                state.copy(stack = fifo).addSideEffect(SideEffect2.Delay())
             }
             is Intent.AfterDelay -> {
-                if (state.fifo.isNotEmpty()) {
-                    var fifo = state.fifo
-                    val elementsToLoad: MutableList<ElementWait<T>> = mutableListOf()
+                if (state.stack.isNotEmpty()) {
+                    var fifo = state.stack
+                    val elementsToLoad: MutableList<ElementWait<K, T>> = mutableListOf()
                     while (state.currentRequests + elementsToLoad.size < maxParallelRequests && fifo.isNotEmpty()) {
                         val result = fifo.remove()
                         result.removed?.let {
@@ -71,7 +68,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
                         fifo = result.collection
                     }
                     state.copy(
-                        fifo = fifo,
+                        stack = fifo,
                         currentRequests = state.currentRequests + elementsToLoad.size
                     ).addSideEffect(SideEffect2.Load(elementsToLoad))
                 } else {
@@ -82,7 +79,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
                 state.copy(
                     currentRequests = state.currentRequests - 1
                 ).run {
-                    if (state.fifo.isNotEmpty()) {
+                    if (state.stack.isNotEmpty()) {
                         addSideEffect(SideEffect2.Delay())
                     } else {
                         noSideEffects()
@@ -92,31 +89,23 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
         }
     }
 
-    scope.launch {
-        store.stateFlow.collect {
-            println("INFO decorateWithLimitRequestsInParallel:")
-            println("currentRequests: ${it.currentRequests}")
-            println("fifo.size: ${it.fifo.size}")
-        }
-    }
-
-    return object : TileContentRepository<T> {
-        override suspend fun getTileContent(tile: Tile): T {
+    return object : ContentRepository<K, T> {
+        override suspend fun loadContent(key: K): T {
             return CompletableDeferred<T>()
-                .also { store.send(Intent.NewElement(ElementWait(tile, it))) }
+                .also { store.send(Intent.NewElement(ElementWait(key, it))) }
                 .await()
         }
     }
 }
 
-private class ElementWait<T>(val tile: Tile, val deferred: CompletableDeferred<T>)
-private sealed interface Intent<T> {
-    class ElementComplete<T> : Intent<T>
-    class NewElement<T>(val wait: ElementWait<T>) : Intent<T>
-    class AfterDelay<T> : Intent<T>
+private class ElementWait<K, T>(val key: K, val deferred: CompletableDeferred<T>)
+private sealed interface Intent<K, T> {
+    class ElementComplete<K, T> : Intent<K, T>
+    class NewElement<K, T>(val wait: ElementWait<K, T>) : Intent<K, T>
+    class AfterDelay<K, T> : Intent<K, T>
 }
 
-private sealed interface SideEffect2<T> {//todo android naming SideEffect duplicate in dex
-    class Load<T>(val waitElements: List<ElementWait<T>>) : SideEffect2<T>
-    class Delay<T> : SideEffect2<T>
+private sealed interface SideEffect2<K, T> {//todo android naming SideEffect duplicate in dex
+    class Load<K, T>(val waitElements: List<ElementWait<K, T>>) : SideEffect2<K, T>
+    class Delay<K, T> : SideEffect2<K, T>
 }

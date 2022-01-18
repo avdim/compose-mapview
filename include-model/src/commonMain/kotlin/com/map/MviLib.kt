@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
@@ -17,6 +16,9 @@ interface Store<STATE, INTENT> {
 }
 /**
  * Самая простая реализация MVI архитектуры для слоя представления.
+ * STATE - immutable состояние
+ * INTENT - Действия, которые влияют на состояние
+ * reducer - геренирует новое состояние
  */
 fun <STATE, INTENT> CoroutineScope.createStore(init: STATE, reducer: Reducer<STATE, INTENT>): Store<STATE, INTENT> {
     val mutableStateFlow = MutableStateFlow(init)

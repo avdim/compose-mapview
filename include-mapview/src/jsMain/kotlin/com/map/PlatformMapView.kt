@@ -6,10 +6,9 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.web.dom.Text
-import kotlin.math.roundToInt
 
 @Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): ContentRepository<Tile, GpuOptimizedImage> {
     // Для js дисковый кэш не нужен. Браузер и так кэширует картинки.
     return createRealRepository()
         .decorateWithLimitRequestsInParallel(ioScope)

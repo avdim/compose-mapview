@@ -22,7 +22,7 @@ public fun MapView(modifier: DisplayModifier) {
                     try {
                         val image: GpuOptimizedImage =
                             (if (Config.SCALE_ONLY_WITH_CROP) tilesHashMap.searchCropAndPut(sideEffect.tile) else null)
-                                ?: imageRepository.getTileContent(sideEffect.tile)
+                                ?: imageRepository.loadContent(sideEffect.tile)
                         tilesHashMap[sideEffect.tile] = image
                         store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
@@ -72,7 +72,7 @@ internal expect fun PlatformMapView(
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage>
+internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): ContentRepository<Tile, GpuOptimizedImage>
 
 @Composable
 internal expect fun Telemetry(stateFlow: StateFlow<MapState>)

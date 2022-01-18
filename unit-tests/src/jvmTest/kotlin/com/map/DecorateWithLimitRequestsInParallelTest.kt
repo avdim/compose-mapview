@@ -6,43 +6,44 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-//todo запуск из консоли
 class DecorateWithLimitRequestsInParallelTest {
     @Test
-    fun testMaximumParallelRequests() {
+    fun testMaximumParallelRequests() = runTest {
         val bufferCapacity = 10
         val totalElementsCount = 50 + bufferCapacity
-        val results: MutableList<Int> = CopyOnWriteArrayList()
-        val jobs: MutableList<Job> = CopyOnWriteArrayList()//todo delete
-        runTest {
-            val counter = AtomicInteger(0)
-            val stub = object : TileContentRepository<Int> {
-                override suspend fun getTileContent(tile: Tile): Int {
-                    delay(Random.nextLong(10, 50))
-                    return counter.incrementAndGet()
-                }
+        val startLoadKeys: MutableList<Int> = CopyOnWriteArrayList()
+        val jobs: MutableList<Job> = CopyOnWriteArrayList()
+
+        val stub = object : ContentRepository<Int, Unit> {
+            override suspend fun loadContent(key: Int): Unit {
+                startLoadKeys.add(key)
+                delay(Random.nextLong(10, 50))
+                return Unit
             }
-            val repository = stub.decorateWithLimitRequestsInParallel(this, waitBufferCapacity = bufferCapacity)
-            repeat(totalElementsCount) {
-                delay(1)
-                jobs.add(
-                    launch(/*job*/) {
-                        try {
-                            val result = repository.getTileContent(Tile(0, 0, 0))
-                            results.add(result)
-                        } catch (t: Throwable) {
-                            //skip dropped elements
-                        }
-                    }
-                )
-            }
-            jobs.joinAll()
-            val guaranteedLoadedElements = (totalElementsCount - bufferCapacity)..totalElementsCount
-            println(results)
-            assertTrue(results.containsAll(guaranteedLoadedElements.toList()), "guaranteed elements exist's")
         }
+
+        val repository = stub.decorateWithLimitRequestsInParallel(CoroutineScope(), waitBufferCapacity = bufferCapacity)
+
+        val counter = AtomicInteger(0)
+        repeat(totalElementsCount) {
+            delay(1)
+            jobs.add(
+                launch(/*job*/) {
+                    try {
+                        val result = repository.loadContent(counter.incrementAndGet())
+                    } catch (t: Throwable) {
+                        //skip dropped elements
+                    }
+                }
+            )
+        }
+        jobs.joinAll()
+        val guaranteedLoadedElements = (totalElementsCount - bufferCapacity)..totalElementsCount
+        println(startLoadKeys)
+        assertTrue(startLoadKeys.containsAll(guaranteedLoadedElements.toList()), "guaranteed elements exist's")
+
+        this.cancel()
     }
 }

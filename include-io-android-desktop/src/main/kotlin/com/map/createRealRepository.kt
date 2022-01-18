@@ -2,12 +2,11 @@ package com.map
 
 import io.ktor.client.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
-fun createRealRepository(ktorClient: HttpClient) = object : TileContentRepository<ByteArray> {
-    override suspend fun getTileContent(tile: Tile): ByteArray {
+fun createRealRepository(ktorClient: HttpClient) = object : ContentRepository<Tile, ByteArray> {
+    override suspend fun loadContent(key: Tile): ByteArray {
         if (Config.SIMULATE_NETWORK_PROBLEMS) {
             delay(Random.nextLong(0, 100))
             if (Random.nextInt(100) < 10) {
@@ -15,7 +14,7 @@ fun createRealRepository(ktorClient: HttpClient) = object : TileContentRepositor
             }
             delay(Random.nextLong(0, 3000))
         }
-        val result = ktorClient.get<ByteArray>(tile.tileUrl)
+        val result = ktorClient.get<ByteArray>(key.tileUrl)
         return result
     }
 }

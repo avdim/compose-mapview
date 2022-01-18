@@ -4,9 +4,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
 
-fun TileContentRepository<ByteArray>.decorateWithDiskCache(backgroundScope: CoroutineScope, cacheDir: File): TileContentRepository<ByteArray> {
+fun ContentRepository<Tile, ByteArray>.decorateWithDiskCache(backgroundScope: CoroutineScope, cacheDir: File): ContentRepository<Tile, ByteArray> {
     val origin = this
-    return object : TileContentRepository<ByteArray> {
+    return object : ContentRepository<Tile, ByteArray> {
 //    val cacheDir: File? //todo для Java можно переделать на nio.Path для неблокирующих операций
         //val cacheDir = System.getProperty("user.home")!! + File.separator + "map-view-cache" + File.separator
 
@@ -21,11 +21,11 @@ fun TileContentRepository<ByteArray>.decorateWithDiskCache(backgroundScope: Coro
             }
         }
 
-        override suspend fun getTileContent(tile: Tile): ByteArray {
+        override suspend fun loadContent(key: Tile): ByteArray {
             if (!cacheDir.exists()) {
-                return origin.getTileContent(tile)
+                return origin.loadContent(key)
             }
-            val file = with(tile) {
+            val file = with(key) {
                 cacheDir.resolve("tile-$zoom-$x-$y.png")
             }
             //todo вставать в synchronized блокировку по ключу tile
@@ -45,7 +45,7 @@ fun TileContentRepository<ByteArray>.decorateWithDiskCache(backgroundScope: Coro
             val result = if (fromCache != null) {
                 fromCache
             } else {
-                val image = origin.getTileContent(tile)
+                val image = origin.loadContent(key)
                 backgroundScope.launch {
                     // save to cacheDir
                     try {

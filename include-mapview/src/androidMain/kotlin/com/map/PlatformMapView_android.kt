@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): ContentRepository<Tile, GpuOptimizedImage> {
     return createRealRepository(HttpClient(CIO))
         .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithDiskCache(ioScope, LocalContext.current.cacheDir)
