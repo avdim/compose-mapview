@@ -19,3 +19,4 @@ fun createRealRepository(ktorClient: HttpClient) = object : TileContentRepositor
         return result
     }
 }
+

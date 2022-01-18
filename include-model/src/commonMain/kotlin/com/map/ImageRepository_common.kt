@@ -13,4 +13,5 @@ fun <A, B> TileContentRepository<A>.adapter(transform: (A) -> B): TileContentRep
     }
 }
 
-val Tile.tileUrl get() = "https://api.maptiler.com/maps/streets/$zoom/$x/$y.png?key=$SECRET_API_KEY" //todo вынести в конфиг с json-ом
+
+

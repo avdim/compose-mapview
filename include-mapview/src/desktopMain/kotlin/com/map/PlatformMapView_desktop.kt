@@ -23,6 +23,7 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): Ti
     // Чтобы не просить разрешений созданим кэш во временной директории.
     val cacheDir = File(System.getProperty("java.io.tmpdir")).resolve(CACHE_DIR_NAME)
     return createRealRepository(HttpClient(CIO))
+        .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithDiskCache(ioScope, cacheDir)
         .adapter { GpuOptimizedImage(it.toImageBitmap()) }
         .decorateWithDistinctDownloader(ioScope)

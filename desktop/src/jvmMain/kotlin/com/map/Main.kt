@@ -21,8 +21,9 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "Map View",
         state = WindowState(
-            position = WindowPosition.Aligned(Alignment.Center),
-            size = getPreferredWindowSize(1400, 1000)
+//            position = WindowPosition.Aligned(Alignment.Center),
+            position = WindowPosition(Alignment.TopStart),
+            size = getPreferredWindowSize(1200, 600)
         ),
         icon = icon
     ) {

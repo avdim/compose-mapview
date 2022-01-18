@@ -17,3 +17,5 @@ val SCROLL_SENSITIVITY_BROWSER = 0.001
 val CACHE_DIR_NAME = "map-view-cache"
 
 fun getSensitivity():Double = SCROLL_SENSITIVITY_DESKTOP
+
+val Tile.tileUrl get() = "https://api.maptiler.com/maps/streets/$zoom/$x/$y.png?key=$SECRET_API_KEY" //todo вынести в конфиг с json-ом
