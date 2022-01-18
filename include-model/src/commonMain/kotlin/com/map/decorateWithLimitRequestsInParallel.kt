@@ -49,8 +49,8 @@ fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
             is Intent.NewElement -> {
                 val (fifo, removed) = state.stack.add(intent.wait)
                 removed?.let {
-                    println("drop")//TODO
                     scope.launch {
+                        // cancel element callback, because hi will wait too long
                         it.deferred.completeExceptionally(Exception("cancelled in decorateWithLimitRequestsInParallel"))
                     }
                 }
