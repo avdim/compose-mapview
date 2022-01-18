@@ -13,6 +13,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import java.awt.Rectangle
 import java.io.File
 import kotlin.math.roundToInt
 
@@ -58,13 +59,13 @@ internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     }
 }
 
-//todo unit tests
+actual val GpuOptimizedImage.isBadQuality: Boolean get() = size < TILE_SIZE
 actual fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage {
     val scale: Float = targetSize.toFloat() / TILE_SIZE
     val newSize = maxOf(1, (size * scale).roundToInt())
     try {
         val multiplier =
-            when(size) {      // size  scale  targetSize  newSize
+            when (size) {      // size  scale  targetSize  newSize
                 512 -> 1f     //  512   0.5       256      256
                 256 -> 0.5f   //  256   0.5       256      128
                 128 -> 0.25f  //  128   0.5       256       64
@@ -75,11 +76,34 @@ actual fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int)
         val newX = srcOffset.x + dx
         val newY = srcOffset.y + dy
         return GpuOptimizedImage(platformSpecificData, IntOffset(newX % TILE_SIZE, newY % TILE_SIZE), newSize)
-    } catch (t:Throwable) {
+    } catch (t: Throwable) {
         t.printStackTrace()
         println("Arithmetic")
         throw t
     }
 }
 
-actual val GpuOptimizedImage.isBadQuality: Boolean get() = size < TILE_SIZE
+private fun GpuOptimizedImage.cropAndScale(x: Int, y: Int, w: Int, h: Int, targetW: Int, targetH: Int): GpuOptimizedImage {
+    val cropped = cropImage(extract().toAwtImage(), Rectangle(x, y, w, h))
+    val scaled = scaleBitmapAspectRatio(cropped, targetW, targetH)
+    val result = GpuOptimizedImage(scaled.toComposeImageBitmap())
+    return result
+    if(false) {
+        return crop(x,y,w,h).scale(targetW, targetH)
+    }
+    if (false) {
+        extract().asSkiaBitmap().asComposeImageBitmap()
+    }
+}
+
+private fun GpuOptimizedImage.crop(x: Int, y: Int, w: Int, h: Int): GpuOptimizedImage {
+    return GpuOptimizedImage(cropImage(extract().toAwtImage(), Rectangle(x, y, w, h)).toComposeImageBitmap())
+}
+
+private fun GpuOptimizedImage.scale(w: Int, h: Int): GpuOptimizedImage {
+    val result = scaleBitmapAspectRatio(extract().toAwtImage(), w, h).toComposeImageBitmap()
+    if (result.width != w || result.height != h) {
+        throw Exception("my exception result.width != w || result.height != h")
+    }
+    return GpuOptimizedImage(result)
+}
