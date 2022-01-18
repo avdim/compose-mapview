@@ -55,10 +55,10 @@ fun CoroutineScope.createMapStore() =
             }
             is MapIntent.Zoom -> {
                 var multiply = (1 + intent.delta)
-                if (multiply < 0.5) {
-                    multiply = 0.5
-                } else if (multiply > 2.0) {
-                    multiply = 2.0
+                if (multiply < 1 / Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT) {
+                    multiply = 1 / Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT
+                } else if (multiply > Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT) {
+                    multiply = Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT
                 }
                 var scale = state.scale * multiply
                 if (scale < state.minScale) {

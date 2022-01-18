@@ -58,23 +58,22 @@ internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     }
 }
 
+//todo unit tests
 actual fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage {
     val scale: Float = targetSize.toFloat() / TILE_SIZE
     val newSize = maxOf(1, (size * scale).roundToInt())
     try {
         val multiplier =
-            when(size) {
-                512 -> 2f
-                256 -> 1f
-                128 -> 0.5f
-                64 -> 0.25f
-                32 -> 0.125f
-                else -> {
-                    0.125f/2
-                }
+            when(size) {      // size  scale  targetSize  newSize
+                512 -> 1f     //  512   0.5       256      256
+                256 -> 0.5f   //  256   0.5       256      128
+                128 -> 0.25f  //  128   0.5       256       64
+                else -> 0.125f
             }
-        val newX = srcOffset.x + ((x * scale).roundToInt()*multiplier).roundToInt()
-        val newY = srcOffset.y + ((y * scale).roundToInt()*multiplier).roundToInt()
+        val dx = x * newSize / targetSize
+        val dy = y * newSize / targetSize
+        val newX = srcOffset.x + dx
+        val newY = srcOffset.y + dy
         return GpuOptimizedImage(platformSpecificData, IntOffset(newX % TILE_SIZE, newY % TILE_SIZE), newSize)
     } catch (t:Throwable) {
         t.printStackTrace()
@@ -82,34 +81,5 @@ actual fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int)
         throw t
     }
 }
-
-//actual fun GpuOptimizedImage.cropAndRestoreSize2(i: Int, j: Int, deltaZoom: Int): GpuOptimizedImage {
-//    var deltaZoom = deltaZoom
-//    var size = this.size
-//    var x = srcOffset.x
-//    var y = srcOffset.y
-//    while (size > 1 && deltaZoom > 0) {
-//        val i = i - (x shl deltaZoom)
-//        val j = j - (y shl deltaZoom)
-//        deltaZoom -= 1
-//        size /= 2
-//
-//    }
-//    srcOffset
-//    srcSize
-//
-//    try {
-//        if (false) { //todo remove
-//            get().asSkiaBitmap().asComposeImageBitmap()
-//        }
-//        val cropped = cropImage(get().toAwtImage(), Rectangle(x, y, w, h))
-//        val scaled = scaleBitmapAspectRatio(cropped, targetW, targetH)
-//        val result = GpuOptimizedImage(scaled.toComposeImageBitmap())
-//        return result
-//    } catch (t: Throwable) {
-//        println("debug")
-//        throw t
-//    }
-//}
 
 actual val GpuOptimizedImage.isBadQuality: Boolean get() = size < TILE_SIZE

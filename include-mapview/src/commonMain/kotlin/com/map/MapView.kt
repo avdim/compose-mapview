@@ -21,7 +21,7 @@ public fun MapView(modifier: DisplayModifier) {
                 ioScope.launch {
                     try {
                         val image: GpuOptimizedImage =
-                            (if (Config.TRY_SCALE_WITH_CROP) tilesHashMap.searchCropAndPut(sideEffect.tile) else null)
+                            (if (Config.SCALE_ONLY_WITH_CROP) tilesHashMap.searchCropAndPut(sideEffect.tile) else null)
                                 ?: imageRepository.getTileContent(sideEffect.tile)
                         tilesHashMap[sideEffect.tile] = image
                         store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
@@ -47,7 +47,7 @@ public fun MapView(modifier: DisplayModifier) {
                 MapIntent.Zoom(pt ?: Pt(mapStore.state.width / 2, mapStore.state.height / 2), change)
             )
         },
-        onClick = { mapStore.send(MapIntent.Zoom(it, 0.8)) },
+        onClick = { mapStore.send(MapIntent.Zoom(it, Config.ZOOM_ON_CLICK)) },
         onMove = { dx, dy -> mapStore.send(MapIntent.Move(Pt(-dx, -dy))) },
         updateSize = { w, h -> mapStore.send(MapIntent.SetSize(w, h)) }
     )
