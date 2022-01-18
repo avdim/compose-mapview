@@ -60,7 +60,7 @@ android {
 buildConfig {
     className("GeneratedSecretConfig")   // forces the class name. Defaults to 'BuildConfig'
     packageName("com.map")
-    buildConfigField("String", "COMMON_VALUE", """ "_no_secret_key_" """)
+    buildConfigField("String", "GENERATED_MAPTILER_SECRET_KEY", """ "_no_secret_key_" """)
 
 //    sourceSets.named<BuildConfigSourceSet>("jvmMain") {
 //        buildConfigField("String", "PLATFORM", "\"jvm\"")

@@ -6,5 +6,5 @@ package com.map
  * Библиотека MapView принимает этот ключ как аргумент.
  * Подробнее в README.md
  */
-const val SECRET_KEY:String = GeneratedSecretConfig.COMMON_VALUE
+const val MAPTILER_SECRET_KEY:String = GeneratedSecretConfig.GENERATED_MAPTILER_SECRET_KEY
 
