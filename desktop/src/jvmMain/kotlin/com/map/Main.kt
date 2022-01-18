@@ -29,7 +29,10 @@ fun main() = application {
     ) {
         MapView(
             modifier = Modifier.fillMaxSize(),
-            mapTilerSecretKey = MAPTILER_SECRET_KEY
+            mapTilerSecretKey = MAPTILER_SECRET_KEY,
+            latitude = 59.999394,
+            longitude = 29.745412,
+            startScale = 300.0,
         )
     }
 }

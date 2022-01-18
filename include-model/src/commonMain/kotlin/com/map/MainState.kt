@@ -14,22 +14,7 @@ data class MapState(
      * display height in dp (pixels)
      */
     val height: Int = 100,
-    /**
-     * 0.1 = little planet
-     * 1.0 = no zoom;
-     * 10.0 = countries
-     * 100.0 = cities
-     */
     val scale: Double = 1.0,
-//    /**
-//     * Latitude -90(South) .. 90(North)
-//     */
-//    val lat: Double = 0.0,
-//    /**
-//     * Longitude -180(Left) .. 180(Right)
-//     */
-//    val lon: Double = 0.0,
-//
     val topLeft: GeoPt = GeoPt(0.0, 0.0)
 )
 
