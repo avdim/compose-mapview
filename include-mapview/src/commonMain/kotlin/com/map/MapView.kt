@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.max
 
 @Composable
 public fun MapView(modifier: DisplayModifier) {
@@ -109,10 +110,7 @@ fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimi
             val deltaZoom = tile1.zoom - tile2.zoom
             val i = tile1.x - (x shl deltaZoom)
             val j = tile1.y - (y shl deltaZoom)
-            val size = TILE_SIZE ushr deltaZoom
-            if (size == 0) {
-                return null//todo придумать tile в 1 пиксель
-            }
+            val size = max(TILE_SIZE ushr deltaZoom, 1)
             val cropImg = img2.crop(i * size, j * size, size, size).scale(TILE_SIZE, TILE_SIZE)
             put(tile1, cropImg)
             return cropImg
