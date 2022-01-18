@@ -25,8 +25,8 @@ public fun MapView(modifier: DisplayModifier) {
                             null
                         }
                         if (imgTryCrop == null && !originalTiles.containsKey(sideEffect.tile)) {
-                            launch {
-                                delay(10)
+                            ioScope.launch {
+                                yield()
                                 if (!originalTiles.containsKey(sideEffect.tile)) {
                                     val image = originalTiles.searchCropAndPut(sideEffect.tile)
                                     if (image != null) {
