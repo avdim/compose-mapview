@@ -6,6 +6,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.max
 
+val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//todo
+
 @Composable
 public fun MapView(modifier: DisplayModifier) {
     val viewScope = rememberCoroutineScope()
@@ -13,23 +15,21 @@ public fun MapView(modifier: DisplayModifier) {
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore()
     val imageRepository = createImageRepositoryComposable(ioScope)
 
-    val originalTiles: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()
-
     val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
         when (sideEffect) {
             is SideEffect.LoadTile -> {
                 ioScope.launch {
                     try {
                         val imgTryCrop = if (Config.TRY_SCALE_WITH_CROP) {
-                            originalTiles.searchCropAndPut(sideEffect.tile)
+                            tilesHashMap.searchCropAndPut(sideEffect.tile)
                         } else {
                             null
                         }
-                        if (imgTryCrop == null && !originalTiles.containsKey(sideEffect.tile)) {
+                        if (imgTryCrop == null && !tilesHashMap.containsKey(sideEffect.tile)) {
                             ioScope.launch {
                                 yield()
-                                if (!originalTiles.containsKey(sideEffect.tile)) {
-                                    val image = originalTiles.searchCropAndPut(sideEffect.tile)
+                                if (!tilesHashMap.containsKey(sideEffect.tile)) {
+                                    val image = tilesHashMap.searchCropAndPut(sideEffect.tile)
                                     if (image != null) {
                                         store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
                                     }
@@ -37,7 +37,7 @@ public fun MapView(modifier: DisplayModifier) {
                             }
                         }
                         val image = imgTryCrop ?: imageRepository.getTileContent(sideEffect.tile)
-                        originalTiles[sideEffect.tile] = image
+                        tilesHashMap[sideEffect.tile] = image
                         store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
                         println("fail to load tile ${sideEffect.displayTile}, $t")

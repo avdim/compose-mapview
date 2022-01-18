@@ -20,7 +20,7 @@ fun CoroutineScope.createGridStore(
     when (intent) {
         is GridIntent.NewTiles -> {
             state.copy(
-                matrix = intent.grid.matrix.map { it.first }.associateWith { null }
+                matrix = intent.grid.matrix.map { it.first to tilesHashMap.searchCropAndPut(it.second) }.toMap() //todo тормозит
             ).addSideEffects(
                 intent.grid.matrix.map {
                     SideEffect.LoadTile(it.first, it.second)
