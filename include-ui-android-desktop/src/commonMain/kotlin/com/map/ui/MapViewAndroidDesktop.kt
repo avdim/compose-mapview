@@ -136,7 +136,13 @@ fun MapViewAndroidDesktop(
                 if (img != null) {
                     val size = IntSize(t.size, t.size)
                     val position = IntOffset(t.x, t.y)
-                    drawImage(img.extract(), srcOffset = img.srcOffset(), srcSize = img.srcSize(), dstOffset = position, dstSize = size)
+                    drawImage(
+                        img.extract(),
+                        srcOffset = IntOffset(img.offsetX, img.offsetY),
+                        srcSize = IntSize(img.cropSize, img.cropSize),
+                        dstOffset = position,
+                        dstSize = size
+                    )
                 }
             }
         }

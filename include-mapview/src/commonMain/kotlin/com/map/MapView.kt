@@ -104,6 +104,3 @@ fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimi
     }
     return null
 }
-
-expect fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage
-expect val GpuOptimizedImage.isBadQuality: Boolean

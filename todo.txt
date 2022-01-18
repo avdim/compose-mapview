@@ -7,3 +7,5 @@ https://cloud.maptiler.com/maps/streets/
 library mode with explicit private / public
 SecretApiKey.kt
 appScope, networkScope
+завернуть в Box, чтобы использовать в любом лейауте
+

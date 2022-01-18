@@ -111,7 +111,6 @@ public fun MapViewBrowser(
             DomSideEffect(state) { element: Element ->
                 val canvas = element as HTMLCanvasElement
                 val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
-                ctx.fillStyle = "green"//todo
                 state.matrix.forEach { (t, img) ->
                     if (img != null) {
                         ctx.drawImage(
@@ -120,14 +119,13 @@ public fun MapViewBrowser(
                             dy = t.y.toDouble(),
                             dw = t.size.toDouble(),
                             dh = t.size.toDouble(),
-                            sx = img.srcOffset.x.toDouble(),
-                            sy = img.srcOffset.y.toDouble(),
-                            sw = img.size.toDouble(),
-                            sh = img.size.toDouble()
+                            sx = img.offsetX.toDouble(),
+                            sy = img.offsetY.toDouble(),
+                            sw = img.cropSize.toDouble(),
+                            sh = img.cropSize.toDouble()
                         )
                     }
                 }
-                ctx.rect(0.0, 0.0, width.toDouble(), height.toDouble())//todo
             }
         }
     )

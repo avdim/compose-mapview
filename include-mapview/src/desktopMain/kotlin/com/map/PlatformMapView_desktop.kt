@@ -60,17 +60,6 @@ internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     }
 }
 
-actual val GpuOptimizedImage.isBadQuality: Boolean get() = size < TILE_SIZE
-actual fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage {
-    val scale: Float = targetSize.toFloat() / TILE_SIZE
-    val newSize = maxOf(1, (size * scale).roundToInt())
-    val dx = x * newSize / targetSize
-    val dy = y * newSize / targetSize
-    val newX = srcOffset.x + dx
-    val newY = srcOffset.y + dy
-    return GpuOptimizedImage(platformSpecificData, IntOffset(newX % TILE_SIZE, newY % TILE_SIZE), newSize)
-}
-
 private fun GpuOptimizedImage.cropAndScale(x: Int, y: Int, w: Int, h: Int, targetW: Int, targetH: Int): GpuOptimizedImage {
     val cropped = cropImage(extract().toAwtImage(), Rectangle(x, y, w, h))
     val scaled = scaleBitmapAspectRatio(cropped, targetW, targetH)
