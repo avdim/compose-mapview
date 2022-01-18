@@ -7,11 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toAwtImage
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import com.map.ui.MapViewAndroidDesktop
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import java.awt.Rectangle
 import java.io.File
 
 @Composable
@@ -56,3 +59,12 @@ internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     }
 }
 
+actual fun GpuOptimizedImage.crop(x: Int, y: Int, w: Int, h: Int): GpuOptimizedImage {
+    try {
+        val result = GpuOptimizedImage(cropImage(get().toAwtImage(), Rectangle(x, y, w, h)).toComposeImageBitmap())
+        return result
+    } catch (t:Throwable) {
+        println("debug")
+        throw t
+    }
+}

@@ -12,15 +12,15 @@ public fun MapView(modifier: DisplayModifier) {
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore()
     val imageRepository = createImageRepositoryComposable(ioScope)
 
-    val originalTiles:MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()
+    val originalTiles: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()
 
     val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
         when (sideEffect) {
             is SideEffect.LoadTile -> {
                 ioScope.launch {
                     try {
-                        launch {
-                            if (!originalTiles.containsKey(sideEffect.tile)) {
+                        if (!originalTiles.containsKey(sideEffect.tile)) {
+                            launch {
                                 delay(10)
                                 if (!originalTiles.containsKey(sideEffect.tile)) {
                                     val image = originalTiles.searchCropAndPut(sideEffect.tile)
@@ -85,8 +85,34 @@ internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): Ti
 @Composable
 internal expect fun Telemetry(stateFlow: StateFlow<MapState>)
 
-fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile:Tile):GpuOptimizedImage? {
+fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimizedImage? {
+    val img1 = get(tile1)
+    if (img1 != null) {
+        return img1
+    }
+    var zoom = tile1.zoom
+    var x = tile1.x
+    var y = tile1.y
+    while (zoom > 0) {
+        zoom--
+        x /= 2
+        y /= 2
+        val tile2 = Tile(zoom, x, y)
+        val img2 = get(tile2)
+        if (img2 != null) {
+            val deltaZoom = tile1.zoom - tile2.zoom
+            val i = tile1.x - (x shl deltaZoom)
+            val j = tile1.y - (y shl deltaZoom)
+            val size = TILE_SIZE ushr zoom
+            if (size == 0) {
+                return null//todo придумать tile в 1 пиксель
+            }
+            val cropImg = img2.crop(i * size, j * size, size, size)
+            put(tile1, cropImg)
+            return cropImg
+        }
+    }
     return null
 }
 
-//expect fun GpuOptimizedImage.crop():GpuOptimizedImage
+expect fun GpuOptimizedImage.crop(x: Int, y: Int, w: Int, h: Int): GpuOptimizedImage
