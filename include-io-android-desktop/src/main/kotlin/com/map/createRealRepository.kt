@@ -5,17 +5,22 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
-fun createRealRepository(ktorClient: HttpClient) = object : ContentRepository<Tile, ByteArray> {
-    override suspend fun loadContent(key: Tile): ByteArray {
-        if (Config.SIMULATE_NETWORK_PROBLEMS) {
-            delay(Random.nextLong(0, 100))
-            if (Random.nextInt(100) < 10) {
-                throw Exception("Simulate network problems")
+fun createRealRepository(ktorClient: HttpClient, mapTilerSecretKey: String) =
+    object : ContentRepository<Tile, ByteArray> {
+        @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+        override suspend fun loadContent(tile: Tile): ByteArray {
+            if (Config.SIMULATE_NETWORK_PROBLEMS) {
+                delay(Random.nextLong(0, 100))
+                if (Random.nextInt(100) < 10) {
+                    throw Exception("Simulate network problems")
+                }
+                delay(Random.nextLong(0, 3000))
             }
-            delay(Random.nextLong(0, 3000))
+            Config.createTileUrl(tile, mapTilerSecretKey)
+            val result = ktorClient.get<ByteArray>(
+                urlString = Config.createTileUrl(tile, mapTilerSecretKey)
+            )
+            return result
         }
-        val result = ktorClient.get<ByteArray>(key.tileUrl)
-        return result
     }
-}
 

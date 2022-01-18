@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): ContentRepository<Tile, GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage> {
     // Для js дисковый кэш не нужен. Браузер и так кэширует картинки.
-    return createRealRepository()
+    return createRealRepository(mapTilerSecretKey)
         .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithInMemoryCache()
 }

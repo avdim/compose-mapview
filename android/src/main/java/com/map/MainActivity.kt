@@ -11,7 +11,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MapView(Modifier.fillMaxSize())
+            MapView(
+                modifier = Modifier.fillMaxSize(),
+                mapTilerSecretKey = MAPTILER_SECRET_KEY,
+            )
         }
     }
 }

@@ -8,12 +8,32 @@ import kotlin.math.max
 
 val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//todo
 
+/**
+ * MapView to display Earth tile maps. API provided by cloud.maptiler.com
+ *
+ * @param mapTilerSecretKey secret API key for cloud.maptiler.com
+ * In file: local.properties, set key:    mapTilerSecretKey=xXxXxXxXxXxXx
+ * Here you get can this key: https://cloud.maptiler.com/maps/streets/  (register and look at url field ?key=...#)
+ *
+ * @param startGeoPosition initial Geo position of map center
+ *
+ * @param startScale initial scale
+ * (Value 1.0 Full Earth view),
+ * (Value 30.0 Countries),
+ * (Value 150.0 Cities),
+ * (Value 40000.0 Street's)
+ */
 @Composable
-public fun MapView(modifier: DisplayModifier) {
+public fun MapView(
+    modifier: DisplayModifier,
+    mapTilerSecretKey:String,
+    startGeoPosition:Double=0.0, //TODO
+    startScale:Double=1.0, //TODO
+) {
     val viewScope = rememberCoroutineScope()
     val ioScope = CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO())
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore()
-    val imageRepository = createImageRepositoryComposable(ioScope)
+    val imageRepository = createImageRepositoryComposable(ioScope, mapTilerSecretKey)
 
     val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
         when (sideEffect) {
@@ -72,7 +92,7 @@ internal expect fun PlatformMapView(
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): ContentRepository<Tile, GpuOptimizedImage>
+internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage>
 
 @Composable
 internal expect fun Telemetry(stateFlow: StateFlow<MapState>)

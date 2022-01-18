@@ -8,21 +8,26 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.js.Promise
 
-fun createRealRepository() = object : ContentRepository<Tile, GpuOptimizedImage> {
-    override suspend fun loadContent(key: Tile): GpuOptimizedImage {
-        val promise: Promise<ImageBitmap> = suspendCoroutine { continuation ->
-            val img = Image() // Create new img element
-            img.onload = {
-                continuation.resume(
-                    createImageBitmap(img)
-                )
+fun createRealRepository(mapTilerSecretKey: String) =
+    object : ContentRepository<Tile, GpuOptimizedImage> {
+        @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+        override suspend fun loadContent(tile: Tile): GpuOptimizedImage {
+            val promise: Promise<ImageBitmap> = suspendCoroutine { continuation ->
+                val img = Image() // Create new <img> element
+                img.onload = {
+                    continuation.resume(
+                        createImageBitmap(img)
+                    )
+                }
+                img.src = Config.createTileUrl(tile, mapTilerSecretKey)
             }
-            img.src = key.tileUrl
+            return GpuOptimizedImage(promise.await())
         }
-        return GpuOptimizedImage(promise.await())
     }
-}
 
-
-external fun createImageBitmap(data: Blob): Promise<ImageBitmap>
+/**
+ * default JS browser API to convert <img> to ImageBitmap
+ * https://developer.mozilla.org/en-US/docs/Web/API/createImageBitmap
+ */
 external fun createImageBitmap(data: Image): Promise<ImageBitmap>
+external fun createImageBitmap(data: Blob): Promise<ImageBitmap>

@@ -16,11 +16,11 @@ import java.awt.Rectangle
 import java.io.File
 
 @Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): ContentRepository<Tile, GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage> {
     // Для HOME директории MacOS требует разрешения.
     // Чтобы не просить разрешений созданим кэш во временной директории.
     val cacheDir = File(System.getProperty("java.io.tmpdir")).resolve(CACHE_DIR_NAME)
-    return createRealRepository(HttpClient(CIO))
+    return createRealRepository(HttpClient(CIO), mapTilerSecretKey)
         .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithDiskCache(ioScope, cacheDir)
         .adapter { GpuOptimizedImage(it.toImageBitmap()) }

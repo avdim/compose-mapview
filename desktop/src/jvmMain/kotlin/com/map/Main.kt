@@ -27,7 +27,10 @@ fun main() = application {
         ),
         icon = icon
     ) {
-        MapView(Modifier.fillMaxSize())
+        MapView(
+            modifier = Modifier.fillMaxSize(),
+            mapTilerSecretKey = MAPTILER_SECRET_KEY
+        )
     }
 }
 
