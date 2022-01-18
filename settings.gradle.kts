@@ -48,5 +48,10 @@ includeBuild("include-mapview") {
         substitute(module("com.map:mapview")).using(project(":"))
     }
 }
+includeBuild("include-secret") {
+    dependencySubstitution {
+        substitute(module("com.map:secret")).using(project(":"))
+    }
+}
 
-rootProject.name = "map-view"
+rootProject.name = "mapview"

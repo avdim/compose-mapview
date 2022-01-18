@@ -14,7 +14,6 @@ import kotlin.random.Random
 import kotlin.reflect.KClass
 
 fun main() {
-    println("Hello Compose Web")
     ComposeCounterApp("root")
 //    val canvas = document.getElementById("map-canvas") as HTMLCanvasElement
 //    val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
@@ -30,6 +29,7 @@ fun Document.createCanvas(style: String) =
 fun ComposeCounterApp(rootId: String) {
     val composition = renderComposable(rootElementId = rootId) {
         MapView(size(1000, 800))
+        SECRET_KEY
     }
     if (false) {//todo
         composition.dispose()
