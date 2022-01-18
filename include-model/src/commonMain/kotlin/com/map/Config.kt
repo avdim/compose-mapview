@@ -2,7 +2,7 @@ package com.map
 
 object Config {
     val SIMULATE_NETWORK_PROBLEMS = false
-    val TRY_SCALE_WITH_CROP = false
+    val TRY_SCALE_WITH_CROP = true
     val CLICK_DURATION_MS: Long = 300
     val CLICK_AREA_RADIUS_PX: Int = 7
 }

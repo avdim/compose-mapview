@@ -6,16 +6,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toAwtImage
-import androidx.compose.ui.graphics.toComposeImageBitmap
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.unit.IntOffset
 import com.map.ui.MapViewAndroidDesktop
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import java.awt.Rectangle
 import java.io.File
+import kotlin.math.roundToInt
 
 @Composable
 internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage> {
@@ -59,22 +58,58 @@ internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     }
 }
 
-actual fun GpuOptimizedImage.crop(x: Int, y: Int, w: Int, h: Int): GpuOptimizedImage {
+actual fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage {
+    val scale: Float = targetSize.toFloat() / TILE_SIZE
+    val newSize = maxOf(1, (size * scale).roundToInt())
     try {
-        val result = GpuOptimizedImage(
-            cropImage(get().toAwtImage(), Rectangle(x, y, w, h)).toComposeImageBitmap()
-        )
-        return result
-    } catch (t: Throwable) {
-        println("debug")
+        val multiplier =
+            when(size) {
+                512 -> 2f
+                256 -> 1f
+                128 -> 0.5f
+                64 -> 0.25f
+                32 -> 0.125f
+                else -> {
+                    0.125f/2
+                }
+            }
+        val newX = srcOffset.x + ((x * scale).roundToInt()*multiplier).roundToInt()
+        val newY = srcOffset.y + ((y * scale).roundToInt()*multiplier).roundToInt()
+        return GpuOptimizedImage(platformSpecificData, IntOffset(newX % TILE_SIZE, newY % TILE_SIZE), newSize)
+    } catch (t:Throwable) {
+        t.printStackTrace()
+        println("Arithmetic")
         throw t
     }
 }
 
-actual fun GpuOptimizedImage.scale(w: Int, h: Int): GpuOptimizedImage {
-    val result = scaleBitmapAspectRatio(get().toAwtImage(), w, h).toComposeImageBitmap()
-    if (result.width != w || result.height != h) {
-        throw Exception("my exception result.width != w || result.height != h")
-    }
-    return GpuOptimizedImage(result)
-}
+//actual fun GpuOptimizedImage.cropAndRestoreSize2(i: Int, j: Int, deltaZoom: Int): GpuOptimizedImage {
+//    var deltaZoom = deltaZoom
+//    var size = this.size
+//    var x = srcOffset.x
+//    var y = srcOffset.y
+//    while (size > 1 && deltaZoom > 0) {
+//        val i = i - (x shl deltaZoom)
+//        val j = j - (y shl deltaZoom)
+//        deltaZoom -= 1
+//        size /= 2
+//
+//    }
+//    srcOffset
+//    srcSize
+//
+//    try {
+//        if (false) { //todo remove
+//            get().asSkiaBitmap().asComposeImageBitmap()
+//        }
+//        val cropped = cropImage(get().toAwtImage(), Rectangle(x, y, w, h))
+//        val scaled = scaleBitmapAspectRatio(cropped, targetW, targetH)
+//        val result = GpuOptimizedImage(scaled.toComposeImageBitmap())
+//        return result
+//    } catch (t: Throwable) {
+//        println("debug")
+//        throw t
+//    }
+//}
+
+actual val GpuOptimizedImage.isBadQuality: Boolean get() = size < TILE_SIZE

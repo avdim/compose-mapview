@@ -20,23 +20,9 @@ public fun MapView(modifier: DisplayModifier) {
             is SideEffect.LoadTile -> {
                 ioScope.launch {
                     try {
-                        val imgTryCrop = if (Config.TRY_SCALE_WITH_CROP) {
-                            tilesHashMap.searchCropAndPut(sideEffect.tile)
-                        } else {
-                            null
-                        }
-                        if (imgTryCrop == null && !tilesHashMap.containsKey(sideEffect.tile)) {
-                            ioScope.launch {
-                                yield()
-                                if (!tilesHashMap.containsKey(sideEffect.tile)) {
-                                    val image = tilesHashMap.searchCropAndPut(sideEffect.tile)
-                                    if (image != null) {
-                                        store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
-                                    }
-                                }
-                            }
-                        }
-                        val image = imgTryCrop ?: imageRepository.getTileContent(sideEffect.tile)
+                        val image: GpuOptimizedImage =
+                            (if (Config.TRY_SCALE_WITH_CROP) tilesHashMap.searchCropAndPut(sideEffect.tile) else null)
+                                ?: imageRepository.getTileContent(sideEffect.tile)
                         tilesHashMap[sideEffect.tile] = image
                         store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
@@ -111,7 +97,7 @@ fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimi
             val i = tile1.x - (x shl deltaZoom)
             val j = tile1.y - (y shl deltaZoom)
             val size = max(TILE_SIZE ushr deltaZoom, 1)
-            val cropImg = img2.crop(i * size, j * size, size, size).scale(TILE_SIZE, TILE_SIZE)
+            val cropImg = img2.cropAndRestoreSize(i * size, j * size, size)
             put(tile1, cropImg)
             return cropImg
         }
@@ -119,5 +105,5 @@ fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimi
     return null
 }
 
-expect fun GpuOptimizedImage.crop(x: Int, y: Int, w: Int, h: Int): GpuOptimizedImage
-expect fun GpuOptimizedImage.scale(w:Int, h:Int):GpuOptimizedImage
+expect fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage
+expect val GpuOptimizedImage.isBadQuality: Boolean

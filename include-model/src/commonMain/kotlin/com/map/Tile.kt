@@ -17,6 +17,6 @@ data class DisplayTile(
 )
 
 data class TilesGrid(
-    val matrix:List<Pair<DisplayTile, Tile>>,
+    val matrix:List<Pair<DisplayTile, Tile>>, //todo pair
 )
 

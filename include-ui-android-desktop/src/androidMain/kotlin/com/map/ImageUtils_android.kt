@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream
 
 actual fun ImageBitmap.toByteArray(): ByteArray = asAndroidBitmap().toByteArray()
 actual fun ByteArray.toImageBitmap(): ImageBitmap = toAndroidBitmap().asImageBitmap()
-actual fun GpuOptimizedImage.get():ImageBitmap = platformSpecificData
+actual fun GpuOptimizedImage.extract():ImageBitmap = platformSpecificData
 
 fun Bitmap.toByteArray(): ByteArray {
     val baos = ByteArrayOutputStream()
