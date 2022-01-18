@@ -64,13 +64,6 @@ actual val GpuOptimizedImage.isBadQuality: Boolean get() = size < TILE_SIZE
 actual fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage {
     val scale: Float = targetSize.toFloat() / TILE_SIZE
     val newSize = maxOf(1, (size * scale).roundToInt())
-    val multiplier =
-        when (size) {      // size  scale  targetSize  newSize
-            512 -> 1f     //  512   0.5       256      256
-            256 -> 0.5f   //  256   0.5       256      128
-            128 -> 0.25f  //  128   0.5       256       64
-            else -> 0.125f
-        }
     val dx = x * newSize / targetSize
     val dy = y * newSize / targetSize
     val newX = srcOffset.x + dx

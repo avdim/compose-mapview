@@ -8,9 +8,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.js.Promise
 
-fun createDownloadImageRepository(): TileContentRepository<GpuOptimizedImage> = createRealRepository()
-
-private fun createRealRepository() = object : TileContentRepository<GpuOptimizedImage> {
+fun createRealRepository() = object : TileContentRepository<GpuOptimizedImage> {
     override suspend fun getTileContent(tile: Tile): GpuOptimizedImage {
         val promise: Promise<ImageBitmap> = suspendCoroutine { continuation ->
             val img = Image() // Create new img element
@@ -25,19 +23,21 @@ private fun createRealRepository() = object : TileContentRepository<GpuOptimized
     }
 }
 
-fun decorateWithInMemoryCache(imageRepository: TileContentRepository<GpuOptimizedImage>): TileContentRepository<GpuOptimizedImage> =
-    object : TileContentRepository<GpuOptimizedImage> {
+fun TileContentRepository<GpuOptimizedImage>.decorateWithInMemoryCache(): TileContentRepository<GpuOptimizedImage> {
+    val origin = this
+    return object : TileContentRepository<GpuOptimizedImage> {
         val cache: MutableMap<Tile, GpuOptimizedImage> = HashMap()
         override suspend fun getTileContent(tile: Tile): GpuOptimizedImage {
             val fromCache = cache[tile]
             if (fromCache != null) {
                 return fromCache
             }
-            val result = imageRepository.getTileContent(tile)
+            val result = origin.getTileContent(tile)
             cache[tile] = result
             return result
         }
     }
+}
 
 external fun createImageBitmap(data: Blob): Promise<ImageBitmap>
 external fun createImageBitmap(data: Image): Promise<ImageBitmap>

@@ -12,5 +12,3 @@ actual class GpuOptimizedImage(
     val size: Int = TILE_SIZE
 )
 
-val GpuOptimizedImage.dstSize:IntSize get() = IntSize(TILE_SIZE, TILE_SIZE)
-

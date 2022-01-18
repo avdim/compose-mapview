@@ -6,11 +6,14 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.web.dom.Text
+import kotlin.math.roundToInt
 
 @Composable
 internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage> {
     // Для js дисковый кэш не нужен. Браузер и так кэширует картинки.
-    return decorateWithInMemoryCache(createDownloadImageRepository())
+    return createRealRepository()
+        .decorateWithLimitRequestsInParallel(ioScope)
+        .decorateWithInMemoryCache()
 }
 
 actual typealias DisplayModifier = MapViewJsModifier
@@ -49,4 +52,15 @@ internal actual fun PlatformMapView(
 internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
     val state by stateFlow.collectAsState()
     Text(state.toShortString())
+}
+
+actual val GpuOptimizedImage.isBadQuality: Boolean get() = size < TILE_SIZE
+actual fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage {
+    val scale: Float = targetSize.toFloat() / TILE_SIZE
+    val newSize = maxOf(1, (size * scale).roundToInt())
+    val dx = x * newSize / targetSize
+    val dy = y * newSize / targetSize
+    val newX = srcOffset.x + dx
+    val newY = srcOffset.y + dy
+    return GpuOptimizedImage(platformSpecificData, Pt(newX % TILE_SIZE, newY % TILE_SIZE), newSize)
 }

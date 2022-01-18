@@ -119,7 +119,11 @@ public fun MapViewBrowser(
                             dx = t.x.toDouble(),
                             dy = t.y.toDouble(),
                             dw = t.size.toDouble(),
-                            dh = t.size.toDouble()
+                            dh = t.size.toDouble(),
+                            sx = img.srcOffset.x.toDouble(),
+                            sy = img.srcOffset.y.toDouble(),
+                            sw = img.size.toDouble(),
+                            sh = img.size.toDouble()
                         )
                     }
                 }
