@@ -8,8 +8,8 @@ import kotlinx.coroutines.*
  */
 fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
     scope: CoroutineScope,
-    maxParallelRequests: Int = 4,
-    waitBufferCapacity: Int = 20,
+    maxParallelRequests: Int = 10,
+    waitBufferCapacity: Int = 50,
     delayBeforeRequestMs: Long = 50 // Если карта быстро изменяется, то загружать сразу нет смысла
 ): TileContentRepository<T> {
     val origin = this
