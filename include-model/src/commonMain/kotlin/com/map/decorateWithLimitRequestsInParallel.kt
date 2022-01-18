@@ -19,11 +19,11 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
         val currentRequests: Int = 0
     )
 
-    val store = scope.createStoreWithSideEffect<State, Intent<T>, SideEffect<T>>(
+    val store = scope.createStoreWithSideEffect<State, Intent<T>, SideEffect2<T>>(
         init = State(),
-        effectHandler = { store, effect: SideEffect<T> ->
+        effectHandler = { store, effect: SideEffect2<T> ->
             when (effect) {
-                is SideEffect.Load<T> -> {
+                is SideEffect2.Load<T> -> {
                     effect.waitElements.forEach { element ->
                         scope.launch {
                             try {
@@ -38,7 +38,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
                         }
                     }
                 }
-                is SideEffect.Delay<T> -> {
+                is SideEffect2.Delay<T> -> {
                     scope.launch {
                         delay(delayBeforeRequestMs)
                         store.send(Intent.AfterDelay())
@@ -57,7 +57,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
                         it.deferred.completeExceptionally(Exception("cancelled in decorateWithLimitRequestsInParallel"))
                     }
                 }
-                state.copy(fifo = fifo).addSideEffect(SideEffect.Delay())
+                state.copy(fifo = fifo).addSideEffect(SideEffect2.Delay())
             }
             is Intent.AfterDelay -> {
                 if (state.fifo.isNotEmpty()) {
@@ -73,7 +73,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
                     state.copy(
                         fifo = fifo,
                         currentRequests = state.currentRequests + elementsToLoad.size
-                    ).addSideEffect(SideEffect.Load(elementsToLoad))
+                    ).addSideEffect(SideEffect2.Load(elementsToLoad))
                 } else {
                     state.noSideEffects()
                 }
@@ -83,7 +83,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
                     currentRequests = state.currentRequests - 1
                 ).run {
                     if (state.fifo.isNotEmpty()) {
-                        addSideEffect(SideEffect.Delay())
+                        addSideEffect(SideEffect2.Delay())
                     } else {
                         noSideEffects()
                     }
@@ -116,7 +116,7 @@ private sealed interface Intent<T> {
     class AfterDelay<T> : Intent<T>
 }
 
-private sealed interface SideEffect<T> {
-    class Load<T>(val waitElements: List<ElementWait<T>>) : SideEffect<T>
-    class Delay<T> : SideEffect<T>
+private sealed interface SideEffect2<T> {//todo android naming SideEffect duplicate in dex
+    class Load<T>(val waitElements: List<ElementWait<T>>) : SideEffect2<T>
+    class Delay<T> : SideEffect2<T>
 }
