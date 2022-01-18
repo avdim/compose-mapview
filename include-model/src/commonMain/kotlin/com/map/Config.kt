@@ -5,8 +5,8 @@ object Config {
     val SCALE_ONLY_WITH_CROP = false
     val CLICK_DURATION_MS: Long = 300
     val CLICK_AREA_RADIUS_PX: Int = 7
-    val ZOOM_ON_CLICK = 0.8 * 40 //todo SCALE_ON_ZOOM как множитель
-    val MAX_SCALE_ON_SINGLE_ZOOM_EVENT = 2.0 * 40
+    val ZOOM_ON_CLICK = 0.8 //todo SCALE_ON_ZOOM как множитель
+    val MAX_SCALE_ON_SINGLE_ZOOM_EVENT = 2.0
 }
 
 val TILE_SIZE = 512

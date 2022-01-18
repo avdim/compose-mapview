@@ -28,13 +28,22 @@ fun CoroutineScope.createGridStore(
             )
         }
         is GridIntent.TileLoaded -> {
-            val previous = state.matrix[intent.tile.display]
-            if (previous == null || previous.isBadQuality) {
-                state.copy(
-                    matrix = state.matrix.toMutableMap().apply {
-                        put(intent.tile.display, intent.tile.image)
+            if (state.matrix.containsKey(intent.tile.display)) {
+                val previous = state.matrix[intent.tile.display]
+                if (previous == null || previous.isBadQuality) {
+                    if (previous != null) {
+                        if(state.matrix.size > 64) {
+                            println("state.matrix.size: ${state.matrix.size}")
+                        }
                     }
-                )
+                    state.copy(
+                        matrix = state.matrix.toMutableMap().apply {
+                            put(intent.tile.display, intent.tile.image)
+                        }
+                    )
+                } else {
+                    state
+                }
             } else {
                 state
             }.noSideEffects()
