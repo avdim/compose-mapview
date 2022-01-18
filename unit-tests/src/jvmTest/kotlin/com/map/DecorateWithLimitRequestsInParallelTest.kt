@@ -9,6 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+//todo запуск из консоли
 class DecorateWithLimitRequestsInParallelTest {
     @Test
     fun testMaximumParallelRequests() {
@@ -16,20 +17,19 @@ class DecorateWithLimitRequestsInParallelTest {
         val totalElementsCount = 50 + bufferCapacity
         val results: MutableList<Int> = CopyOnWriteArrayList()
         val jobs: MutableList<Job> = CopyOnWriteArrayList()//todo delete
-        val job = Job()
         runTest {
             val counter = AtomicInteger(0)
             val stub = object : TileContentRepository<Int> {
                 override suspend fun getTileContent(tile: Tile): Int {
-                    delay(Random.nextLong(0, 50))
+                    delay(Random.nextLong(10, 50))
                     return counter.incrementAndGet()
                 }
             }
             val repository = stub.decorateWithLimitRequestsInParallel(this, waitBufferCapacity = bufferCapacity)
-            repeat(100) {
+            repeat(totalElementsCount) {
                 delay(1)
                 jobs.add(
-                    launch(job) {
+                    launch(/*job*/) {
                         try {
                             val result = repository.getTileContent(Tile(0, 0, 0))
                             results.add(result)
@@ -41,6 +41,7 @@ class DecorateWithLimitRequestsInParallelTest {
             }
             jobs.joinAll()
             val guaranteedLoadedElements = (totalElementsCount - bufferCapacity)..totalElementsCount
+            println(results)
             assertTrue(results.containsAll(guaranteedLoadedElements.toList()), "guaranteed elements exist's")
         }
     }

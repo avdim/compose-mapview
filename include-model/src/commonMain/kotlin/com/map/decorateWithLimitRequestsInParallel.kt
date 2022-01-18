@@ -2,10 +2,7 @@ package com.map
 
 import kotlinx.coroutines.*
 
-//todo Unit tests
-/**
- * todo doc
- */
+
 fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
     scope: CoroutineScope,
     maxParallelRequests: Int = 10,
@@ -18,7 +15,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
      * Чтобы не имееть дело с mutable состоянием, воспользуемся immutable состоянием внутри Store
      */
     data class State(
-        val fifo: List<ElementWait<T>> = emptyList(),
+        val fifo: CollectionAddRemove<ElementWait<T>> = createStack(waitBufferCapacity),
         val currentRequests: Int = 0
     )
 
@@ -52,29 +49,29 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
     ) { state, intent: Intent<T> ->
         // Модификация состояния происходит только в этой функции и исполняется в одном потоке
         when (intent) {
-            is Intent.New -> {
-                val bigList = state.fifo + intent.wait
-                for (i in waitBufferCapacity until bigList.size) {
-                    val element = bigList[i]
+            is Intent.NewElement -> {
+                val (fifo, removed) = state.fifo.add(intent.wait)
+                removed?.let {
+                    println("drop")//TODO
                     scope.launch {
-                        println("drop")
-                        element.deferred.completeExceptionally(Exception("cancelled in decorateWithLimitRequestsInParallel"))
+                        it.deferred.completeExceptionally(Exception("cancelled in decorateWithLimitRequestsInParallel"))
                     }
                 }
-                state.copy(
-                    fifo = bigList.take(waitBufferCapacity)
-                ).addSideEffect(SideEffect.Delay())
+                state.copy(fifo = fifo).addSideEffect(SideEffect.Delay())
             }
             is Intent.AfterDelay -> {
                 if (state.fifo.isNotEmpty()) {
                     var fifo = state.fifo
                     val elementsToLoad: MutableList<ElementWait<T>> = mutableListOf()
                     while (state.currentRequests + elementsToLoad.size < maxParallelRequests && fifo.isNotEmpty()) {
-                        elementsToLoad.add(fifo.last())
-                        fifo = fifo.dropLast(1)
+                        val result = fifo.remove()
+                        result.removed?.let {
+                            elementsToLoad.add(it)
+                        }
+                        fifo = result.collection
                     }
                     state.copy(
-                        fifo = state.fifo.dropLast(elementsToLoad.size),
+                        fifo = fifo,
                         currentRequests = state.currentRequests + elementsToLoad.size
                     ).addSideEffect(SideEffect.Load(elementsToLoad))
                 } else {
@@ -99,14 +96,14 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
         store.stateFlow.collect {
             println("INFO decorateWithLimitRequestsInParallel:")
             println("currentRequests: ${it.currentRequests}")
-            println("fifoList.size: ${it.fifo.size}")
+            println("fifo.size: ${it.fifo.size}")
         }
     }
 
     return object : TileContentRepository<T> {
         override suspend fun getTileContent(tile: Tile): T {
             return CompletableDeferred<T>()
-                .also { store.send(Intent.New(ElementWait(tile, it))) }
+                .also { store.send(Intent.NewElement(ElementWait(tile, it))) }
                 .await()
         }
     }
@@ -115,7 +112,7 @@ fun <T> TileContentRepository<T>.decorateWithLimitRequestsInParallel(
 private class ElementWait<T>(val tile: Tile, val deferred: CompletableDeferred<T>)
 private sealed interface Intent<T> {
     class ElementComplete<T> : Intent<T>
-    class New<T>(val wait: ElementWait<T>) : Intent<T>
+    class NewElement<T>(val wait: ElementWait<T>) : Intent<T>
     class AfterDelay<T> : Intent<T>
 }
 
