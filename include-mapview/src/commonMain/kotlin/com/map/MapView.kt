@@ -19,7 +19,12 @@ public fun MapView(modifier: DisplayModifier) {
             is SideEffect.LoadTile -> {
                 ioScope.launch {
                     try {
-                        if (!originalTiles.containsKey(sideEffect.tile)) {
+                        val imgTryCrop = if (Config.TRY_SCALE_WITH_CROP) {
+                            originalTiles.searchCropAndPut(sideEffect.tile)
+                        } else {
+                            null
+                        }
+                        if (imgTryCrop == null && !originalTiles.containsKey(sideEffect.tile)) {
                             launch {
                                 delay(10)
                                 if (!originalTiles.containsKey(sideEffect.tile)) {
@@ -30,7 +35,7 @@ public fun MapView(modifier: DisplayModifier) {
                                 }
                             }
                         }
-                        val image = imageRepository.getTileContent(sideEffect.tile)
+                        val image = imgTryCrop ?: imageRepository.getTileContent(sideEffect.tile)
                         originalTiles[sideEffect.tile] = image
                         store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
@@ -86,6 +91,7 @@ internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope): Ti
 internal expect fun Telemetry(stateFlow: StateFlow<MapState>)
 
 fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimizedImage? {
+    //todo unit tests
     val img1 = get(tile1)
     if (img1 != null) {
         return img1
@@ -103,11 +109,11 @@ fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimi
             val deltaZoom = tile1.zoom - tile2.zoom
             val i = tile1.x - (x shl deltaZoom)
             val j = tile1.y - (y shl deltaZoom)
-            val size = TILE_SIZE ushr zoom
+            val size = TILE_SIZE ushr deltaZoom
             if (size == 0) {
                 return null//todo придумать tile в 1 пиксель
             }
-            val cropImg = img2.crop(i * size, j * size, size, size)
+            val cropImg = img2.crop(i * size, j * size, size, size).scale(TILE_SIZE, TILE_SIZE)
             put(tile1, cropImg)
             return cropImg
         }
@@ -116,3 +122,4 @@ fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimi
 }
 
 expect fun GpuOptimizedImage.crop(x: Int, y: Int, w: Int, h: Int): GpuOptimizedImage
+expect fun GpuOptimizedImage.scale(w:Int, h:Int):GpuOptimizedImage

@@ -18,7 +18,7 @@ import java.awt.Rectangle
 import java.io.File
 
 @Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope):TileContentRepository<GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope): TileContentRepository<GpuOptimizedImage> {
     // Для HOME директории MacOS требует разрешения.
     // Чтобы не просить разрешений созданим кэш во временной директории.
     val cacheDir = File(System.getProperty("java.io.tmpdir")).resolve(CACHE_DIR_NAME)
@@ -39,7 +39,7 @@ internal actual fun PlatformMapView(
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,
     updateSize: (width: Int, height: Int) -> Unit
-){
+) {
     MapViewAndroidDesktop(
         modifier = modifier,
         isInTouchMode = false,
@@ -61,10 +61,20 @@ internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
 
 actual fun GpuOptimizedImage.crop(x: Int, y: Int, w: Int, h: Int): GpuOptimizedImage {
     try {
-        val result = GpuOptimizedImage(cropImage(get().toAwtImage(), Rectangle(x, y, w, h)).toComposeImageBitmap())
+        val result = GpuOptimizedImage(
+            cropImage(get().toAwtImage(), Rectangle(x, y, w, h)).toComposeImageBitmap()
+        )
         return result
-    } catch (t:Throwable) {
+    } catch (t: Throwable) {
         println("debug")
         throw t
     }
+}
+
+actual fun GpuOptimizedImage.scale(w: Int, h: Int): GpuOptimizedImage {
+    val result = scaleBitmapAspectRatio(get().toAwtImage(), w, h).toComposeImageBitmap()
+    if (result.width != w || result.height != h) {
+        throw Exception("my exception result.width != w || result.height != h")
+    }
+    return GpuOptimizedImage(result)
 }
