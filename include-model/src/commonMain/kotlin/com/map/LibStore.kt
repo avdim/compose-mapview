@@ -27,8 +27,6 @@ fun <STATE, INTENT> CoroutineScope.createStore(init: STATE, reducer: Reducer<STA
 
     return object : Store<STATE, INTENT> {
         init {
-            //https://m.habr.com/ru/company/kaspersky/blog/513364/
-            //or alternative in jvm use fun CoroutineScope.actor(...)
             launch {
                 channel.consumeAsFlow().collect { intent ->
                     mutableStateFlow.value = reducer(mutableStateFlow.value, intent)
@@ -37,9 +35,9 @@ fun <STATE, INTENT> CoroutineScope.createStore(init: STATE, reducer: Reducer<STA
         }
 
         override fun send(intent: INTENT) {
-            //mutableStateFlow.value = reducer(mutableStateFlow.value, intent)
-            val success = channel.trySend(intent).isSuccess
-            //todo check success or use coroutine scope with guaranteed send
+            launch {
+                channel.send(intent)
+            }
         }
 
         override val stateFlow: StateFlow<STATE> = mutableStateFlow
@@ -71,11 +69,11 @@ fun <STATE, INTENT, EFFECT> CoroutineScope.createStoreWithSideEffect(
     return store
 }
 
-fun <STATE:Any, EFFECT> STATE.noSideEffects() = ReducerResult(this, emptyList<EFFECT>())
-fun <STATE:Any, EFFECT> STATE.addSideEffects(sideEffects: List<EFFECT>) = ReducerResult(this, sideEffects)
+fun <STATE : Any, EFFECT> STATE.noSideEffects() = ReducerResult(this, emptyList<EFFECT>())
+fun <STATE : Any, EFFECT> STATE.addSideEffects(sideEffects: List<EFFECT>) = ReducerResult(this, sideEffects)
 fun <STATE : Any, EFFECT> STATE.addSideEffect(effect: EFFECT) = addSideEffects(listOf(effect))
 
-fun <T, R> StateFlow<T>.mapStateFlow(scope: CoroutineScope, init:R, transform: suspend (T) -> R): StateFlow<R> {
+fun <T, R> StateFlow<T>.mapStateFlow(scope: CoroutineScope, init: R, transform: suspend (T) -> R): StateFlow<R> {
     val result = MutableStateFlow(init)
     scope.launch {
         collect {
