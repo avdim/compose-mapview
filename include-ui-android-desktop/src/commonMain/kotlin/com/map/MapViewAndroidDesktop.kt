@@ -2,12 +2,10 @@
 
 package com.map
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -17,17 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import com.map.*
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.math.ceil
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 @Composable
 fun MapViewAndroidDesktop(
@@ -153,39 +147,3 @@ fun MapViewAndroidDesktop(
 //    ScrollableArea(state)
 }
 
-@Composable
-fun TransformableSample() {
-    // set up all transformation states
-    var scale by remember { mutableStateOf(1f) }
-    var rotation by remember { mutableStateOf(0f) }
-    var offset by remember { mutableStateOf(Offset.Zero) }
-    val state = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
-        scale *= zoomChange
-        rotation += rotationChange
-        offset += offsetChange
-    }
-    Box(
-        Modifier
-            // apply other transformations like rotation and zoom
-            // on the pizza slice emoji
-            .graphicsLayer(
-                scaleX = scale,
-                scaleY = scale,
-                rotationZ = rotation,
-                translationX = offset.x,
-                translationY = offset.y
-            )
-            // add transformable to listen to multitouch transformation events
-            // after offset
-            .transformable(state = state)
-            .background(Color.Blue)
-            .fillMaxSize()
-    )
-}
-
-fun Offset.toPt(): Pt = Pt(ceil(x).roundToInt(), ceil(y).roundToInt())
-fun Offset.distanceTo(other: Offset): Double {
-    val dx = other.x - x
-    val dy = other.y - y
-    return sqrt(dx * dx + dy * dy).toDouble()
-}
