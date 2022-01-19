@@ -11,7 +11,6 @@ data class DisplayTileWithImage<T>(
 data class GridState<T : Any>(
     val displayTiles: List<DisplayTileWithImage<T>> = emptyList(),
     val cache: Map<Tile, T> = emptyMap(),
-    val croppedCache: Map<Tile, T> = emptyMap(),
 )
 
 sealed interface SideEffectGrid {

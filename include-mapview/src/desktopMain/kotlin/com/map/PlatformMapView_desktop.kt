@@ -19,7 +19,6 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, map
         .decorateWithDiskCache(ioScope, cacheDir)
         .adapter { TileImage(it.toImageBitmap()) }
         .decorateWithDistinctDownloader(ioScope)
-        .decorateWithInMemoryCache()
 }
 
 actual typealias DisplayModifier = Modifier

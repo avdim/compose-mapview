@@ -11,7 +11,6 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, map
     return createRealRepository(mapTilerSecretKey)
         .adapter { TileImage(it) }
         .decorateWithLimitRequestsInParallel(ioScope)
-        .decorateWithInMemoryCache()
 }
 
 actual typealias DisplayModifier = MapViewJsModifier

@@ -13,18 +13,3 @@ fun <K, A, B> ContentRepository<K, A>.adapter(transform: (A) -> B): ContentRepos
     }
 }
 
-fun <K, T> ContentRepository<K, T>.decorateWithInMemoryCache(): ContentRepository<K, T> {
-    val origin = this
-    return object : ContentRepository<K, T> {
-        val cache: MutableMap<K, T> = createConcurrentMap() //todo LRU cache LinkedHashMap
-        override suspend fun loadContent(key: K): T {
-            val fromCache = cache[key]
-            if (fromCache != null) {
-                return fromCache
-            }
-            val result = origin.loadContent(key)
-            cache[key] = result
-            return result
-        }
-    }
-}
