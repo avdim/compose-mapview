@@ -58,4 +58,3 @@ MapViewBrowser.kt - отрисовка в <canvas>
 ### include-config
 Содержит конфиги для настройки и отладки
 
-Config
