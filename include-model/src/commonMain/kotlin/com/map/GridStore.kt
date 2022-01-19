@@ -7,21 +7,23 @@ sealed interface SideEffectGrid {
     class LoadTile(val displayTile: DisplayTile, val tile: Tile) : SideEffectGrid
 }
 
-sealed interface IntentGrid {
-    class NewTiles(val grid: TilesGrid) : IntentGrid
-    class TileLoaded(val tile: ImageTile) : IntentGrid
+sealed interface IntentGrid<T> {
+    class NewTiles<T>(val grid: TilesGrid) : IntentGrid<T>
+    class TileLoaded<T>(val tile: DisplayTileWithImage<T>) : IntentGrid<T>
 }
 
-fun CoroutineScope.createGridStore(
-    effectHandler: (store: Store<ImageTilesGrid, IntentGrid>, SideEffectGrid) -> Unit
+fun <T:Any> CoroutineScope.createGridStore(
+    isBadQuality: (T)->Boolean,
+    searchCropAndPut: (Tile) -> T?,
+    effectHandler: (store: Store<ImageTilesGrid<T>, IntentGrid<T>>, SideEffectGrid) -> Unit
 ) = createStoreWithSideEffect(
     ImageTilesGrid(emptyMap()),
     effectHandler = effectHandler
-) { state, intent: IntentGrid ->
+) { state, intent: IntentGrid<T> ->
     when (intent) {
         is IntentGrid.NewTiles -> {
             state.copy(
-                matrix = intent.grid.matrix.map { it.first to tilesHashMap.searchCropAndPut(it.second) }.toMap()
+                matrix = intent.grid.matrix.map { it.first to searchCropAndPut(it.second) }.toMap()
             ).addSideEffects(
                 intent.grid.matrix.map {
                     SideEffectGrid.LoadTile(it.first, it.second)
@@ -31,7 +33,7 @@ fun CoroutineScope.createGridStore(
         is IntentGrid.TileLoaded -> {
             if (state.matrix.containsKey(intent.tile.display)) {
                 val previous = state.matrix[intent.tile.display]
-                if (previous == null || previous.isBadQuality) {
+                if (previous == null || isBadQuality(previous)) {
                     if (previous != null) {
                         if (state.matrix.size > 64) {
                             println("state.matrix.size: ${state.matrix.size}")
@@ -51,8 +53,6 @@ fun CoroutineScope.createGridStore(
         }
     }
 }
-
-val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//todo global mutable state
 
 fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimizedImage? {
     //todo unit tests

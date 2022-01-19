@@ -14,12 +14,12 @@ expect class GpuOptimizedImage {
 }
 val GpuOptimizedImage.isBadQuality: Boolean get() = cropSize < TILE_SIZE
 
-data class ImageTilesGrid(
-    val matrix: Map<DisplayTile, GpuOptimizedImage?>,
+data class ImageTilesGrid<T:Any>(
+    val matrix: Map<DisplayTile, T?>,
 )
 
-data class ImageTile(
-    val image: GpuOptimizedImage,
+data class DisplayTileWithImage<T>(
+    val image: T,
     val display: DisplayTile
 )
 

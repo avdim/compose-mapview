@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 internal expect fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: StateFlow<ImageTilesGrid>,
+    stateFlow: StateFlow<ImageTilesGrid<GpuOptimizedImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,

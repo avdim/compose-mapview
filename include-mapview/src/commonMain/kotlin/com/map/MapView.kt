@@ -3,8 +3,6 @@ package com.map
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.StateFlow
-import kotlin.math.max
 
 /**
  * MapView to display Earth tile maps. API provided by cloud.maptiler.com
@@ -45,7 +43,13 @@ public fun MapView(
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore(latitude, longitude, startScale)
     val imageRepository = createImageRepositoryComposable(ioScope, mapTilerSecretKey)
 
-    val gridStore = viewScope.createGridStore { store, sideEffect: SideEffectGrid ->
+
+    val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//todo mutable state
+
+    val gridStore = viewScope.createGridStore<GpuOptimizedImage>(
+        isBadQuality = { it.isBadQuality },
+        searchCropAndPut = { tilesHashMap.searchCropAndPut(it) }
+    ) { store, sideEffect: SideEffectGrid ->
         when (sideEffect) {
             is SideEffectGrid.LoadTile -> {
                 ioScope.launch {
@@ -55,7 +59,7 @@ public fun MapView(
                                 ?: imageRepository.loadContent(sideEffect.tile)
 
                         tilesHashMap[sideEffect.tile] = image
-                        store.send(IntentGrid.TileLoaded(ImageTile(image, sideEffect.displayTile)))
+                        store.send(IntentGrid.TileLoaded(DisplayTileWithImage(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
                         println("fail to load tile ${sideEffect.displayTile}, $t")
                     }
