@@ -30,3 +30,13 @@ includeBuild("../include-ui-browser") {
         substitute(module("com.map:ui-browser")).using(project(":"))
     }
 }
+includeBuild("../include-config") {
+    dependencySubstitution {
+        substitute(module("com.map:config")).using(project(":"))
+    }
+}
+includeBuild("../include-tile-image") {
+    dependencySubstitution {
+        substitute(module("com.map:tile-image")).using(project(":"))
+    }
+}

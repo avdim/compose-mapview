@@ -3,6 +3,7 @@ package com.map
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.*
+import kotlin.math.*
 
 /**
  * MapView to display Earth tile maps. API provided by cloud.maptiler.com

@@ -9,9 +9,9 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.js.Promise
 
 fun createRealRepository(mapTilerSecretKey: String) =
-    object : ContentRepository<Tile, GpuOptimizedImage> {
+    object : ContentRepository<Tile, ImageBitmap> {
         @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-        override suspend fun loadContent(tile: Tile): GpuOptimizedImage {
+        override suspend fun loadContent(tile: Tile): ImageBitmap {
             val promise: Promise<ImageBitmap> = suspendCoroutine { continuation ->
                 val img = Image() // Create new <img> element
                 img.onload = {
@@ -19,9 +19,9 @@ fun createRealRepository(mapTilerSecretKey: String) =
                         createImageBitmap(img)
                     )
                 }
-                img.src = Config.createTileUrl(tile, mapTilerSecretKey)
+                img.src = Config.createTileUrl(tile.zoom, tile.x, tile.y, mapTilerSecretKey)
             }
-            return GpuOptimizedImage(promise.await())
+            return promise.await()
         }
     }
 

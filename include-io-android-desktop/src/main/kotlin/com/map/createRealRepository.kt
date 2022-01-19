@@ -16,9 +16,9 @@ fun createRealRepository(ktorClient: HttpClient, mapTilerSecretKey: String) =
                 }
                 delay(Random.nextLong(0, 3000))
             }
-            Config.createTileUrl(tile, mapTilerSecretKey)
+            Config.createTileUrl(tile.zoom, tile.x, tile.y, mapTilerSecretKey)
             val result = ktorClient.get<ByteArray>(
-                urlString = Config.createTileUrl(tile, mapTilerSecretKey)
+                urlString = Config.createTileUrl(tile.zoom, tile.x, tile.y, mapTilerSecretKey)
             )
             return result
         }

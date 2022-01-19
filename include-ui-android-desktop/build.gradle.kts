@@ -14,6 +14,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("com.map:config:1.0-SNAPSHOT")
                 api("com.map:model:1.0-SNAPSHOT")
                 implementation("com.map:tile-image:1.0-SNAPSHOT")
                 api(compose.runtime)

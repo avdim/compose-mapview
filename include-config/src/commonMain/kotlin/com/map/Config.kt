@@ -9,10 +9,8 @@ object Config {
     val ZOOM_ON_CLICK = 0.8
     val MAX_SCALE_ON_SINGLE_ZOOM_EVENT = 2.0
 
-    fun createTileUrl(tile: Tile, mapTilerSecretKey: String): String =
-        with(tile) {
-            "https://api.maptiler.com/maps/streets/$zoom/$x/$y.png?key=$mapTilerSecretKey"
-        }
+    fun createTileUrl(zoom:Int, x:Int, y:Int, mapTilerSecretKey: String): String =
+        "https://api.maptiler.com/maps/streets/$zoom/$x/$y.png?key=$mapTilerSecretKey"
 }
 
 val TILE_SIZE = 512

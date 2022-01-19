@@ -6,8 +6,9 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage> {
-    // Для js дисковый кэш не нужен. Браузер и так кэширует картинки.
+    // Для браузера дисковый кэш не нужен, он и так кэширует картинки.
     return createRealRepository(mapTilerSecretKey)
+        .adapter { GpuOptimizedImage(it) }
         .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithInMemoryCache()
 }
