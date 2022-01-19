@@ -10,7 +10,3 @@ data class DisplayTileAndTile(
     val display: DisplayTile,
     val tile: Tile
 )
-
-data class TilesGrid(//todo redundant wrapper
-    val tiles: List<DisplayTileAndTile>,
-)
