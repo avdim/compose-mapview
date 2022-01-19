@@ -33,6 +33,21 @@ MapView(
 ## Describe sources
 Проект разбит на несколько includeBuild, чтобы нормально проходил импорт в Idea.
 Состоит из следующих подпроектов:
+
 ### include-mapview
-Главный мультиплатформенный модуль, тут лежит мультиплатформенный MapView() с общей логикой инициализации. 
-А также платформо специфичные PlatformMapView. 
+Тут лежит мультиплатформенный MapView с общей логикой инициализации.    
+
+### include-ui-android-desktop
+Общий UI код между Android и Desktop. Всё максимально вынесено в commonMain sourceSet    
+MapViewAndroidDesktop.kt - отрисовка на Canvas и обработка pointer ввода.
+
+### include-ui-browser
+MapViewBrowser.kt - отрисовка в <canvas>
+
+### include-io-android-desktop
+Общий код между Android и Desktop для запросов в сеть и кэширования на диск.  
+Для простоты этот модуль подключен как plugins { kotlin("jvm") } 
+
+### include-model
+Мультиплатформенная логика 
+

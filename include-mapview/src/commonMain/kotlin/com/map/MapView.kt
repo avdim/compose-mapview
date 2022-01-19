@@ -55,6 +55,7 @@ public fun MapView(
                         val image: GpuOptimizedImage =
                             (if (Config.SCALE_ONLY_WITH_CROP) tilesHashMap.searchCropAndPut(sideEffect.tile) else null)
                                 ?: imageRepository.loadContent(sideEffect.tile)
+
                         tilesHashMap[sideEffect.tile] = image
                         store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
@@ -92,16 +93,6 @@ public fun MapView(
 }
 
 expect interface DisplayModifier
-
-@Composable
-internal expect fun PlatformMapView(
-    modifier: DisplayModifier,
-    stateFlow: StateFlow<ImageTilesGrid>,
-    onZoom: (Pt?, Double) -> Unit,
-    onClick: (Pt) -> Unit,
-    onMove: (Int, Int) -> Unit,
-    updateSize: (width: Int, height: Int) -> Unit
-)
 
 /**
  * Создать репозиторий для получения tile картинок.

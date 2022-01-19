@@ -9,3 +9,4 @@ SecretApiKey.kt
 appScope, networkScope
 завернуть в Box, чтобы использовать в любом лейауте
 
+перечитать README
