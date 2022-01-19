@@ -45,7 +45,7 @@ kotlin {
                 implementation("com.map:io-android-desktop:1.0-SNAPSHOT")
                 implementation("com.map:ui-android-desktop:1.0-SNAPSHOT")
                 implementation(ktorCIO)
-                implementation(compose.desktop.common)//todo delete?
+                implementation(compose.desktop.common)
             }
         }
         val jsMain by getting {
