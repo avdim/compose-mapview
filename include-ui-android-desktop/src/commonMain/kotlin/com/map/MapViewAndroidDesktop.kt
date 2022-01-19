@@ -144,6 +144,5 @@ fun MapViewAndroidDesktop(
             addRect(Rect(0f, 0f, size.width, size.height))
         }, color = Color.Red, style = Stroke(4f))
     }
-//    ScrollableArea(state)
 }
 
