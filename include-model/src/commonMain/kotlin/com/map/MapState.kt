@@ -13,6 +13,12 @@ data class MapState<T>(
     val cache: MutableMap<Tile, T> = hashMapOf()
 )
 
+data class DisplayTileWithImage<T>(
+    val displayTile: DisplayTile,
+    val image: T?,
+    val tile: Tile,
+)
+
 val MapState<*>.centerGeo get():GeoPt = displayToGeo(Pt(width / 2, height / 2))
 fun <T> MapState<T>.copyAndChangeCenter(targetCenter: GeoPt): MapState<T> =
     copy(

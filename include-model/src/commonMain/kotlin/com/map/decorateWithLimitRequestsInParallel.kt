@@ -21,9 +21,9 @@ fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
 
     val store = scope.createStoreWithSideEffect(
         init = State(),
-        effectHandler = { store, effect: SideEffect2<K, T> ->
+        effectHandler = { store, effect: NetworkSideEffect<K, T> ->
             when (effect) {
-                is SideEffect2.Load<K, T> -> {
+                is NetworkSideEffect.Load<K, T> -> {
                     effect.waitElements.forEach { element ->
                         scope.launch {
                             try {
@@ -38,7 +38,7 @@ fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
                         }
                     }
                 }
-                is SideEffect2.Delay<K, T> -> {
+                is NetworkSideEffect.Delay<K, T> -> {
                     scope.launch {
                         delay(delayBeforeRequestMs)
                         store.send(Intent.AfterDelay())
@@ -57,7 +57,7 @@ fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
                         it.deferred.completeExceptionally(Exception("cancelled in decorateWithLimitRequestsInParallel"))
                     }
                 }
-                state.copy(stack = fifo).addSideEffect(SideEffect2.Delay())
+                state.copy(stack = fifo).addSideEffect(NetworkSideEffect.Delay())
             }
             is Intent.AfterDelay -> {
                 if (state.stack.isNotEmpty()) {
@@ -73,7 +73,7 @@ fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
                     state.copy(
                         stack = fifo,
                         currentRequests = state.currentRequests + elementsToLoad.size
-                    ).addSideEffect(SideEffect2.Load(elementsToLoad))
+                    ).addSideEffect(NetworkSideEffect.Load(elementsToLoad))
                 } else {
                     state.noSideEffects()
                 }
@@ -83,7 +83,7 @@ fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
                     currentRequests = state.currentRequests - 1
                 ).run {
                     if (state.stack.isNotEmpty()) {
-                        addSideEffect(SideEffect2.Delay())
+                        addSideEffect(NetworkSideEffect.Delay())
                     } else {
                         noSideEffects()
                     }
@@ -108,7 +108,7 @@ private sealed interface Intent<K, T> {
     class AfterDelay<K, T> : Intent<K, T>
 }
 
-private sealed interface SideEffect2<K, T> {//todo android naming SideEffect duplicate in dex
-    class Load<K, T>(val waitElements: List<ElementWait<K, T>>) : SideEffect2<K, T>
-    class Delay<K, T> : SideEffect2<K, T>
+private sealed interface NetworkSideEffect<K, T> {
+    class Load<K, T>(val waitElements: List<ElementWait<K, T>>) : NetworkSideEffect<K, T>
+    class Delay<K, T> : NetworkSideEffect<K, T>
 }
