@@ -3,14 +3,14 @@ package com.map
 import org.w3c.dom.ImageBitmap
 
 //todo rename GpuImageContainer
-actual class GpuOptimizedImage(
+actual class TileImage(
     val platformSpecificData: ImageBitmap,
     actual val offsetX: Int = 0,
     actual val offsetY: Int = 0,
     actual val cropSize: Int = TILE_SIZE,
 ) {
-    actual fun lightweightDuplicate(offsetX: Int, offsetY: Int, cropSize: Int): GpuOptimizedImage =
-        GpuOptimizedImage(
+    actual fun lightweightDuplicate(offsetX: Int, offsetY: Int, cropSize: Int): TileImage =
+        TileImage(
             platformSpecificData,
             offsetX = offsetX,
             offsetY = offsetY,

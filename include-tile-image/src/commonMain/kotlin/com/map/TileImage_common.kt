@@ -6,15 +6,15 @@ import kotlin.math.roundToInt
  * Картинка в удобном представлении для рисования на конкретной платформе.
  * Требуется чтобы отрисовка на Canvas происходила быстро.
  */
-expect class GpuOptimizedImage {
+expect class TileImage {
     val cropSize: Int
     val offsetX: Int
     val offsetY: Int
-    fun lightweightDuplicate(offsetX: Int, offsetY: Int, cropSize: Int): GpuOptimizedImage
+    fun lightweightDuplicate(offsetX: Int, offsetY: Int, cropSize: Int): TileImage
 }
-val GpuOptimizedImage.isBadQuality: Boolean get() = cropSize < TILE_SIZE
+val TileImage.isBadQuality: Boolean get() = cropSize < TILE_SIZE
 
-fun GpuOptimizedImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): GpuOptimizedImage {
+fun TileImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): TileImage {
     val scale: Float = targetSize.toFloat() / TILE_SIZE
     val newSize = maxOf(1, (cropSize * scale).roundToInt())
     val dx = x * newSize / targetSize

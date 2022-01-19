@@ -4,4 +4,4 @@ import org.w3c.dom.events.MouseEvent
 import kotlin.math.ceil
 
 fun MouseEvent.toPt(): Pt = Pt(ceil(x).toInt(), ceil(y).toInt())
-fun GpuOptimizedImage.extract() = platformSpecificData
+fun TileImage.extract() = platformSpecificData

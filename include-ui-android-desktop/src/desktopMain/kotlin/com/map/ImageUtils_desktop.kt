@@ -5,5 +5,5 @@ import androidx.compose.ui.graphics.toComposeImageBitmap
 import org.jetbrains.skia.Image
 
 actual fun ByteArray.toImageBitmap(): ImageBitmap = Image.makeFromEncoded(this).toComposeImageBitmap()
-actual fun GpuOptimizedImage.extract():ImageBitmap = platformSpecificData
+actual fun TileImage.extract():ImageBitmap = platformSpecificData
 

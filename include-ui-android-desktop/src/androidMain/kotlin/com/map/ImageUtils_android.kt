@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 
 actual fun ByteArray.toImageBitmap(): ImageBitmap = toAndroidBitmap().asImageBitmap()
-actual fun GpuOptimizedImage.extract():ImageBitmap = platformSpecificData
+actual fun TileImage.extract():ImageBitmap = platformSpecificData
 
 fun ByteArray.toAndroidBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(this, 0, size);

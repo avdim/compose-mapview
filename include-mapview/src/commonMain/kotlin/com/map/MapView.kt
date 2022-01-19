@@ -45,9 +45,9 @@ public fun MapView(
     val imageRepository = createImageRepositoryComposable(ioScope, mapTilerSecretKey)
 
 
-    val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//todo mutable state
+    val tilesHashMap: MutableMap<Tile, TileImage> = createConcurrentMap()//todo mutable state
 
-    val gridStore = viewScope.createGridStore<GpuOptimizedImage>(
+    val gridStore = viewScope.createGridStore<TileImage>(
         isBadQuality = { it.isBadQuality },
         searchCropAndPut = { tilesHashMap.searchCropAndPut(it) }
     ) { store, sideEffect: SideEffectGrid ->
@@ -55,7 +55,7 @@ public fun MapView(
             is SideEffectGrid.LoadTile -> {
                 ioScope.launch {
                     try {
-                        val image: GpuOptimizedImage =
+                        val image: TileImage =
                             (if (Config.SCALE_ONLY_WITH_CROP) tilesHashMap.searchCropAndPut(sideEffect.tile) else null)
                                 ?: imageRepository.loadContent(sideEffect.tile)
 
@@ -105,9 +105,9 @@ expect interface DisplayModifier
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage>
+internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, TileImage>
 
-fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimizedImage? {
+fun MutableMap<Tile, TileImage>.searchCropAndPut(tile1: Tile): TileImage? {
     //todo unit tests
     val img1 = get(tile1)
     if (img1 != null) {

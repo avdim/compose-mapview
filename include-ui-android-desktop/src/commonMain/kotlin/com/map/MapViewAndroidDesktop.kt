@@ -27,7 +27,7 @@ import kotlin.math.roundToInt
 fun MapViewAndroidDesktop(
     modifier: Modifier,
     isInTouchMode: Boolean,
-    stateFlow: StateFlow<ImageTilesGrid<GpuOptimizedImage>>,
+    stateFlow: StateFlow<ImageTilesGrid<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,

@@ -15,7 +15,7 @@ import org.w3c.dom.events.MouseEvent
 public fun MapViewBrowser(
     width: Int,
     height: Int,
-    stateFlow: StateFlow<ImageTilesGrid<GpuOptimizedImage>>,
+    stateFlow: StateFlow<ImageTilesGrid<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit

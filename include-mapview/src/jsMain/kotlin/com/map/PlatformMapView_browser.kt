@@ -5,10 +5,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, TileImage> {
     // Для браузера дисковый кэш не нужен, он и так кэширует картинки.
     return createRealRepository(mapTilerSecretKey)
-        .adapter { GpuOptimizedImage(it) }
+        .adapter { TileImage(it) }
         .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithInMemoryCache()
 }
@@ -28,7 +28,7 @@ public fun size(width: Int, height: Int): MapViewJsModifier = object : MapViewJs
 @Composable
 internal actual fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: StateFlow<ImageTilesGrid<GpuOptimizedImage>>,
+    stateFlow: StateFlow<ImageTilesGrid<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,

@@ -17,11 +17,11 @@ import kotlinx.coroutines.flow.StateFlow
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, TileImage> {
     return createRealRepository(HttpClient(CIO), mapTilerSecretKey)
         .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithDiskCache(ioScope, LocalContext.current.cacheDir)
-        .adapter { GpuOptimizedImage(it.toImageBitmap()) }
+        .adapter { TileImage(it.toImageBitmap()) }
         .decorateWithDistinctDownloader(ioScope)
         .decorateWithInMemoryCache()
 }
@@ -31,7 +31,7 @@ actual typealias DisplayModifier = Modifier
 @Composable
 internal actual fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: StateFlow<ImageTilesGrid<GpuOptimizedImage>>,
+    stateFlow: StateFlow<ImageTilesGrid<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,

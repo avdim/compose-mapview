@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 @Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage> {
+internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, TileImage> {
     // Для HOME директории MacOS требует разрешения.
     // Чтобы не просить разрешений созданим кэш во временной директории.
     val cacheDir = File(System.getProperty("java.io.tmpdir")).resolve(CACHE_DIR_NAME)
     return createRealRepository(HttpClient(CIO), mapTilerSecretKey)
         .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithDiskCache(ioScope, cacheDir)
-        .adapter { GpuOptimizedImage(it.toImageBitmap()) }
+        .adapter { TileImage(it.toImageBitmap()) }
         .decorateWithDistinctDownloader(ioScope)
         .decorateWithInMemoryCache()
 }
@@ -26,7 +26,7 @@ actual typealias DisplayModifier = Modifier
 @Composable
 internal actual fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: StateFlow<ImageTilesGrid<GpuOptimizedImage>>,
+    stateFlow: StateFlow<ImageTilesGrid<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,
