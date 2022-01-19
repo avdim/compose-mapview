@@ -16,18 +16,18 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("com.map:config:1.0-SNAPSHOT")
-                api(compose.runtime)
+                implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
         val androidMain by getting {
             dependencies {
-                api(compose.foundation)
+                implementation(compose.foundation)
             }
         }
         val desktopMain by getting {
             dependencies {
-                api(compose.foundation)
+                implementation(compose.foundation)
             }
         }
         val jsMain by getting {
