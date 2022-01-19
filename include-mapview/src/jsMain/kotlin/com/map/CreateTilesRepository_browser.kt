@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 
 @Composable
-internal actual fun createImageRepositoryComposable(
+internal actual fun createTilesRepository(
     ioScope: CoroutineScope,
     mapTilerSecretKey: String
 ): ContentRepository<Tile, TileImage> {

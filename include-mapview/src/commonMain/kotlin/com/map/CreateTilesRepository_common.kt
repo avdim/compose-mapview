@@ -10,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal expect fun createImageRepositoryComposable(
+internal expect fun createTilesRepository(
     ioScope: CoroutineScope,
     mapTilerSecretKey: String
 ): ContentRepository<Tile, TileImage>
