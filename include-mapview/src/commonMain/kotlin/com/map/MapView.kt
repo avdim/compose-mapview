@@ -27,7 +27,7 @@ val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//t
  * (value around 150.0 = Cities),
  * (value around 40000.0 = Street's)
  *
- * @param onMapViewClick handle click event with point coordinates
+ * @param onMapViewClick handle click event with point coordinates (latitude, longitude)
  * return true to enable zoom on click
  * return false to disable zoom on click
  */
@@ -38,7 +38,7 @@ public fun MapView(
     latitude: Double = 0.0,
     longitude: Double = 0.0,
     startScale:Double=1.0,
-    onMapViewClick: (latitude: Double, longitude: Double) -> Boolean = { lat, lon -> true }
+    onMapViewClick: (latitude: Double, longitude: Double) -> Boolean = { lat, lon -> true },
 ) {
     val viewScope = rememberCoroutineScope()
     val ioScope = CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO())
