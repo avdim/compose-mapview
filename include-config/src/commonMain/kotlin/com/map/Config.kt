@@ -5,7 +5,6 @@ val TILE_SIZE = 512
 object Config {
     val DISPLAY_TELEMETRY: Boolean = true
     val SIMULATE_NETWORK_PROBLEMS = false
-    val SCALE_ONLY_WITH_CROP = false
     val CLICK_DURATION_MS: Long = 300
     val CLICK_AREA_RADIUS_PX: Int = 7
     val ZOOM_ON_CLICK = 0.8

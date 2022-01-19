@@ -55,10 +55,7 @@ public fun MapView(
             is SideEffectGrid.LoadTile -> {
                 ioScope.launch {
                     try {
-                        val image: TileImage =
-                            (if (Config.SCALE_ONLY_WITH_CROP) tilesHashMap.searchCropAndPut(sideEffect.tile) else null)
-                                ?: imageRepository.loadContent(sideEffect.tile)
-
+                        val image: TileImage = imageRepository.loadContent(sideEffect.tile)
                         tilesHashMap[sideEffect.tile] = image
                         store.send(IntentGrid.TileLoaded(DisplayTileWithImage(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
