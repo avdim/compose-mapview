@@ -5,9 +5,9 @@ package com.map
  * doc here https://cloud.maptiler.com/maps/streets/
  */
 data class Tile(
-    val zoom:Int,
-    val x:Int,
-    val y:Int
+    val zoom: Int,
+    val x: Int,
+    val y: Int
 )
 
 data class DisplayTile(
@@ -16,13 +16,11 @@ data class DisplayTile(
     val y: Int
 )
 
-
 data class DisplayTileAndTile(
-    val first: DisplayTile,
-    val second: Tile
-)
-fun DisplayTileAndTile.pair() = Pair<DisplayTile, Tile>(first, second)
-data class TilesGrid(
-    val matrix:List<DisplayTileAndTile>, //todo pair
+    val display: DisplayTile,
+    val tile: Tile
 )
 
+data class TilesGrid(
+    val matrix: List<DisplayTileAndTile>,
+)

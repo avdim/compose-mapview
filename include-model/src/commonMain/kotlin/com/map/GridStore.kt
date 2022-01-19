@@ -31,10 +31,10 @@ fun <T:Any> CoroutineScope.createGridStore(
     when (intent) {
         is IntentGrid.UpdateTiles -> {
             state.copy(
-                matrix = intent.grid.matrix.map { it.first to searchCropAndPut(it.second) }.toMap()
+                matrix = intent.grid.matrix.map { it.display to searchCropAndPut(it.tile) }.toMap()
             ).addSideEffects(
                 intent.grid.matrix.map {
-                    SideEffectGrid.LoadTile(it.first, it.second)
+                    SideEffectGrid.LoadTile(it.display, it.tile)
                 }
             )
         }
