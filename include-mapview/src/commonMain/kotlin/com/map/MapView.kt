@@ -6,8 +6,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.max
 
-val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//todo
-
 /**
  * MapView to display Earth tile maps. API provided by cloud.maptiler.com
  *
@@ -47,9 +45,9 @@ public fun MapView(
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore(latitude, longitude, startScale)
     val imageRepository = createImageRepositoryComposable(ioScope, mapTilerSecretKey)
 
-    val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
+    val gridStore = viewScope.createGridStore { store, sideEffect: SideEffectGrid ->
         when (sideEffect) {
-            is SideEffect.LoadTile -> {
+            is SideEffectGrid.LoadTile -> {
                 ioScope.launch {
                     try {
                         val image: GpuOptimizedImage =
@@ -57,7 +55,7 @@ public fun MapView(
                                 ?: imageRepository.loadContent(sideEffect.tile)
 
                         tilesHashMap[sideEffect.tile] = image
-                        store.send(GridIntent.TileLoaded(ImageTile(image, sideEffect.displayTile)))
+                        store.send(IntentGrid.TileLoaded(ImageTile(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
                         println("fail to load tile ${sideEffect.displayTile}, $t")
                     }
@@ -68,7 +66,7 @@ public fun MapView(
     viewScope.launch {
         mapStore.stateFlow.collect { state ->
             val grid = state.calcTiles()
-            gridStore.send(GridIntent.NewTiles(grid))
+            gridStore.send(IntentGrid.NewTiles(grid))
         }
     }
 
@@ -105,30 +103,3 @@ internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope, map
 @Composable
 internal expect fun Telemetry(stateFlow: StateFlow<MapState>)
 
-fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimizedImage? {
-    //todo unit tests
-    val img1 = get(tile1)
-    if (img1 != null) {
-        return img1
-    }
-    var zoom = tile1.zoom
-    var x = tile1.x
-    var y = tile1.y
-    while (zoom > 0) {
-        zoom--
-        x /= 2
-        y /= 2
-        val tile2 = Tile(zoom, x, y)
-        val img2 = get(tile2)
-        if (img2 != null) {
-            val deltaZoom = tile1.zoom - tile2.zoom
-            val i = tile1.x - (x shl deltaZoom)
-            val j = tile1.y - (y shl deltaZoom)
-            val size = max(TILE_SIZE ushr deltaZoom, 1)
-            val cropImg = img2.cropAndRestoreSize(i * size, j * size, size)
-            put(tile1, cropImg)
-            return cropImg
-        }
-    }
-    return null
-}
