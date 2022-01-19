@@ -4,7 +4,7 @@ plugins {
     id("com.github.gmazzo.buildconfig") version "3.0.3"
 }
 
-version = "1.0"
+version = "1.0-SNAPSHOT"
 
 kotlin {
     android()

@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-version = "1.0"
+version = "1.0-SNAPSHOT"
 
 val KTOR_VERSION = "1.6.7"
 val ktorCore = "io.ktor:ktor-client-core:$KTOR_VERSION"

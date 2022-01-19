@@ -17,10 +17,10 @@ pluginManagement {
     }
 }
 
-rootProject.name = "mapview"
-include(":android")
-include(":desktop")
-include(":browser")
+rootProject.name = "compose-mapview"
+include(":sample-android")
+include(":sample-desktop")
+include(":sample-browser")
 include(":unit-tests")
 
 includeBuild("include-model") {

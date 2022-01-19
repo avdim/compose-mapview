@@ -17,7 +17,7 @@ MapView(
     mapTilerSecretKey = MAPTILER_SECRET_KEY,
     latitude =  60.00,
     longitude = 29.75,
-    startScale = 840.0,
+    startScale = 500.0,
     onMapViewClick = { latitude, longitude ->
         println("Hello, Geo coordinates, (lat $latitude, lon $longitude)")
         true
@@ -27,18 +27,16 @@ MapView(
 
 ### Running desktop application
 ```
-./gradlew :desktop:run
+./gradlew sample-desktop:run
 ```
 
 ### Install Android application
 
 ```
-./gradlew android:installDebug
+./gradlew sample-android:installDebug
 ```
-
-Open project in IntelliJ IDEA or Android Studio and run "android" configuration.
 
 ### JS
 ```
-./gradlew browser:jsBrowserRun
+./gradlew sample-browser:jsBrowserRun
 ```
