@@ -48,7 +48,7 @@ public fun MapView(
         latitude = latitude,
         longitude = longitude,
         startScale = startScale,
-        searchOrCropOrNull = { searchOrCropOrNull(it) },
+        searchOrCropOrNull = { searchOrCrop(it) },
     ) { store, sideEffect ->
         when (sideEffect) {
             is MapSideEffect.LoadTile -> {

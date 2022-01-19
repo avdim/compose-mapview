@@ -12,7 +12,6 @@ expect class TileImage {
     val offsetY: Int
     fun lightweightDuplicate(offsetX: Int, offsetY: Int, cropSize: Int): TileImage
 }
-val TileImage.isBadQuality: Boolean get() = cropSize < TILE_SIZE
 
 /**
  * Вырезать нужный кусочек и сделать scale до исходного размера
