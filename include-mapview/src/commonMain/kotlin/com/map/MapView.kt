@@ -88,14 +88,4 @@ public fun MapView(
 
 expect interface DisplayModifier
 
-/**
- * Создать репозиторий для получения tile картинок.
- * В зависимости от платформы будет обёрнут в Декоратор для кэша на диск и (или) in-memory кэш.
- * Эта функция с аннотацией Composable, чтобы можно было получить android Context
- */
-@Composable
-internal expect fun createImageRepositoryComposable(
-    ioScope: CoroutineScope,
-    mapTilerSecretKey: String
-): ContentRepository<Tile, TileImage>
 

@@ -2,16 +2,10 @@ package com.map
 
 import androidx.compose.runtime.Composable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-
-@Composable
-internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, TileImage> {
-    // Для браузера дисковый кэш не нужен, он и так кэширует картинки.
-    return createRealRepository(mapTilerSecretKey)
-        .adapter { TileImage(it) }
-        .decorateWithLimitRequestsInParallel(ioScope)
-}
+import kotlin.coroutines.CoroutineContext
 
 actual typealias DisplayModifier = MapViewJsModifier
 

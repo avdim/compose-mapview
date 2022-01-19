@@ -2,7 +2,6 @@ package com.map
 
 import org.w3c.dom.ImageBitmap
 
-//todo rename GpuImageContainer
 actual class TileImage(
     val platformSpecificData: ImageBitmap,
     actual val offsetX: Int = 0,
