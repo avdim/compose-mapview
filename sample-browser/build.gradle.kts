@@ -15,8 +15,8 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             dependencies {
-                implementation("com.map:mapview:1.0")
-                implementation("com.map:secret:1.0")
+                implementation("com.map:mapview:1.0-SNAPSHOT")
+                implementation("com.map:secret:1.0-SNAPSHOT")
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0

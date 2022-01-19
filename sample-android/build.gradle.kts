@@ -21,8 +21,8 @@ android {
 }
 
 dependencies {
-    implementation("com.map:mapview:1.0")
-    implementation("com.map:secret:1.0")
+    implementation("com.map:mapview:1.0-SNAPSHOT")
+    implementation("com.map:secret:1.0-SNAPSHOT")
 
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("androidx.core:core-ktx:1.3.1")

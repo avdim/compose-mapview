@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         named("commonTest") {
             dependencies {
-                implementation("com.map:model:1.0")
+                implementation("com.map:model:1.0-SNAPSHOT")
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
             }

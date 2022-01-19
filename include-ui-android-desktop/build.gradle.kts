@@ -14,7 +14,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("com.map:model:1.0")
+                api("com.map:model:1.0-SNAPSHOT")
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)

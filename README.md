@@ -25,18 +25,14 @@ MapView(
 )
 ```
 
-### Running desktop application
-```
-./gradlew sample-desktop:run
-```
+## Run samples targets
+```./gradlew sample-desktop:run```
+```./gradlew sample-android:installDebug #(connect device first)```
+```./gradlew sample-browser:jsBrowserRun```
 
-### Install Android application
-
-```
-./gradlew sample-android:installDebug
-```
-
-### JS
-```
-./gradlew sample-browser:jsBrowserRun
-```
+## Describe sources
+Проект разбит на несколько includeBuild, чтобы нормально проходил импорт в Idea.
+Состоит из следующих подпроектов:
+### include-mapview
+Главный мультиплатформенный модуль, тут лежит мультиплатформенный MapView() с общей логикой инициализации. 
+А также платформо специфичные PlatformMapView. 

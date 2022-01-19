@@ -25,30 +25,30 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.map:model:1.0")
+                implementation("com.map:model:1.0-SNAPSHOT")
                 implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation("com.map:io-android-desktop:1.0")
-                implementation("com.map:ui-android-desktop:1.0")
+                implementation("com.map:io-android-desktop:1.0-SNAPSHOT")
+                implementation("com.map:ui-android-desktop:1.0-SNAPSHOT")
                 implementation(ktorOkHttp)
                 implementation(ktorCIO)
             }
         }
         val desktopMain by getting {
             dependencies {
-                implementation("com.map:io-android-desktop:1.0")
-                implementation("com.map:ui-android-desktop:1.0")
+                implementation("com.map:io-android-desktop:1.0-SNAPSHOT")
+                implementation("com.map:ui-android-desktop:1.0-SNAPSHOT")
                 implementation(ktorCIO)
                 implementation(compose.desktop.common)//todo delete?
             }
         }
         val jsMain by getting {
             dependencies {
-                implementation("com.map:ui-browser:1.0")
+                implementation("com.map:ui-browser:1.0-SNAPSHOT")
                 implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
             }
         }
