@@ -4,8 +4,8 @@ Composable UI component for Desktop, Android and Browser
 ## Setup
 In local.properties, add keys:
 ```
-mapTilerSecretKey={xXxXxXxXxXxXx}
-sdk.dir={Path to Android SDK}
+mapTilerSecretKey=xXxXxXxXxXxXx
+sdk.dir=Path to Android SDK
 ```
 Where **mapTilerSecretKey** is secret API key for cloud.maptiler.com  
 Here you can get this key: https://cloud.maptiler.com/maps/streets/ (register and look at url field `?key=...#`)
