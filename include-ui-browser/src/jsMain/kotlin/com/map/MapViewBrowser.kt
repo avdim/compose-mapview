@@ -16,7 +16,7 @@ import org.w3c.dom.events.MouseEvent
 public fun MapViewBrowser(
     width: Int,
     height: Int,
-    stateFlow: Flow<Set<DisplayTileWithImage<TileImage>>>,
+    stateFlow: StateFlow<MapState<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
@@ -27,7 +27,7 @@ public fun MapViewBrowser(
     var previousMouseMoveDownPos by remember { mutableStateOf<Pt?>(null) }
     var previousMouseMovePos by remember { mutableStateOf(Pt(width / 2, height / 2)) }
     var previousMouseDownPos by remember { mutableStateOf<Pt?>(null) }
-    val state by stateFlow.collectAsState(emptySet())
+    val state by stateFlow.collectAsState()
     TagElement(
         elementBuilder = ElementBuilder.createBuilder("canvas"),
         applyAttrs = {
@@ -111,18 +111,20 @@ public fun MapViewBrowser(
             DomSideEffect(state) { element: Element ->
                 val canvas = element as HTMLCanvasElement
                 val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
-                state.forEach { (t, img) ->
-                    ctx.drawImage(
-                        image = img.extract(),
-                        dx = t.x.toDouble(),
-                        dy = t.y.toDouble(),
-                        dw = t.size.toDouble(),
-                        dh = t.size.toDouble(),
-                        sx = img.offsetX.toDouble(),
-                        sy = img.offsetY.toDouble(),
-                        sw = img.cropSize.toDouble(),
-                        sh = img.cropSize.toDouble()
-                    )
+                state.displayTiles.forEach { (t, img) ->
+                    if (img != null) {
+                        ctx.drawImage(
+                            image = img.extract(),
+                            dx = t.x.toDouble(),
+                            dy = t.y.toDouble(),
+                            dw = t.size.toDouble(),
+                            dh = t.size.toDouble(),
+                            sx = img.offsetX.toDouble(),
+                            sy = img.offsetY.toDouble(),
+                            sw = img.cropSize.toDouble(),
+                            sh = img.cropSize.toDouble()
+                        )
+                    }
                 }
             }
         }

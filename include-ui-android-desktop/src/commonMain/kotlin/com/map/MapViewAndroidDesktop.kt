@@ -28,7 +28,7 @@ import kotlin.math.roundToInt
 fun MapViewAndroidDesktop(
     modifier: Modifier,
     isInTouchMode: Boolean,
-    stateFlow: Flow<Set<DisplayTileWithImage<TileImage>>>,
+    stateFlow: StateFlow<MapState<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,
@@ -37,7 +37,7 @@ fun MapViewAndroidDesktop(
     var previousMoveDownPos by remember { mutableStateOf<Offset?>(null) }
     var previousPressTime by remember { mutableStateOf(0L) }
     var previousPressPos by remember { mutableStateOf<Offset?>(null) }
-    val state by stateFlow.collectAsState(emptySet())
+    val state by stateFlow.collectAsState()
 
     fun Modifier.applyPointerInput() = pointerInput(Unit) {
         while (true) {
@@ -127,16 +127,21 @@ fun MapViewAndroidDesktop(
     ) {
         updateSize(size.width.toInt(), size.height.toInt())
         clipRect() {
-            state.forEach { (t, img) ->
-                val size = IntSize(t.size, t.size)
-                val position = IntOffset(t.x, t.y)
-                drawImage(
-                    img.extract(),
-                    srcOffset = IntOffset(img.offsetX, img.offsetY),
-                    srcSize = IntSize(img.cropSize, img.cropSize),
-                    dstOffset = position,
-                    dstSize = size
-                )
+            state.displayTiles.forEach { (t, img) ->
+                if(img == null) {
+                    println("break")
+                }
+                if (img != null) {
+                    val size = IntSize(t.size, t.size)
+                    val position = IntOffset(t.x, t.y)
+                    drawImage(
+                        img.extract(),
+                        srcOffset = IntOffset(img.offsetX, img.offsetY),
+                        srcSize = IntSize(img.cropSize, img.cropSize),
+                        dstOffset = position,
+                        dstSize = size
+                    )
+                }
             }
         }
         drawPath(path = Path().apply {

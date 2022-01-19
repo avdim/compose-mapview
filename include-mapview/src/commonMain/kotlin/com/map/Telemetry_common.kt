@@ -10,4 +10,4 @@ import kotlin.math.max
  * Для тестового отображения состояния MapState
  */
 @Composable
-internal expect fun Telemetry(stateFlow: StateFlow<MapState>)
+internal expect fun Telemetry(stateFlow: StateFlow<MapState<*>>)

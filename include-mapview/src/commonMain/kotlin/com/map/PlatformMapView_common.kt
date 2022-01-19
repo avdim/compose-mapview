@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 internal expect fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: Flow<Set<DisplayTileWithImage<TileImage>>>,
+    stateFlow: StateFlow<MapState<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,

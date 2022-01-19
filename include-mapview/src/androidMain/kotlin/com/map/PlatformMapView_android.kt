@@ -24,7 +24,6 @@ internal actual fun createImageRepositoryComposable(ioScope: CoroutineScope, map
         .decorateWithDiskCache(ioScope, LocalContext.current.cacheDir)
         .adapter { TileImage(it.toImageBitmap()) }
         .decorateWithDistinctDownloader(ioScope)
-        .decorateWithInMemoryCache()
 }
 
 actual typealias DisplayModifier = Modifier
@@ -32,7 +31,7 @@ actual typealias DisplayModifier = Modifier
 @Composable
 internal actual fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: Flow<Set<DisplayTileWithImage<TileImage>>>,
+    stateFlow: StateFlow<MapState<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,
@@ -50,7 +49,7 @@ internal actual fun PlatformMapView(
 }
 
 @Composable
-internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
+internal actual fun Telemetry(stateFlow: StateFlow<MapState<*>>) {
     val state by stateFlow.collectAsState()
     Column {
         Text(state.toString())

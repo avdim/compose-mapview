@@ -2,8 +2,10 @@ package com.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 
 /**
  * MapView to display Earth tile maps. API provided by cloud.maptiler.com
@@ -33,26 +35,27 @@ import kotlinx.coroutines.flow.map
 @Composable
 public fun MapView(
     modifier: DisplayModifier,
-    mapTilerSecretKey:String,
+    mapTilerSecretKey: String,
     latitude: Double = 0.0,
     longitude: Double = 0.0,
-    startScale:Double=1.0,
+    startScale: Double = 1.0,
     onMapViewClick: (latitude: Double, longitude: Double) -> Boolean = { lat, lon -> true },
 ) {
     val viewScope = rememberCoroutineScope()
     val ioScope = CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO())
-    val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore(latitude, longitude, startScale)
     val imageRepository = createImageRepositoryComposable(ioScope, mapTilerSecretKey)
-
-    val gridStore = viewScope.createGridStore<TileImage>(
-        searchOrCropOrNull = { searchOrCropOrNull(it) }
-    ) { store, sideEffect: SideEffectGrid ->
+    val mapStore: Store<MapState<TileImage>, MapIntent<TileImage>> = viewScope.createMapStore(
+        latitude = latitude,
+        longitude = longitude,
+        startScale = startScale,
+        searchOrCropOrNull = { searchOrCropOrNull(it) },
+    ) { store, sideEffect ->
         when (sideEffect) {
-            is SideEffectGrid.LoadTile -> {
+            is MapSideEffect.LoadTile -> {
                 ioScope.launch {
                     try {
                         val image: TileImage = imageRepository.loadContent(sideEffect.tile)
-                        store.send(IntentGrid.TileImageLoaded(sideEffect.tile, image))
+                        store.send(MapIntent.TileImageLoaded(sideEffect.tile, image))
                     } catch (t: Throwable) {
                         // ignore errors. Tile image loaded with retries
                     }
@@ -60,29 +63,23 @@ public fun MapView(
             }
         }
     }
-    viewScope.launch {
-        mapStore.stateFlow.collect { state ->
-            val grid = state.calcTiles()
-            gridStore.send(IntentGrid.UpdateTiles(grid))
-        }
-    }
 
     PlatformMapView(
         modifier = modifier,
-        stateFlow = gridStore.stateFlow.map { it.displayTiles. toSet() },
+        stateFlow = mapStore.stateFlow,
         onZoom = { pt, change ->
             mapStore.send(
-                MapIntent.Zoom(pt ?: Pt(mapStore.state.width / 2, mapStore.state.height / 2), change)
+                MapIntent.Input.Zoom(pt ?: Pt(mapStore.state.width / 2, mapStore.state.height / 2), change)
             )
         },
         onClick = {
             val state = mapStore.state
             if (onMapViewClick(state.displayToGeo(it).latitude, state.displayToGeo(it).longitude)) {
-                mapStore.send(MapIntent.Zoom(it, Config.ZOOM_ON_CLICK))
+                mapStore.send(MapIntent.Input.Zoom(it, Config.ZOOM_ON_CLICK))
             }
         },
-        onMove = { dx, dy -> mapStore.send(MapIntent.Move(Pt(-dx, -dy))) },
-        updateSize = { w, h -> mapStore.send(MapIntent.SetSize(w, h)) }
+        onMove = { dx, dy -> mapStore.send(MapIntent.Input.Move(Pt(-dx, -dy))) },
+        updateSize = { w, h -> mapStore.send(MapIntent.Input.SetSize(w, h)) }
     )
     if (Config.DISPLAY_TELEMETRY) {
         Telemetry(mapStore.stateFlow)
@@ -97,5 +94,8 @@ expect interface DisplayModifier
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
 @Composable
-internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, TileImage>
+internal expect fun createImageRepositoryComposable(
+    ioScope: CoroutineScope,
+    mapTilerSecretKey: String
+): ContentRepository<Tile, TileImage>
 
