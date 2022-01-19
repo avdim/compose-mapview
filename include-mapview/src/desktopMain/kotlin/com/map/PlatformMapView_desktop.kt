@@ -2,14 +2,7 @@ package com.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import java.io.File
-import kotlin.coroutines.CoroutineContext
 
 actual typealias DisplayModifier = Modifier
 
