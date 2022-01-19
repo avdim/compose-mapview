@@ -87,7 +87,9 @@ public fun MapView(
         onMove = { dx, dy -> mapStore.send(MapIntent.Move(Pt(-dx, -dy))) },
         updateSize = { w, h -> mapStore.send(MapIntent.SetSize(w, h)) }
     )
-    Telemetry(mapStore.stateFlow)
+    if (Config.DISPLAY_TELEMETRY) {
+        Telemetry(mapStore.stateFlow)
+    }
 }
 
 expect interface DisplayModifier
@@ -99,7 +101,4 @@ expect interface DisplayModifier
  */
 @Composable
 internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, GpuOptimizedImage>
-
-@Composable
-internal expect fun Telemetry(stateFlow: StateFlow<MapState>)
 

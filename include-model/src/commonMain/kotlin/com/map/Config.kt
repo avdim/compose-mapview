@@ -1,6 +1,7 @@
 package com.map
 
 object Config {
+    val DISPLAY_TELEMETRY: Boolean = true
     val SIMULATE_NETWORK_PROBLEMS = false
     val SCALE_ONLY_WITH_CROP = false
     val CLICK_DURATION_MS: Long = 300

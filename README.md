@@ -51,3 +51,4 @@ MapViewBrowser.kt - отрисовка в <canvas>
 ### include-model
 Мультиплатформенная логика 
 
+Config

@@ -50,35 +50,4 @@ internal actual fun PlatformMapView(
     )
 }
 
-@Composable
-internal actual fun Telemetry(stateFlow: StateFlow<MapState>) {
-    val state by stateFlow.collectAsState()
-    Column(Modifier.background(Color(0x77ffFFff))) {
-        Text(state.toShortString())
-    }
-}
 
-private fun GpuOptimizedImage.cropAndScale(x: Int, y: Int, w: Int, h: Int, targetW: Int, targetH: Int): GpuOptimizedImage {
-    val cropped = cropImage(extract().toAwtImage(), Rectangle(x, y, w, h))
-    val scaled = scaleBitmapAspectRatio(cropped, targetW, targetH)
-    val result = GpuOptimizedImage(scaled.toComposeImageBitmap())
-    return result
-    if(false) {
-        return crop(x,y,w,h).scale(targetW, targetH)
-    }
-    if (false) {
-        extract().asSkiaBitmap().asComposeImageBitmap()
-    }
-}
-
-private fun GpuOptimizedImage.crop(x: Int, y: Int, w: Int, h: Int): GpuOptimizedImage {
-    return GpuOptimizedImage(cropImage(extract().toAwtImage(), Rectangle(x, y, w, h)).toComposeImageBitmap())
-}
-
-private fun GpuOptimizedImage.scale(w: Int, h: Int): GpuOptimizedImage {
-    val result = scaleBitmapAspectRatio(extract().toAwtImage(), w, h).toComposeImageBitmap()
-    if (result.width != w || result.height != h) {
-        throw Exception("my exception result.width != w || result.height != h")
-    }
-    return GpuOptimizedImage(result)
-}
