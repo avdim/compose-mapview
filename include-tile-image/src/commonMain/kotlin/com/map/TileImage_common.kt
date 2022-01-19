@@ -14,6 +14,9 @@ expect class TileImage {
 }
 val TileImage.isBadQuality: Boolean get() = cropSize < TILE_SIZE
 
+/**
+ * Вырезать нужный кусочек и сделать scale до исходного размера
+ */
 fun TileImage.cropAndRestoreSize(x: Int, y: Int, targetSize: Int): TileImage {
     val scale: Float = targetSize.toFloat() / TILE_SIZE
     val newSize = maxOf(1, (cropSize * scale).roundToInt())

@@ -104,30 +104,3 @@ expect interface DisplayModifier
 @Composable
 internal expect fun createImageRepositoryComposable(ioScope: CoroutineScope, mapTilerSecretKey:String): ContentRepository<Tile, TileImage>
 
-fun MutableMap<Tile, TileImage>.searchCropAndPut(tile1: Tile): TileImage? {
-    //todo unit tests
-    val img1 = get(tile1)
-    if (img1 != null) {
-        return img1
-    }
-    var zoom = tile1.zoom
-    var x = tile1.x
-    var y = tile1.y
-    while (zoom > 0) {
-        zoom--
-        x /= 2
-        y /= 2
-        val tile2 = Tile(zoom, x, y)
-        val img2 = get(tile2)
-        if (img2 != null) {
-            val deltaZoom = tile1.zoom - tile2.zoom
-            val i = tile1.x - (x shl deltaZoom)
-            val j = tile1.y - (y shl deltaZoom)
-            val size = max(TILE_SIZE ushr deltaZoom, 1)
-            val cropImg = img2.cropAndRestoreSize(i * size, j * size, size)
-            put(tile1, cropImg)
-            return cropImg
-        }
-    }
-    return null
-}

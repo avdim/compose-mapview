@@ -18,3 +18,13 @@ object Config {
     fun createTileUrl(zoom: Int, x: Int, y: Int, mapTilerSecretKey: String): String =
         "https://api.maptiler.com/maps/streets/$zoom/$x/$y.png?key=$mapTilerSecretKey"
 }
+
+/**
+ * MapTiler tile,
+ * doc here https://cloud.maptiler.com/maps/streets/
+ */
+data class Tile(
+    val zoom: Int,
+    val x: Int,
+    val y: Int
+)
