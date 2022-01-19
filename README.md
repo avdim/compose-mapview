@@ -26,9 +26,9 @@ MapView(
 ```
 
 ## Run samples targets
-```./gradlew sample-desktop:run```
-```./gradlew sample-android:installDebug #(connect device first)```
-```./gradlew sample-browser:jsBrowserRun```
+```./gradlew sample-desktop:run```  
+```./gradlew sample-android:installDebug #(connect device first)```  
+```./gradlew sample-browser:jsBrowserRun```  
 
 ## Describe sources
 Проект разбит на несколько includeBuild, чтобы нормально проходил импорт в Idea.
