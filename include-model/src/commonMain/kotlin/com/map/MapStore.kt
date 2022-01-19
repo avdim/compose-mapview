@@ -26,7 +26,7 @@ fun <T> CoroutineScope.createMapStore(
     fun MapState<T>.updateDisplayTiles() = run {
         val tilesToDisplay: MutableList<DisplayTileWithImage<T>> = mutableListOf()
         val tilesToLoad: MutableSet<Tile> = mutableSetOf()
-        calcTiles().tiles.forEach {
+        calcTiles().forEach {
             val cachedImage = cache[it.tile]
             if (cachedImage != null) {
                 tilesToDisplay.add(DisplayTileWithImage(it.display, cachedImage, it.tile))

@@ -29,12 +29,13 @@ val MapState<*>.zoom: Int
         )
     }
 
+@Suppress("unused")
 val MapState<*>.minScale get():Double = 1.0
 val MapState<*>.maxScale get():Double = (TILE_SIZE.toDouble() / height) * pow2(Config.MAX_ZOOM)
 val MapState<*>.maxTileIndex: Int get() = pow2(zoom)
 val MapState<*>.tileSize: Int get() = geoLengthToDisplay(1.0) / maxTileIndex + 1
 
-fun MapState<*>.calcTiles(): TilesGrid {
+fun MapState<*>.calcTiles(): List<DisplayTileAndTile> {
     val minI = (topLeft.x * maxTileIndex).toInt()
     val minJ = (topLeft.y * maxTileIndex).toInt()
 
@@ -61,7 +62,7 @@ fun MapState<*>.calcTiles(): TilesGrid {
             }
         }
     }
-    return TilesGrid(tiles)
+    return tiles
 }
 
 /**
@@ -84,11 +85,6 @@ fun createGeoPt(latitude: Double, longitude: Double): GeoPt {
 }
 
 fun Double.toRad() = this * PI / 180
-
-fun GeoPt.toShortString(): String {
-    return "x: ${x.toShortString()}, y: ${y.toShortString()}"
-}
-
 data class Pt(val x: Int, val y: Int)
 
 operator fun Pt.minus(other: Pt): Pt = Pt(this.x - other.x, this.y - other.y)

@@ -128,9 +128,6 @@ fun MapViewAndroidDesktop(
         updateSize(size.width.toInt(), size.height.toInt())
         clipRect() {
             state.displayTiles.forEach { (t, img) ->
-                if(img == null) {
-                    println("break")
-                }
                 if (img != null) {
                     val size = IntSize(t.size, t.size)
                     val position = IntOffset(t.x, t.y)
