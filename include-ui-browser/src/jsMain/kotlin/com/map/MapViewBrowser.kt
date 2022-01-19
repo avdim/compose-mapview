@@ -39,7 +39,7 @@ public fun MapViewBrowser(
                 val canvas = element as HTMLCanvasElement
                 canvas.onwheel = {
                     it.preventDefault()//cancel page scrolling
-                    onZoom(previousMouseMovePos, -it.deltaY * SCROLL_SENSITIVITY_BROWSER)
+                    onZoom(previousMouseMovePos, -it.deltaY * Config.SCROLL_SENSITIVITY_BROWSER)
                 }
 
                 val activeListeners: MutableList<ListenerData> = mutableListOf()

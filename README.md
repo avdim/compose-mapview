@@ -51,4 +51,7 @@ MapViewBrowser.kt - отрисовка в <canvas>
 ### include-model
 Мультиплатформенная логика 
 
+### include-config
+Содержит конфиги для настройки и отладки
+
 Config

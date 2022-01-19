@@ -21,9 +21,9 @@ fun MapState.displayToGeo(displayPt: Pt): GeoPt {
 val MapState.zoom: Int
     get() {
         return minOf(
-            MAX_ZOOM,
+            Config.MAX_ZOOM,
             maxOf(
-                MIN_ZOOM,
+                Config.MIN_ZOOM,
                 ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
             )
         )
@@ -32,7 +32,7 @@ val MapState.zoom: Int
 @Suppress("unused")
 val MapState.minScale
     get():Double = 1.0
-val MapState.maxScale get():Double = (TILE_SIZE.toDouble() / height) * pow2(MAX_ZOOM)
+val MapState.maxScale get():Double = (TILE_SIZE.toDouble() / height) * pow2(Config.MAX_ZOOM)
 val MapState.maxTileIndex: Int get() = pow2(zoom)
 val MapState.tileSize: Int get() = geoLengthToDisplay(1.0) / maxTileIndex + 1
 
