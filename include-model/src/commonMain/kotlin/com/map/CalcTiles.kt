@@ -65,11 +65,14 @@ fun MapState.calcTiles(): TilesGrid {
  */
 data class GeoPt(val x: Double, val y: Double)
 val GeoPt.longitude get():Double = x * 360.0 - 180.0
-val GeoPt.latitude get():Double = -y * 180.0 + 90.0
+val GeoPt.latitude get():Double {
+    val latRad = atan(sinh(PI * (1 - 2 * y)))
+    val latDeg = latRad / PI * 180.0
+    return latDeg
+}
 fun createGeoPt(latitude: Double, longitude: Double): GeoPt {
     val x = (longitude + 180) / 360
     val y = (1 - ln(tan(latitude.toRad()) + 1 / cos(latitude.toRad())) / PI) / 2
-//    val y = (1 - (log(tan(latitude.toRad()) + sec(latitude.toRad())) / PI)) / 2
     return GeoPt(x, y)
 }
 
