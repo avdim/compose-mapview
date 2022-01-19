@@ -9,7 +9,6 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.MouseEvent
-import kotlin.math.ceil
 
 
 @Composable
@@ -114,7 +113,7 @@ public fun MapViewBrowser(
                 state.matrix.forEach { (t, img) ->
                     if (img != null) {
                         ctx.drawImage(
-                            image = img.get(),
+                            image = img.extract(),
                             dx = t.x.toDouble(),
                             dy = t.y.toDouble(),
                             dw = t.size.toDouble(),
@@ -132,6 +131,3 @@ public fun MapViewBrowser(
 }
 
 private class ListenerData(val target: EventTarget, val type: String, val callback: EventListener)
-
-fun MouseEvent.toPt(): Pt = Pt(ceil(x).toInt(), ceil(y).toInt())
-fun GpuOptimizedImage.get() = platformSpecificData
