@@ -31,9 +31,9 @@ fun ComposeCounterApp(rootId: String) {
         MapView(
             modifier = size(1000, 800),
             mapTilerSecretKey = MAPTILER_SECRET_KEY,
-            latitude = 59.999394,
-            longitude = 29.745412,
-            startScale = 840.0,
+//            latitude = 59.999394,
+//            longitude = 29.745412,
+//            startScale = 840.0,
         )
 
     }

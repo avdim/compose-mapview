@@ -14,9 +14,9 @@ class MainActivity : AppCompatActivity() {
             MapView(
                 modifier = Modifier.fillMaxSize(),
                 mapTilerSecretKey = MAPTILER_SECRET_KEY,
-                latitude = 59.999394,
-                longitude = 29.745412,
-                startScale = 840.0,
+//                latitude = 59.999394,
+//                longitude = 29.745412,
+//                startScale = 840.0,
             )
         }
     }
