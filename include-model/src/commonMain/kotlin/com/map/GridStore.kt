@@ -53,7 +53,7 @@ fun CoroutineScope.createGridStore(
     }
 }
 
-val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//todo
+val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//todo global mutable state
 
 fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimizedImage? {
     //todo unit tests
