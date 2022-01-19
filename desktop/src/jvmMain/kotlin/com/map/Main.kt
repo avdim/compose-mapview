@@ -32,7 +32,7 @@ fun main() = application {
             mapTilerSecretKey = MAPTILER_SECRET_KEY,
             latitude = 59.999394,
             longitude = 29.745412,
-            startScale = 300.0,
+            startScale = 840.0,
         )
     }
 }

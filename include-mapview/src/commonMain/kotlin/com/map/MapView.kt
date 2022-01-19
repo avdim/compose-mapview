@@ -37,7 +37,7 @@ public fun MapView(
 ) {
     val viewScope = rememberCoroutineScope()
     val ioScope = CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO())
-    val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore()
+    val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore(latitude, longitude, startScale)
     val imageRepository = createImageRepositoryComposable(ioScope, mapTilerSecretKey)
 
     val gridStore = viewScope.createGridStore { store, sideEffect: SideEffect ->
@@ -72,7 +72,15 @@ public fun MapView(
                 MapIntent.Zoom(pt ?: Pt(mapStore.state.width / 2, mapStore.state.height / 2), change)
             )
         },
-        onClick = { mapStore.send(MapIntent.Zoom(it, Config.ZOOM_ON_CLICK)) },
+        onClick = {
+            val state = mapStore.state
+            println("click")
+            println("pt: $it")
+            println("geoPt: ${state.displayToGeo(it)}")
+            println("lat: ${state.displayToGeo(it).latitude}")
+            println("lon: ${state.displayToGeo(it).longitude}")
+//            mapStore.send(MapIntent.Zoom(it, Config.ZOOM_ON_CLICK))
+        },
         onMove = { dx, dy -> mapStore.send(MapIntent.Move(Pt(-dx, -dy))) },
         updateSize = { w, h -> mapStore.send(MapIntent.SetSize(w, h)) }
     )

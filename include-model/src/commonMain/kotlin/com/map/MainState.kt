@@ -18,22 +18,55 @@ data class MapState(
     val topLeft: GeoPt = GeoPt(0.0, 0.0)
 )
 
+val MapState.centerGeo get():GeoPt = displayToGeo(Pt(width / 2, height / 2))
+val MapState.latitude get():Double = centerGeo.latitude
+val MapState.longitude get():Double = centerGeo.longitude
+fun MapState.copyAndChangeCenter(targetCenter: GeoPt): MapState =
+    copy(
+        topLeft = topLeft + targetCenter - centerGeo
+    ).correctGeoXY()
+
+/**
+ * Корректируем координаты, чтобы они не выходили за край карты.
+ */
+fun MapState.correctGeoXY(): MapState =
+    correctGeoX().correctGeoY()
+
+fun MapState.correctGeoY(): MapState {
+    val minGeoY = 0.0
+    val maxGeoY: Double = 1 - 1 / scale
+    return if (topLeft.y < minGeoY) {
+        copy(topLeft = topLeft.copy(y = minGeoY))
+    } else if (topLeft.y > maxGeoY) {
+        copy(topLeft = topLeft.copy(y = maxGeoY))
+    } else {
+        this
+    }
+}
+
+fun MapState.correctGeoX(): MapState = copy(topLeft = topLeft.copy(x = topLeft.x.mod(1.0)))
+
 fun MapState.toShortString(): String = buildString {
     appendLine("width: $width")
     appendLine("height: $height")
     appendLine("scale: ${scale.toShortString()}")
     appendLine("zoom: $zoom")
     appendLine("topLeft: ${topLeft.toShortString()}")
+    appendLine("center: ${centerGeo.toShortString()}")
+    appendLine("lat: ${centerGeo.latitude}, lon: ${centerGeo.longitude}")
 }
 
+//todo move to another file
 sealed interface MapIntent {
     data class Zoom(val pt: Pt, val delta: Double) : MapIntent
     data class Move(val pt: Pt) : MapIntent
     data class SetSize(val width: Int, val height: Int) : MapIntent
 }
 
-fun CoroutineScope.createMapStore() =
-    createStore(MapState()) { state: MapState, intent: MapIntent ->
+fun CoroutineScope.createMapStore(latitude: Double, longitude: Double, startScale: Double): Store<MapState, MapIntent> {
+    return createStore(
+        MapState(scale = startScale).copyAndChangeCenter(createGeoPt(latitude, longitude))
+    ) { state: MapState, intent: MapIntent ->
         when (intent) {
             is MapIntent.SetSize -> {
                 state.copy(width = intent.width, height = intent.height)
@@ -64,23 +97,4 @@ fun CoroutineScope.createMapStore() =
             }
         }
     }
-
-/**
- * Корректируем координаты, чтобы они не выходили за край карты.
- */
-fun MapState.correctGeoXY(): MapState =
-    correctGeoX().correctGeoY()
-
-fun MapState.correctGeoY(): MapState {
-    val minGeoY = 0.0
-    val maxGeoY: Double = 1 - 1 / scale
-    return if (topLeft.y < minGeoY) {
-        copy(topLeft = topLeft.copy(y = minGeoY))
-    } else if (topLeft.y > maxGeoY) {
-        copy(topLeft = topLeft.copy(y = maxGeoY))
-    } else {
-        this
-    }
 }
-
-fun MapState.correctGeoX(): MapState = copy(topLeft = topLeft.copy(x = topLeft.x.mod(1.0)))
