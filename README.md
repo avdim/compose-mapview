@@ -42,7 +42,7 @@ MapView(
 MapViewAndroidDesktop.kt - отрисовка на Canvas и обработка pointer ввода.
 
 ### include-ui-browser
-MapViewBrowser.kt - отрисовка в <canvas>
+MapViewBrowser.kt - отрисовка в html `<canvas>`
 
 ### include-io-android-desktop
 Общий код между Android и Desktop для запросов в сеть и кэширования на диск.  
