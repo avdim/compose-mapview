@@ -11,8 +11,10 @@ val tilesHashMap: MutableMap<Tile, GpuOptimizedImage> = createConcurrentMap()//t
 /**
  * MapView to display Earth tile maps. API provided by cloud.maptiler.com
  *
+ * @param modifier to specify size strategy for this composable
+ *
  * @param mapTilerSecretKey secret API key for cloud.maptiler.com
- * Here you get can this key: https://cloud.maptiler.com/maps/streets/  (register and look at url field ?key=...#)
+ * Here you can get this key: https://cloud.maptiler.com/maps/streets/  (register and look at url field ?key=...#)
  * For build sample projects, in file: local.properties, set key: `mapTilerSecretKey=xXxXxXxXxXxXx`
  *
  * @param latitude initial Latitude of map center.

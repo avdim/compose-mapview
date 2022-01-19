@@ -59,7 +59,7 @@ android {
 
 /**
  * In file: local.properties, set key:    mapTilerSecretKey=xXxXxXxXxXxXx
- * Here you get can this key: https://cloud.maptiler.com/maps/streets/  (register and look at url field ?key=...#)
+ * Here you can get this key: https://cloud.maptiler.com/maps/streets/  (register and look at url field ?key=...#)
  */
 val MAPTILER_SECRET_KEY = project.getLocalProperty("mapTilerSecretKey", "please_set_secret_key_in_local.properties")
 
