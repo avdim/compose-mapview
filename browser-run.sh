@@ -1,3 +1,4 @@
 #!/bin/bash
-./gradlew browser:jsBrowserDevelopmentRun
+./gradlew browser:jsBrowserRun
+#./gradlew browser:jsBrowserDevelopmentRun
 

@@ -40,5 +40,5 @@ Open project in IntelliJ IDEA or Android Studio and run "android" configuration.
 
 ### JS
 ```
-./gradlew common:jsBrowserDevelopmentRun
+./gradlew browser:jsBrowserRun
 ```
