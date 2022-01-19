@@ -1,9 +1,5 @@
 package com.map
 
-interface ContentRepository<K, T> {
-    suspend fun loadContent(key: K): T
-}
-
 fun <K, A, B> ContentRepository<K, A>.adapter(transform: (A) -> B): ContentRepository<K, B> {
     val origin = this
     return object : ContentRepository<K, B> {
@@ -12,4 +8,3 @@ fun <K, A, B> ContentRepository<K, A>.adapter(transform: (A) -> B): ContentRepos
         }
     }
 }
-

@@ -1,10 +1,16 @@
 package com.map
 
+import com.map.collection.CollectionAddRemove
+import com.map.collection.createStack
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Декоратор для ограничения количества параллельных запросов в сеть.
+ * Запросы которые пришли недавно - обрабатываются в первую очередь (внутри для этого используется Stack)
+ */
 fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
     scope: CoroutineScope,
     maxParallelRequests: Int = 10,

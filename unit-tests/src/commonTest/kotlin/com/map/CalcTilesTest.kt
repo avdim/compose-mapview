@@ -1,14 +1,15 @@
 package com.map
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class CalcTilesTest {
 
     @Test
-    fun testZoom() {
-//        val state = MapState(100, 100, 1.0)
-//        val tiles = state.calcTiles()
-//        println(tiles.toString())
+    fun testSingleTile() {
+        val state = MapState<Unit>(512, 512, 1.0)
+        val tiles = state.calcTiles()
+        assertEquals(1, tiles.size)
     }
 
 }

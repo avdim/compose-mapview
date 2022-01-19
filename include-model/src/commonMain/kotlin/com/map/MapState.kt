@@ -19,6 +19,18 @@ data class DisplayTileWithImage<T>(
     val tile: Tile,
 )
 
+data class DisplayTile(
+    val size: Int,//Размер на экране
+    val x: Int,//координаты на экране
+    val y: Int
+)
+
+data class DisplayTileAndTile(
+    val display: DisplayTile,
+    val tile: Tile
+)
+
+
 val MapState<*>.centerGeo get():GeoPt = displayToGeo(Pt(width / 2, height / 2))
 fun <T> MapState<T>.copyAndChangeCenter(targetCenter: GeoPt): MapState<T> =
     copy(

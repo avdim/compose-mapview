@@ -1,4 +1,4 @@
-package com.map
+package com.map.collection
 
 /**
  * Стэк, который работает как LRU cache.

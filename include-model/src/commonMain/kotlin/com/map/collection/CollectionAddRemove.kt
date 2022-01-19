@@ -1,4 +1,4 @@
-package com.map
+package com.map.collection
 
 /**
  * Интерфейс для потокобезопасных immutable коллекций
