@@ -12,7 +12,6 @@ sealed interface IntentGrid {
     class TileLoaded(val tile: ImageTile) : IntentGrid
 }
 
-//todo move to model
 fun CoroutineScope.createGridStore(
     effectHandler: (store: Store<ImageTilesGrid, IntentGrid>, SideEffectGrid) -> Unit
 ) = createStoreWithSideEffect(
@@ -34,7 +33,7 @@ fun CoroutineScope.createGridStore(
                 val previous = state.matrix[intent.tile.display]
                 if (previous == null || previous.isBadQuality) {
                     if (previous != null) {
-                        if(state.matrix.size > 64) {
+                        if (state.matrix.size > 64) {
                             println("state.matrix.size: ${state.matrix.size}")
                         }
                     }

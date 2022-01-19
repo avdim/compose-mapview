@@ -1,6 +1,9 @@
 package com.map
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
     scope: CoroutineScope,
@@ -16,7 +19,7 @@ fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
         val currentRequests: Int = 0
     )
 
-    val store = scope.createStoreWithSideEffect<State, Intent<K, T>, SideEffect2<K, T>>(
+    val store = scope.createStoreWithSideEffect(
         init = State(),
         effectHandler = { store, effect: SideEffect2<K, T> ->
             when (effect) {

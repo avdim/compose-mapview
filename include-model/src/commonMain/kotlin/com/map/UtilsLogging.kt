@@ -1,5 +1,12 @@
 package com.map
 
+fun MapState.toShortString(): String = buildString {
+    appendLine("width: $width, height: $height")
+    appendLine("scale: ${scale.toShortString()}")
+    appendLine("zoom: $zoom")
+    appendLine("lat: ${centerGeo.latitude}, lon: ${centerGeo.longitude}")
+}
+
 fun Double.toShortString(significantDigits: Int = 5): String {
     var multiplier: Long = 1
     repeat(significantDigits) {

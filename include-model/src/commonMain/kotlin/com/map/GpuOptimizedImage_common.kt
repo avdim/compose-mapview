@@ -16,7 +16,6 @@ val GpuOptimizedImage.isBadQuality: Boolean get() = cropSize < TILE_SIZE
 
 data class ImageTilesGrid(
     val matrix: Map<DisplayTile, GpuOptimizedImage?>,
-//    val matrix:List<ImageTile> = emptyList(),
 )
 
 data class ImageTile(

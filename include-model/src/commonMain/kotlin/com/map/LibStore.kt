@@ -15,10 +15,10 @@ interface Store<STATE, INTENT> {
     val state get() = stateFlow.value
 }
 /**
- * Самая простая реализация MVI архитектуры для слоя представления.
+ * Реализация Store из MVI архитектуры для слоя представления.
  * STATE - immutable состояние
  * INTENT - Действия, которые влияют на состояние
- * reducer - геренирует новое состояние
+ * reducer - генерирует новое состояние
  */
 fun <STATE, INTENT> CoroutineScope.createStore(init: STATE, reducer: Reducer<STATE, INTENT>): Store<STATE, INTENT> {
     val mutableStateFlow = MutableStateFlow(init)
