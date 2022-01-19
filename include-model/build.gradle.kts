@@ -1,7 +1,6 @@
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
-    id("org.jetbrains.compose")
 }
 
 version = "1.0-SNAPSHOT"
@@ -15,18 +14,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-            }
-        }
-        val androidMain by getting {
-            dependencies {
-                api(compose.foundation)
-            }
-        }
-        val desktopMain by getting {
-            dependencies {
-                api(compose.foundation)
             }
         }
         val jsMain by getting {
