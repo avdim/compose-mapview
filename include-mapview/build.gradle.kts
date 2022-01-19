@@ -26,6 +26,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("com.map:model:1.0-SNAPSHOT")
+                implementation("com.map:tile-image:1.0-SNAPSHOT")
                 implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }

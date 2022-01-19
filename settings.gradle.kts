@@ -23,6 +23,11 @@ include(":sample-desktop")
 include(":sample-browser")
 include(":unit-tests")
 
+includeBuild("include-tile-image") {
+    dependencySubstitution {
+        substitute(module("com.map:tile-image")).using(project(":"))
+    }
+}
 includeBuild("include-model") {
     dependencySubstitution {
         substitute(module("com.map:model")).using(project(":"))

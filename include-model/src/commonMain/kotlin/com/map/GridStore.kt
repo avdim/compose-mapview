@@ -1,7 +1,15 @@
 package com.map
 
 import kotlinx.coroutines.CoroutineScope
-import kotlin.math.max
+
+data class ImageTilesGrid<T:Any>(
+    val matrix: Map<DisplayTile, T?>,
+)
+
+data class DisplayTileWithImage<T>(
+    val image: T,
+    val display: DisplayTile
+)
 
 sealed interface SideEffectGrid {
     class LoadTile(val displayTile: DisplayTile, val tile: Tile) : SideEffectGrid
@@ -54,30 +62,3 @@ fun <T:Any> CoroutineScope.createGridStore(
     }
 }
 
-fun MutableMap<Tile, GpuOptimizedImage>.searchCropAndPut(tile1: Tile): GpuOptimizedImage? {
-    //todo unit tests
-    val img1 = get(tile1)
-    if (img1 != null) {
-        return img1
-    }
-    var zoom = tile1.zoom
-    var x = tile1.x
-    var y = tile1.y
-    while (zoom > 0) {
-        zoom--
-        x /= 2
-        y /= 2
-        val tile2 = Tile(zoom, x, y)
-        val img2 = get(tile2)
-        if (img2 != null) {
-            val deltaZoom = tile1.zoom - tile2.zoom
-            val i = tile1.x - (x shl deltaZoom)
-            val j = tile1.y - (y shl deltaZoom)
-            val size = max(TILE_SIZE ushr deltaZoom, 1)
-            val cropImg = img2.cropAndRestoreSize(i * size, j * size, size)
-            put(tile1, cropImg)
-            return cropImg
-        }
-    }
-    return null
-}

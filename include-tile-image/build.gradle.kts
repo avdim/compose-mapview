@@ -1,5 +1,3 @@
-import org.jetbrains.compose.compose
-
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
@@ -11,25 +9,29 @@ version = "1.0-SNAPSHOT"
 kotlin {
     android()
     jvm("desktop")
+    js(IR) {
+        browser()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("com.map:model:1.0-SNAPSHOT")
-                implementation("com.map:tile-image:1.0-SNAPSHOT")
                 api(compose.runtime)
-                api(compose.foundation)
-                api(compose.material)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
         val androidMain by getting {
             dependencies {
-                api("androidx.appcompat:appcompat:1.3.1")
-                api("androidx.core:core-ktx:1.3.1")
+                api(compose.foundation)
             }
         }
         val desktopMain by getting {
             dependencies {
-                api(compose.desktop.common)
+                api(compose.foundation)
+            }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
             }
         }
         val commonTest by getting {
