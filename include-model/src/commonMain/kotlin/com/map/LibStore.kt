@@ -14,6 +14,7 @@ interface Store<STATE, INTENT> {
     val stateFlow: StateFlow<STATE>
     val state get() = stateFlow.value
 }
+
 /**
  * Реализация Store из MVI архитектуры для слоя представления.
  * STATE - immutable состояние

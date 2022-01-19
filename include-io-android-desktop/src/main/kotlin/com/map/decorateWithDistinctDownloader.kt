@@ -13,7 +13,7 @@ private sealed interface Message<K, T> {
 }
 
 /**
- * TODO doc
+ * Если идёт несколько запросов по одному и тому же ключу, то ставить их в ожидание, и делать только один сетевой вызов.
  */
 fun <K, T> ContentRepository<K, T>.decorateWithDistinctDownloader(
     scope: CoroutineScope

@@ -28,7 +28,7 @@ public fun size(width: Int, height: Int): MapViewJsModifier = object : MapViewJs
 @Composable
 internal actual fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: StateFlow<ImageTilesGrid<TileImage>>,
+    stateFlow: StateFlow<GridStoreState<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,

@@ -27,7 +27,7 @@ import kotlin.math.roundToInt
 fun MapViewAndroidDesktop(
     modifier: Modifier,
     isInTouchMode: Boolean,
-    stateFlow: StateFlow<ImageTilesGrid<TileImage>>,
+    stateFlow: StateFlow<GridStoreState<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,
@@ -126,7 +126,7 @@ fun MapViewAndroidDesktop(
     ) {
         updateSize(size.width.toInt(), size.height.toInt())
         clipRect() {
-            state.matrix.forEach { (t, img) ->
+            state.mapTileToImage.forEach { (t, img) ->
                 if (img != null) {
                     val size = IntSize(t.size, t.size)
                     val position = IntOffset(t.x, t.y)

@@ -15,7 +15,7 @@ import org.w3c.dom.events.MouseEvent
 public fun MapViewBrowser(
     width: Int,
     height: Int,
-    stateFlow: StateFlow<ImageTilesGrid<TileImage>>,
+    stateFlow: StateFlow<GridStoreState<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
@@ -110,7 +110,7 @@ public fun MapViewBrowser(
             DomSideEffect(state) { element: Element ->
                 val canvas = element as HTMLCanvasElement
                 val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
-                state.matrix.forEach { (t, img) ->
+                state.mapTileToImage.forEach { (t, img) ->
                     if (img != null) {
                         ctx.drawImage(
                             image = img.extract(),

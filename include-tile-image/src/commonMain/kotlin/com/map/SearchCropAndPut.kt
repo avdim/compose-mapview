@@ -6,7 +6,7 @@ import kotlin.math.max
  * Из кэша найти графику для нужного тайла
  * Если нужной графики нету, то можно тайли tile с меньшим zoom и вырезать из него кусочек
  */
-fun MutableMap<Tile, TileImage>.searchCropAndPut(tile: Tile): TileImage? {
+fun Map<Tile, TileImage>.searchCropAndPut(tile: Tile): TileImage? {
     val img1 = get(tile)
     if (img1 != null) {
         return img1
@@ -26,7 +26,6 @@ fun MutableMap<Tile, TileImage>.searchCropAndPut(tile: Tile): TileImage? {
             val j = tile.y - (y shl deltaZoom)
             val size = max(TILE_SIZE ushr deltaZoom, 1)
             val cropImg = img2.cropAndRestoreSize(i * size, j * size, size)
-            put(tile, cropImg)
             return cropImg
         }
     }

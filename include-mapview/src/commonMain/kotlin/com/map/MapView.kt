@@ -3,7 +3,6 @@ package com.map
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.*
-import kotlin.math.*
 
 /**
  * MapView to display Earth tile maps. API provided by cloud.maptiler.com
@@ -49,7 +48,11 @@ public fun MapView(
 
     val gridStore = viewScope.createGridStore<TileImage>(
         isBadQuality = { it.isBadQuality },
-        searchCropAndPut = { tilesHashMap.searchCropAndPut(it) }
+        searchCropAndPut = {tile->
+            tilesHashMap.searchCropAndPut(tile)?.also {
+                tilesHashMap.put(tile, it)
+            }
+        }
     ) { store, sideEffect: SideEffectGrid ->
         when (sideEffect) {
             is SideEffectGrid.LoadTile -> {
@@ -57,7 +60,7 @@ public fun MapView(
                     try {
                         val image: TileImage = imageRepository.loadContent(sideEffect.tile)
                         tilesHashMap[sideEffect.tile] = image
-                        store.send(IntentGrid.TileLoaded(DisplayTileWithImage(image, sideEffect.displayTile)))
+                        store.send(IntentGrid.TileImageLoaded(DisplayTileWithImage(image, sideEffect.displayTile)))
                     } catch (t: Throwable) {
                         println("fail to load tile ${sideEffect.displayTile}, $t")
                     }
