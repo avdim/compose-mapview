@@ -16,7 +16,7 @@ sealed interface SideEffectGrid {
 }
 
 sealed interface IntentGrid<T> {
-    class NewTiles<T>(val grid: TilesGrid) : IntentGrid<T>
+    class UpdateTiles<T>(val grid: TilesGrid) : IntentGrid<T>
     class TileLoaded<T>(val tile: DisplayTileWithImage<T>) : IntentGrid<T>
 }
 
@@ -29,7 +29,7 @@ fun <T:Any> CoroutineScope.createGridStore(
     effectHandler = effectHandler
 ) { state, intent: IntentGrid<T> ->
     when (intent) {
-        is IntentGrid.NewTiles -> {
+        is IntentGrid.UpdateTiles -> {
             state.copy(
                 matrix = intent.grid.matrix.map { it.first to searchCropAndPut(it.second) }.toMap()
             ).addSideEffects(

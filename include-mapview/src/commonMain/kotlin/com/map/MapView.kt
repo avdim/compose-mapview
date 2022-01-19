@@ -68,7 +68,7 @@ public fun MapView(
     viewScope.launch {
         mapStore.stateFlow.collect { state ->
             val grid = state.calcTiles()
-            gridStore.send(IntentGrid.NewTiles(grid))
+            gridStore.send(IntentGrid.UpdateTiles(grid))
         }
     }
 
