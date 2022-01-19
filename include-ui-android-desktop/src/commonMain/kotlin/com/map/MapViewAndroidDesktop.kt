@@ -20,6 +20,7 @@ import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.roundToInt
 
@@ -27,7 +28,7 @@ import kotlin.math.roundToInt
 fun MapViewAndroidDesktop(
     modifier: Modifier,
     isInTouchMode: Boolean,
-    stateFlow: StateFlow<GridStoreState<TileImage>>,
+    stateFlow: Flow<Set<DisplayTileWithImage<TileImage>>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,
@@ -36,7 +37,7 @@ fun MapViewAndroidDesktop(
     var previousMoveDownPos by remember { mutableStateOf<Offset?>(null) }
     var previousPressTime by remember { mutableStateOf(0L) }
     var previousPressPos by remember { mutableStateOf<Offset?>(null) }
-    val state by stateFlow.collectAsState()
+    val state by stateFlow.collectAsState(emptySet())
 
     fun Modifier.applyPointerInput() = pointerInput(Unit) {
         while (true) {
@@ -126,18 +127,16 @@ fun MapViewAndroidDesktop(
     ) {
         updateSize(size.width.toInt(), size.height.toInt())
         clipRect() {
-            state.mapTileToImage.forEach { (t, img) ->
-                if (img != null) {
-                    val size = IntSize(t.size, t.size)
-                    val position = IntOffset(t.x, t.y)
-                    drawImage(
-                        img.extract(),
-                        srcOffset = IntOffset(img.offsetX, img.offsetY),
-                        srcSize = IntSize(img.cropSize, img.cropSize),
-                        dstOffset = position,
-                        dstSize = size
-                    )
-                }
+            state.forEach { (t, img) ->
+                val size = IntSize(t.size, t.size)
+                val position = IntOffset(t.x, t.y)
+                drawImage(
+                    img.extract(),
+                    srcOffset = IntOffset(img.offsetX, img.offsetY),
+                    srcSize = IntSize(img.cropSize, img.cropSize),
+                    dstOffset = position,
+                    dstSize = size
+                )
             }
         }
         drawPath(path = Path().apply {

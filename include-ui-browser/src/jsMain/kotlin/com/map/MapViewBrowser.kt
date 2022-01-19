@@ -2,6 +2,7 @@ package com.map
 
 import androidx.compose.runtime.*
 import kotlinx.browser.document
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.*
@@ -15,7 +16,7 @@ import org.w3c.dom.events.MouseEvent
 public fun MapViewBrowser(
     width: Int,
     height: Int,
-    stateFlow: StateFlow<GridStoreState<TileImage>>,
+    stateFlow: Flow<Set<DisplayTileWithImage<TileImage>>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
@@ -26,7 +27,7 @@ public fun MapViewBrowser(
     var previousMouseMoveDownPos by remember { mutableStateOf<Pt?>(null) }
     var previousMouseMovePos by remember { mutableStateOf(Pt(width / 2, height / 2)) }
     var previousMouseDownPos by remember { mutableStateOf<Pt?>(null) }
-    val state by stateFlow.collectAsState()
+    val state by stateFlow.collectAsState(emptySet())
     TagElement(
         elementBuilder = ElementBuilder.createBuilder("canvas"),
         applyAttrs = {
@@ -110,20 +111,18 @@ public fun MapViewBrowser(
             DomSideEffect(state) { element: Element ->
                 val canvas = element as HTMLCanvasElement
                 val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
-                state.mapTileToImage.forEach { (t, img) ->
-                    if (img != null) {
-                        ctx.drawImage(
-                            image = img.extract(),
-                            dx = t.x.toDouble(),
-                            dy = t.y.toDouble(),
-                            dw = t.size.toDouble(),
-                            dh = t.size.toDouble(),
-                            sx = img.offsetX.toDouble(),
-                            sy = img.offsetY.toDouble(),
-                            sw = img.cropSize.toDouble(),
-                            sh = img.cropSize.toDouble()
-                        )
-                    }
+                state.forEach { (t, img) ->
+                    ctx.drawImage(
+                        image = img.extract(),
+                        dx = t.x.toDouble(),
+                        dy = t.y.toDouble(),
+                        dw = t.size.toDouble(),
+                        dh = t.size.toDouble(),
+                        sx = img.offsetX.toDouble(),
+                        sy = img.offsetY.toDouble(),
+                        sw = img.cropSize.toDouble(),
+                        sh = img.cropSize.toDouble()
+                    )
                 }
             }
         }

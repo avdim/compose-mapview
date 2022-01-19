@@ -32,7 +32,7 @@ fun main() = application {
 //            longitude = 29.745412,
 //            startScale = 840.0,
             onMapViewClick = { latitude, longitude ->
-                println("Hello, Geo coordinates, (lat $latitude, lon $longitude)")
+                println("click on geo coordinates: (lat $latitude, lon $longitude)")
                 true
             }
         )

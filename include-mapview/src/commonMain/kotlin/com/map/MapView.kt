@@ -3,6 +3,7 @@ package com.map
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.map
 
 /**
  * MapView to display Earth tile maps. API provided by cloud.maptiler.com
@@ -43,26 +44,17 @@ public fun MapView(
     val mapStore: Store<MapState, MapIntent> = viewScope.createMapStore(latitude, longitude, startScale)
     val imageRepository = createImageRepositoryComposable(ioScope, mapTilerSecretKey)
 
-
-    val tilesHashMap: MutableMap<Tile, TileImage> = createConcurrentMap()//todo mutable state
-
     val gridStore = viewScope.createGridStore<TileImage>(
-        isBadQuality = { it.isBadQuality },
-        searchCropAndPut = {tile->
-            tilesHashMap.searchCropAndPut(tile)?.also {
-                tilesHashMap.put(tile, it)
-            }
-        }
+        searchOrCropOrNull = { searchOrCropOrNull(it) }
     ) { store, sideEffect: SideEffectGrid ->
         when (sideEffect) {
             is SideEffectGrid.LoadTile -> {
                 ioScope.launch {
                     try {
                         val image: TileImage = imageRepository.loadContent(sideEffect.tile)
-                        tilesHashMap[sideEffect.tile] = image
-                        store.send(IntentGrid.TileImageLoaded(DisplayTileWithImage(image, sideEffect.displayTile)))
+                        store.send(IntentGrid.TileImageLoaded(sideEffect.tile, image))
                     } catch (t: Throwable) {
-                        println("fail to load tile ${sideEffect.displayTile}, $t")
+                        // ignore errors. Tile image loaded with retries
                     }
                 }
             }
@@ -77,7 +69,7 @@ public fun MapView(
 
     PlatformMapView(
         modifier = modifier,
-        stateFlow = gridStore.stateFlow,
+        stateFlow = gridStore.stateFlow.map { it.displayTiles. toSet() },
         onZoom = { pt, change ->
             mapStore.send(
                 MapIntent.Zoom(pt ?: Pt(mapStore.state.width / 2, mapStore.state.height / 2), change)

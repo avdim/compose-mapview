@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
@@ -26,7 +27,7 @@ actual typealias DisplayModifier = Modifier
 @Composable
 internal actual fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: StateFlow<GridStoreState<TileImage>>,
+    stateFlow: Flow<Set<DisplayTileWithImage<TileImage>>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,

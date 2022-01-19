@@ -2,62 +2,72 @@ package com.map
 
 import kotlinx.coroutines.CoroutineScope
 
-data class GridStoreState<T:Any>(
-    val mapTileToImage: Map<DisplayTile, T?>,
+data class DisplayTileWithImage<T>(
+    val displayTile: DisplayTile,
+    val image: T,
+    val tile: Tile,
 )
 
-data class DisplayTileWithImage<T>(
-    val image: T,
-    val display: DisplayTile
+data class GridState<T : Any>(
+    val displayTiles: List<DisplayTileWithImage<T>> = emptyList(),
+    val cache: Map<Tile, T> = emptyMap(),
+    val croppedCache: Map<Tile, T> = emptyMap(),
 )
 
 sealed interface SideEffectGrid {
-    class LoadTile(val displayTile: DisplayTile, val tile: Tile) : SideEffectGrid
+    class LoadTile(val tile: Tile) : SideEffectGrid
 }
 
 sealed interface IntentGrid<T> {
     class UpdateTiles<T>(val grid: TilesGrid) : IntentGrid<T>
-    class TileImageLoaded<T>(val tileWithImage: DisplayTileWithImage<T>) : IntentGrid<T>
+    class TileImageLoaded<T>(val tile: Tile, val image: T) : IntentGrid<T>
 }
 
-fun <T:Any> CoroutineScope.createGridStore(
-    isBadQuality: (T)->Boolean,
-    searchCropAndPut: (Tile) -> T?,
-    effectHandler: (store: Store<GridStoreState<T>, IntentGrid<T>>, SideEffectGrid) -> Unit
+fun <T : Any> CoroutineScope.createGridStore(
+    searchOrCropOrNull: Map<Tile, T>.(Tile) -> T?,
+    effectHandler: (store: Store<GridState<T>, IntentGrid<T>>, SideEffectGrid) -> Unit
 ) = createStoreWithSideEffect(
-    GridStoreState(emptyMap()),
+    init = GridState(),
     effectHandler = effectHandler
 ) { state, intent: IntentGrid<T> ->
     when (intent) {
         is IntentGrid.UpdateTiles -> {
+            val tilesToDisplay: MutableList<DisplayTileWithImage<T>> = mutableListOf()
+            val tilesToLoad: MutableList<Tile> = mutableListOf()
+            intent.grid.tiles.forEach {
+                val cachedImage = state.cache[it.tile]
+                if (cachedImage != null) {
+                    tilesToDisplay.add(DisplayTileWithImage(it.display, cachedImage, it.tile))
+                } else {
+                    tilesToLoad.add(it.tile)
+                    val croppedImage = state.cache.searchOrCropOrNull(it.tile)
+                    if (croppedImage != null) {
+                        tilesToDisplay.add(DisplayTileWithImage(it.display, croppedImage, it.tile))
+                        //todo maybe add croppedCache ?
+                    }
+                }
+            }
             state.copy(
-                mapTileToImage = intent.grid.matrix.map { it.display to searchCropAndPut(it.tile) }.toMap()
+                displayTiles = tilesToDisplay
             ).addSideEffects(
-                intent.grid.matrix.map {
-                    SideEffectGrid.LoadTile(it.display, it.tile)
+                tilesToLoad.map {
+                    SideEffectGrid.LoadTile(it)
                 }
             )
         }
         is IntentGrid.TileImageLoaded -> {
-            if (state.mapTileToImage.containsKey(intent.tileWithImage.display)) {
-                val previous = state.mapTileToImage[intent.tileWithImage.display]
-                if (previous == null || isBadQuality(previous)) {
-                    if (previous != null) {
-                        if (state.mapTileToImage.size > 64) {
-                            println("state.matrix.size: ${state.mapTileToImage.size}")
-                        }
-                    }
-                    state.copy(
-                        mapTileToImage = state.mapTileToImage.toMutableMap().apply {
-                            put(intent.tileWithImage.display, intent.tileWithImage.image)
-                        }
+            val modifiedTiles = state.displayTiles.toMutableList()
+            for (i in modifiedTiles.indices) {
+                if (modifiedTiles[i].tile == intent.tile) {
+                    modifiedTiles[i] = modifiedTiles[i].copy(
+                        image = intent.image
                     )
-                } else {
-                    state
                 }
-            } else {
-                state
-            }.noSideEffects()
+            }
+            state.copy(
+                displayTiles = modifiedTiles,
+                cache = state.cache + (intent.tile to intent.image)
+            ).noSideEffects()
         }
     }
 }

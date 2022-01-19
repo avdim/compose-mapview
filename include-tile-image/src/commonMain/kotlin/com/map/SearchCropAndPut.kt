@@ -3,10 +3,10 @@ package com.map
 import kotlin.math.max
 
 /**
- * Из кэша найти графику для нужного тайла
- * Если нужной графики нету, то можно тайли tile с меньшим zoom и вырезать из него кусочек
+ * Из кэша найти графику для нужного тайла.
+ * Если нужной графики нету, то можно тайли tile с меньшим zoom и вырезать из него кусочек.
  */
-fun Map<Tile, TileImage>.searchCropAndPut(tile: Tile): TileImage? {
+fun Map<Tile, TileImage>.searchOrCropOrNull(tile: Tile): TileImage? {
     val img1 = get(tile)
     if (img1 != null) {
         return img1
