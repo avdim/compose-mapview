@@ -11,6 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 internal actual fun Telemetry(stateFlow: StateFlow<MapState<*>>) {
     val state by stateFlow.collectAsState()
     Column {
-        Text(state.toString())
+        Text(state.toShortString())
     }
 }

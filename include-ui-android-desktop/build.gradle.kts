@@ -15,22 +15,22 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("com.map:config:1.0-SNAPSHOT")
-                implementation("com.map:model:1.0-SNAPSHOT")
+                api("com.map:model:1.0-SNAPSHOT")
                 implementation("com.map:tile-image:1.0-SNAPSHOT")
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
+                api(compose.runtime)
+                api(compose.foundation)
+                api(compose.material)
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.appcompat:appcompat:1.3.1")
-                implementation("androidx.core:core-ktx:1.3.1")
+                api("androidx.appcompat:appcompat:1.3.1")
+                api("androidx.core:core-ktx:1.3.1")
             }
         }
         val desktopMain by getting {
             dependencies {
-                implementation(compose.desktop.common)
+                api(compose.desktop.common)
             }
         }
         val commonTest by getting {
