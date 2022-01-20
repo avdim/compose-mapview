@@ -27,7 +27,7 @@ val MapState<*>.zoom: Int
             Config.MAX_ZOOM,
             maxOf(
                 Config.MIN_ZOOM,
-                ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt()
+                ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt() - 2
             )
         )
     }
