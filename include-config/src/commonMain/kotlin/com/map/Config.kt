@@ -14,6 +14,7 @@ object Config {
     val CACHE_DIR_NAME = "map-view-cache"
     val MIN_ZOOM = 0
     val MAX_ZOOM = 22
+    val FONT_LEVEL = 2
 
     fun createTileUrl(zoom: Int, x: Int, y: Int, mapTilerSecretKey: String): String =
         "https://api.maptiler.com/maps/streets/$zoom/$x/$y.png?key=$mapTilerSecretKey"
