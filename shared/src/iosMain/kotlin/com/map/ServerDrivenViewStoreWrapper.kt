@@ -2,21 +2,23 @@ package com.map
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class ServerDrivenViewStoreWrapper(val scope: CoroutineScope, val sideEffectHandler: (MapSideEffect) -> Unit) {
-
+class ServerDrivenViewStoreWrapper(val sideEffectHandler: (MapSideEffect) -> Unit) {
+    val scope = MainScope()
     val store: Store<MapState<TileImage>, MapIntent<TileImage>> = scope.createMapStore(
         latitude = 0.0,
         longitude = 0.0,
         startScale = 1.0,
         searchOrCropOrNull = { searchOrCrop(it) },
     ) { store, sideEffect ->
-        when (sideEffect) {
-            is MapSideEffect.LoadTile -> {
-//                store.send(MapIntent.TileImageLoaded(sideEffect.tile, image as ImageIos))
-            }
-        }
+        sideEffectHandler(sideEffect)
+//        when (sideEffect) {
+//            is MapSideEffect.LoadTile -> {
+////                store.send(MapIntent.TileImageLoaded(sideEffect.tile, image as ImageIos))
+//            }
+//        }
     }
 
     fun sendIntent(intent: MapIntent<TileImage>) {
