@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class ServerDrivenViewStoreWrapper(val sideEffectHandler: (MapSideEffect) -> Unit) {
+class MapStoreWrapper(val sideEffectHandler: (MapSideEffect) -> Unit) {
     val scope = MainScope()
     val store: Store<MapState<TileImage>, MapIntent<TileImage>> = scope.createMapStore(
         latitude = 0.0,
