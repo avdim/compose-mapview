@@ -22,6 +22,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("com.map:model:1.0-SNAPSHOT")
+                implementation("com.map:tile-image:1.0-SNAPSHOT")
             }
         }
         val commonTest by getting {

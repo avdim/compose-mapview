@@ -12,27 +12,40 @@ kotlin {
     js(IR) {
         browser()
     }
+    ios {
+        binaries {
+            framework {
+                baseName = "model"
+            }
+        }
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation("com.map:config:1.0-SNAPSHOT")
-                api(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
         val androidMain by getting {
             dependencies {
                 api(compose.foundation)
+                api(compose.runtime)
             }
         }
         val desktopMain by getting {
             dependencies {
                 api(compose.foundation)
+                api(compose.runtime)
             }
         }
         val jsMain by getting {
             dependencies {
                 implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
+            }
+        }
+        val iosMain by getting {
+            dependencies {
+
             }
         }
         val commonTest by getting {
