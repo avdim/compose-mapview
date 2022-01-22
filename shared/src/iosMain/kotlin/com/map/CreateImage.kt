@@ -19,3 +19,4 @@ fun createImage() {
 //    bitmap.toBMP32()
 }
 
+typealias ImageIos = Any

@@ -19,7 +19,11 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("com.map:model:1.0-SNAPSHOT")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
