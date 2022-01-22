@@ -18,10 +18,13 @@ pluginManagement {
 }
 
 rootProject.name = "compose-mapview"
+include(":shared")
+include(":sample-ios")
 include(":sample-android")
 include(":sample-desktop")
 include(":sample-browser")
 include(":unit-tests")
+
 
 includeBuild("include-config") {
     dependencySubstitution {
