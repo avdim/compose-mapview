@@ -13,7 +13,7 @@ import com.soywiz.korim.color.*
 import com.soywiz.korio.async.*
 import kotlin.native.concurrent.*
 
-fun createImage() {
+fun createImage(img:CGImage) {
 //    val image = UIImage.imageWithData(nsdata) ?: error("Can't read image")
 //    val bitmap:Bitmap = decodeImageBytes()
 //    bitmap.toBMP32()
