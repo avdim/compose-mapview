@@ -40,6 +40,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
+                api(compose.runtime)
                 implementation(npm("colors", "=1.4.0"))//temp vulnerability fix, use strict version 1.4.0
             }
         }
