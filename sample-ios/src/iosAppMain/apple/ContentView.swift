@@ -13,6 +13,11 @@ struct ContentView: View {
                         Path(ellipseIn: CGRect(origin: .zero, size: size)),
                         with: .color(.green),
                         lineWidth: 4)
+
+                let rect3 = CGRect(origin: .zero, size: size).insetBy(dx: 10, dy: 10)
+                let image = Image("800x800")
+
+                context.draw(image, in: rect3)
             }
                     .frame(width: 300, height: 200)
                     .border(Color.blue)

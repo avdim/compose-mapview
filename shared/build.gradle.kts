@@ -35,7 +35,11 @@ kotlin {
 //                implementation("junit:junit:4.13")
 //            }
 //        }
-        val iosMain by getting
+        val iosMain by getting {
+            dependencies {
+                implementation("com.soywiz.korlibs.korim:korim:2.2.2")
+            }
+        }
         val iosTest by getting
     }
 }
