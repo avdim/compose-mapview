@@ -1,6 +1,8 @@
 package com.map
 
-typealias ImageIos = Any
+import platform.CoreGraphics.*
+
+typealias ImageIos = CGImage
 
 actual class TileImage(
     val platformSpecificData: ImageIos,
