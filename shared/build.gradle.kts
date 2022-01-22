@@ -43,6 +43,7 @@ kotlin {
         val iosMain by getting {
             dependencies {
                 implementation("com.soywiz.korlibs.korim:korim:2.2.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
             }
         }
         val iosTest by getting

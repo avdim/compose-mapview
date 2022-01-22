@@ -22,7 +22,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("com.map:config:1.0-SNAPSHOT")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
             }
         }
         val jsMain by getting {
