@@ -61,7 +61,24 @@ public struct MapViewSwiftUI: View {
                                     .onChanged { value in
                                         let dx = value.location.x - value.startLocation.x
                                         let dy = value.location.y - value.startLocation.y
-                                        mviStore.sendIntent(intent: SwiftHelpersKt.createIntentMove(x: Int32(dx), y: Int32(dy)))
+                                        mviStore.sendIntent(
+                                                intent: SwiftHelpersKt.createIntentMove(
+                                                        x: Int32(dx),
+                                                        y: Int32(dy)
+                                                )
+                                        )
+                                    }
+                    )
+                    .gesture(
+                            TapGesture()
+                                    .onEnded { _ in
+                                        mviStore.sendIntent(
+                                                intent: SwiftHelpersKt.createIntentZoom(
+                                                        x: Int32(200),
+                                                        y: Int32(200),
+                                                        delta: 0.5
+                                                )
+                                        )
                                     }
                     )
                     .frame(width: 400, height: 400)
