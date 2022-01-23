@@ -45,7 +45,7 @@ public fun MapView(
 ) {
     val viewScope = rememberCoroutineScope()
     val ioScope = remember { CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO()) }
-    val imageRepository = remember { createTilesRepository(ioScope, mapTilerSecretKey) }
+    val imageRepository = rememberTilesRepository(ioScope, mapTilerSecretKey)
     val mapStore: Store<MapState<TileImage>, MapIntent<TileImage>> = remember {
         viewScope.createMapStore(
             latitude = latitude,

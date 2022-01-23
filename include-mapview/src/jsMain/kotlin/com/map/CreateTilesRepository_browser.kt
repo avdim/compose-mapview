@@ -1,6 +1,7 @@
 package com.map
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.await
@@ -12,11 +13,12 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.js.Promise
 
-internal actual fun createTilesRepository(
+@Composable
+internal actual fun rememberTilesRepository(
     ioScope: CoroutineScope,
     mapTilerSecretKey: String
-): ContentRepository<Tile, TileImage> {
-    return createRealRepository(mapTilerSecretKey)
+): ContentRepository<Tile, TileImage> = remember {
+    createRealRepository(mapTilerSecretKey)
         .adapter { TileImage(it) }
         .decorateWithLimitRequestsInParallel(ioScope)
 }
