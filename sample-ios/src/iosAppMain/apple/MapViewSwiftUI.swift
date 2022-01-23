@@ -8,12 +8,12 @@ var previousMagnitude: CGFloat? = nil
 let IOS_SCALE = 2.0
 
 public struct MapViewSwiftUI: View {
-    let mviStore: MapStoreWrapper
+    let mviStore: MapStoreAdapter
 
     @ObservedObject var mapViewModel: MapViewModel
 
     public init() {
-        mviStore = MapStoreWrapper { (store, sideEffect) in
+        mviStore = MapStoreAdapter { (store, sideEffect) in
             let effect = SwiftHelpersKt.sideEffectAsLoadTile(effect: sideEffect)
             if (effect != nil) {
                 let tile = effect!.tile

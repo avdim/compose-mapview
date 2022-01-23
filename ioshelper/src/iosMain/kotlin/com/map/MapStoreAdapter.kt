@@ -1,11 +1,10 @@
 package com.map
 
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class MapStoreWrapper(val sideEffectHandler: (Store<MapState<TileImage>, MapIntent<TileImage>>, MapSideEffect) -> Unit) {
+class MapStoreAdapter(val sideEffectHandler: (Store<MapState<TileImage>, MapIntent<TileImage>>, MapSideEffect) -> Unit) {
     val scope = MainScope()
     val store: Store<MapState<TileImage>, MapIntent<TileImage>> = scope.createMapStore(
         latitude = 0.0,
