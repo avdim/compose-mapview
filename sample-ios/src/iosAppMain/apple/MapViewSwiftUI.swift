@@ -46,17 +46,23 @@ public struct MapViewSwiftUI: View {
                         lineWidth: 4)
 
                 for displayTile in myViewModel.myState.displayTiles {
-                    guard let img = displayTile.image else { continue }
+                    guard let img = displayTile.image else {
+                        continue
+                    }
+                    let t = displayTile.displayTile
                     let platformImage = SwiftHelpersKt.extract(tileImage: img)
                     let image: Image = Image(uiImage: platformImage)
 
-                    let rect3 = CGRect(origin: .zero, size: size).insetBy(dx: 10, dy: 10)
+                    let rect3 = CGRect(
+                            origin: CGPoint(x: Int(t.x), y: Int(t.y)),
+                            size: CGSize(width: Int(t.size), height: Int(t.size))
+                    )
 
                     context.draw(image, in: rect3)
                 }
             }
                     .frame(width: 400, height: 400)
-//                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .border(Color.blue)
         } else {
             // Fallback on earlier versions
