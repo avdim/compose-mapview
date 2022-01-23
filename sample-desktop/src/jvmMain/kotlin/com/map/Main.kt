@@ -15,6 +15,8 @@ import androidx.compose.ui.window.application
 import java.awt.Dimension
 import java.awt.Toolkit
 
+const val ANIMATE = false
+
 fun main() = application {
     val icon = painterResource("images/ic_imageviewer_round.png")
 
@@ -28,23 +30,26 @@ fun main() = application {
         icon = icon
     ) {
         val infiniteTransition = rememberInfiniteTransition()
-        val scale by infiniteTransition.animateFloat(
+        val animatedScale: Float by infiniteTransition.animateFloat(
             initialValue = 1f,
-            targetValue = 5f,
+            targetValue = 4200f,
             animationSpec = infiniteRepeatable(
                 animation = keyframes {
-                    durationMillis = 1000
-                    3f at 500
+                    durationMillis = 5_000
+                    2f at 500
+                    100f at 2000
+                    4100f at 4_500
                 },
                 repeatMode = RepeatMode.Reverse
             )
         )
+        val constScale = 1.0
         MapView(
             modifier = Modifier.fillMaxSize(),
             mapTilerSecretKey = MAPTILER_SECRET_KEY,
             latitude = 59.999394,
             longitude = 29.745412,
-            startScale = scale.toDouble(),
+            startScale = if(ANIMATE) animatedScale.toDouble() else constScale,
             onMapViewClick = { latitude, longitude ->
                 println("click on geo coordinates: (lat $latitude, lon $longitude)")
                 true
