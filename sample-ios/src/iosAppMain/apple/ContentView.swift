@@ -5,7 +5,6 @@ struct ContentView: View {
     var body: some View {
         MapViewSwiftUI()
     }
-
 }
 
 struct ContentView_Previews: PreviewProvider {
