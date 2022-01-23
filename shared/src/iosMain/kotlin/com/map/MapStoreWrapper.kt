@@ -21,6 +21,10 @@ class MapStoreWrapper(val sideEffectHandler: (MapSideEffect) -> Unit) {
 //        }
     }
 
+    init {
+        store.send(MapIntent.Input.SetSize(1000, 1000))
+    }
+
     fun sendIntent(intent: MapIntent<TileImage>) {
         store.send(intent)
     }

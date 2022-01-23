@@ -10,18 +10,33 @@ public struct MapViewSwiftUI: View {
     public init() {
         mviStore = MapStoreWrapper(
                 sideEffectHandler: { (sideEffect) in
-//                    switch sideEffect {
-//                    case let openOrder as MapSideEffect.LoadTile:
-                        print("todo load tile")
-//                    default:
-//                        print("do nothing")
-//                    }
+                    print("sideEffect: \(sideEffect)")
+                    let effect = SwiftHelpersKt.sideEffectAsLoadTile(effect: sideEffect)
+                    if(effect != nil) {
+                        print("load tile \(effect!.tile)")
+                    }
                 }
         )
         self.myViewModel = MapViewModel(mviStore)
     }
 
     public var body: some View {
-        Text("todo MapView Canvas iOS")
+        if #available(iOS 15.0, *) {
+            Canvas { (context: inout GraphicsContext, size: CGSize) in
+                context.stroke(
+                        Path(ellipseIn: CGRect(origin: .zero, size: size)),
+                        with: .color(.green),
+                        lineWidth: 4)
+
+                let rect3 = CGRect(origin: .zero, size: size).insetBy(dx: 10, dy: 10)
+                let image = Image("800x800")
+
+                context.draw(image, in: rect3)
+            }
+                    .frame(width: 300, height: 200)
+                    .border(Color.blue)
+        } else {
+            // Fallback on earlier versions
+        }
     }
 }

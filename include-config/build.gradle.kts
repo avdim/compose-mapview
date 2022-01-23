@@ -14,7 +14,7 @@ kotlin {
     ios {
         binaries {
             framework {
-                baseName = "model"
+                baseName = "config"
             }
         }
     }
