@@ -3,11 +3,13 @@ import shared
 import model
 import config
 
+var previousDragPos: CGPoint? = nil
+var previousMagnitude: CGFloat? = nil
+
 public struct MapViewSwiftUI: View {
     let mviStore: MapStoreWrapper
 
-    @ObservedObject var myViewModel: MapViewModel
-
+    @ObservedObject var mapViewModel: MapViewModel
     public init() {
         mviStore = MapStoreWrapper(
                 sideEffectHandler: { (store, sideEffect) in
@@ -16,7 +18,6 @@ public struct MapViewSwiftUI: View {
                     if (effect != nil) {
                         let tile = effect!.tile
                         let url = SwiftHelpersKt.createTileUrl(tile: tile)
-                        print("loadTileImage \(url)")
                         DispatchQueue.global().async {
                             if let data = try? Data(contentsOf: URL(string: url)!) {
                                 if let image = UIImage(data: data) {
@@ -34,13 +35,13 @@ public struct MapViewSwiftUI: View {
                     }
                 }
         )
-        self.myViewModel = MapViewModel(mviStore)
+        self.mapViewModel = MapViewModel(mviStore)
     }
 
     public var body: some View {
         if #available(iOS 15.0, *) {
             Canvas { (context: inout GraphicsContext, size: CGSize) in
-                for displayTile in myViewModel.myState.displayTiles {
+                for displayTile in mapViewModel.myState.displayTiles {
                     guard let img = displayTile.image else {
                         continue
                     }
@@ -57,16 +58,22 @@ public struct MapViewSwiftUI: View {
                 }
             }
                     .gesture(
-                            DragGesture(minimumDistance: 5, coordinateSpace: .global)
+                            DragGesture(minimumDistance: 2, coordinateSpace: .global)
                                     .onChanged { value in
-                                        let dx = value.location.x - value.startLocation.x
-                                        let dy = value.location.y - value.startLocation.y
-                                        mviStore.sendIntent(
-                                                intent: SwiftHelpersKt.createIntentMove(
-                                                        x: Int32(dx),
-                                                        y: Int32(dy)
-                                                )
-                                        )
+                                        if(previousDragPos != nil) {
+                                            let prev: CGPoint = previousDragPos!
+                                            let dx = prev.x - value.location.x
+                                            let dy = prev.y - value.location.y
+                                            mviStore.sendIntent(
+                                                    intent: SwiftHelpersKt.createIntentMove(
+                                                            x: Int32(dx),
+                                                            y: Int32(dy)
+                                                    )
+                                            )
+                                        }
+                                        previousDragPos = value.location
+                                    }.onEnded { _ in
+                                        previousDragPos = nil
                                     }
                     )
                     .gesture(
@@ -81,11 +88,28 @@ public struct MapViewSwiftUI: View {
                                         )
                                     }
                     )
+                    .gesture(MagnificationGesture()
+                            .onChanged { value in
+                                if(previousMagnitude != nil) {
+                                    let prev = previousMagnitude!
+                                    mviStore.sendIntent(
+                                            intent: SwiftHelpersKt.createIntentZoom(
+                                                    x: Int32(200),
+                                                    y: Int32(200),
+                                                    delta: Float(value.magnitude - prev)
+                                            )
+                                    )
+                                }
+                                previousMagnitude = value.magnitude
+                            }.onEnded { _ in
+                                previousMagnitude = nil
+                            }
+                    )
                     .frame(width: 400, height: 400)
                     //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .border(Color.blue)
         } else {
-            // Fallback on earlier versions
+            Text("need iOS 15.0+")
         }
     }
 }
