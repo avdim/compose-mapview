@@ -83,8 +83,8 @@ public struct MapViewSwiftUI: View {
                                     .onEnded { _ in
                                         mviStore.sendIntent(
                                                 intent: SwiftHelpersKt.createIntentZoom(
-                                                        x: Int32(200),
-                                                        y: Int32(200),
+                                                        x: Int32(mapViewModel.myState.width / 2),
+                                                        y: Int32(mapViewModel.myState.height / 2),
                                                         delta: 0.5
                                                 )
                                         )
@@ -96,8 +96,8 @@ public struct MapViewSwiftUI: View {
                                     let prev = previousMagnitude!
                                     mviStore.sendIntent(
                                             intent: SwiftHelpersKt.createIntentZoom(
-                                                    x: Int32(200),
-                                                    y: Int32(200),
+                                                    x: Int32(mapViewModel.myState.width / 2),
+                                                    y: Int32(mapViewModel.myState.height / 2),
                                                     delta: Float(value.magnitude - prev)
                                             )
                                     )
