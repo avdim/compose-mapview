@@ -5,6 +5,7 @@ import config
 
 var previousDragPos: CGPoint? = nil
 var previousMagnitude: CGFloat? = nil
+let IOS_SCALE = 2.0
 
 public struct MapViewSwiftUI: View {
     let mviStore: MapStoreWrapper
@@ -41,7 +42,7 @@ public struct MapViewSwiftUI: View {
     public var body: some View {
         if #available(iOS 15.0, *) {
             Canvas { (context: inout GraphicsContext, size: CGSize) in
-                mviStore.sendIntent(intent: SwiftHelpersKt.createIntentSetSize(width: Int32(size.width), height: Int32(size.height)))
+                mviStore.sendIntent(intent: SwiftHelpersKt.createIntentSetSize(width: Int32(size.width * IOS_SCALE), height: Int32(size.height * IOS_SCALE)))
                 for displayTile in mapViewModel.myState.displayTiles {
                     guard let img = displayTile.image else {
                         continue
@@ -51,8 +52,8 @@ public struct MapViewSwiftUI: View {
                     let image: Image = Image(uiImage: platformImage)
 
                     let rect3 = CGRect(
-                            origin: CGPoint(x: Int(t.x), y: Int(t.y)),
-                            size: CGSize(width: Int(t.size), height: Int(t.size))
+                            origin: CGPoint(x: Double(t.x) / IOS_SCALE, y: Double(t.y) / IOS_SCALE),
+                            size: CGSize(width: Double(t.size) / IOS_SCALE, height: Double(t.size) / IOS_SCALE)
                     )
 
                     context.draw(image, in: rect3)
