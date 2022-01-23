@@ -25,7 +25,6 @@ include(":sample-ios")
 include(":ioshelper")
 include(":unit-tests")
 
-
 includeBuild("include-config") {
     dependencySubstitution {
         substitute(module("com.map:config")).using(project(":"))
