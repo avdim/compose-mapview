@@ -16,6 +16,8 @@ fun createIntentTileLoaded(tile: Tile, imageIos: ImageIos /*CGImage*/) = MapInte
     )
 )
 
+fun createIntentMove(x: Int, y: Int) = MapIntent.Input.Move<TileImage>(Pt(x, y))
+
 fun createTileUrl(tile: Tile): String {
     return Config.createTileUrl(tile.zoom, tile.x, tile.y, mapTilerSecretKey = MAPTILER_SECRET_KEY)
 }

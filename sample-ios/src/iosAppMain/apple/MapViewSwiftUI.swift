@@ -40,11 +40,6 @@ public struct MapViewSwiftUI: View {
     public var body: some View {
         if #available(iOS 15.0, *) {
             Canvas { (context: inout GraphicsContext, size: CGSize) in
-                context.stroke(
-                        Path(ellipseIn: CGRect(origin: .zero, size: size)),
-                        with: .color(.green),
-                        lineWidth: 4)
-
                 for displayTile in myViewModel.myState.displayTiles {
                     guard let img = displayTile.image else {
                         continue
@@ -61,6 +56,14 @@ public struct MapViewSwiftUI: View {
                     context.draw(image, in: rect3)
                 }
             }
+                    .gesture(
+                            DragGesture(minimumDistance: 5, coordinateSpace: .global)
+                                    .onChanged { value in
+                                        let dx = value.location.x - value.startLocation.x
+                                        let dy = value.location.y - value.startLocation.y
+                                        mviStore.sendIntent(intent: SwiftHelpersKt.createIntentMove(x: Int32(dx), y: Int32(dy)))
+                                    }
+                    )
                     .frame(width: 400, height: 400)
                     //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .border(Color.blue)
