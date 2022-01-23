@@ -23,6 +23,7 @@ kotlin {
             dependencies {
                 implementation("com.map:model:1.0-SNAPSHOT")
                 implementation("com.map:tile-image:1.0-SNAPSHOT")
+                implementation("com.map:secret:1.0-SNAPSHOT")//todo bad
             }
         }
         val commonTest by getting {
