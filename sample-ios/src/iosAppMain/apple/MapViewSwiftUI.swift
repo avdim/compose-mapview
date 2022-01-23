@@ -10,10 +10,10 @@ public struct MapViewSwiftUI: View {
     let mviStore: MapStoreWrapper
 
     @ObservedObject var mapViewModel: MapViewModel
+
     public init() {
         mviStore = MapStoreWrapper(
                 sideEffectHandler: { (store, sideEffect) in
-                    print("sideEffect: \(sideEffect)")
                     let effect = SwiftHelpersKt.sideEffectAsLoadTile(effect: sideEffect)
                     if (effect != nil) {
                         let tile = effect!.tile
@@ -41,6 +41,7 @@ public struct MapViewSwiftUI: View {
     public var body: some View {
         if #available(iOS 15.0, *) {
             Canvas { (context: inout GraphicsContext, size: CGSize) in
+                mviStore.sendIntent(intent: SwiftHelpersKt.createIntentSetSize(width: Int32(size.width), height: Int32(size.height)))
                 for displayTile in mapViewModel.myState.displayTiles {
                     guard let img = displayTile.image else {
                         continue
@@ -60,7 +61,7 @@ public struct MapViewSwiftUI: View {
                     .gesture(
                             DragGesture(minimumDistance: 2, coordinateSpace: .global)
                                     .onChanged { value in
-                                        if(previousDragPos != nil) {
+                                        if (previousDragPos != nil) {
                                             let prev: CGPoint = previousDragPos!
                                             let dx = prev.x - value.location.x
                                             let dy = prev.y - value.location.y
@@ -72,7 +73,8 @@ public struct MapViewSwiftUI: View {
                                             )
                                         }
                                         previousDragPos = value.location
-                                    }.onEnded { _ in
+                                    }
+                                    .onEnded { _ in
                                         previousDragPos = nil
                                     }
                     )
@@ -90,7 +92,7 @@ public struct MapViewSwiftUI: View {
                     )
                     .gesture(MagnificationGesture()
                             .onChanged { value in
-                                if(previousMagnitude != nil) {
+                                if (previousMagnitude != nil) {
                                     let prev = previousMagnitude!
                                     mviStore.sendIntent(
                                             intent: SwiftHelpersKt.createIntentZoom(
@@ -101,12 +103,12 @@ public struct MapViewSwiftUI: View {
                                     )
                                 }
                                 previousMagnitude = value.magnitude
-                            }.onEnded { _ in
+                            }
+                            .onEnded { _ in
                                 previousMagnitude = nil
                             }
                     )
-                    .frame(width: 400, height: 400)
-                    //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .border(Color.blue)
         } else {
             Text("need iOS 15.0+")
