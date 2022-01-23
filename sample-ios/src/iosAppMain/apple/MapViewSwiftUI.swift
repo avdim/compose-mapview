@@ -12,8 +12,14 @@ public struct MapViewSwiftUI: View {
                 sideEffectHandler: { (sideEffect) in
                     print("sideEffect: \(sideEffect)")
                     let effect = SwiftHelpersKt.sideEffectAsLoadTile(effect: sideEffect)
-                    if(effect != nil) {
+                    if (effect != nil) {
                         print("load tile \(effect!.tile)")
+//                        mviStore.sendIntent(
+//                                createIntentTileLoaded(
+//                                        tile: effect!.tile,
+//                                        img: CGImage()
+//                                )
+//                        )
                     }
                 }
         )
