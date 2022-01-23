@@ -1,6 +1,7 @@
 import SwiftUI
 import shared
 import model
+import config
 
 public struct MapViewSwiftUI: View {
     let mviStore: MapStoreWrapper
@@ -9,19 +10,27 @@ public struct MapViewSwiftUI: View {
 
     public init() {
         mviStore = MapStoreWrapper(
-                sideEffectHandler: { (sideEffect) in
+                sideEffectHandler: { (store, sideEffect) in
                     print("sideEffect: \(sideEffect)")
                     let effect = SwiftHelpersKt.sideEffectAsLoadTile(effect: sideEffect)
                     if (effect != nil) {
                         let tile = effect!.tile
                         let url = SwiftHelpersKt.createTileUrl(tile: tile)
-                        print("load tile \(url)")
-//                        mviStore.sendIntent(
-//                                createIntentTileLoaded(
-//                                        tile: effect!.tile,
-//                                        img: CGImage()
-//                                )
-//                        )
+                        print("loadTileImage \(url)")
+                        DispatchQueue.global().async {
+                            if let data = try? Data(contentsOf: URL(string: url)!) {
+                                if let image = UIImage(data: data) {
+                                    DispatchQueue.main.async {
+                                        store.send(
+                                                intent: SwiftHelpersKt.createIntentTileLoaded(
+                                                        tile: tile,
+                                                        imageIos: image
+                                                )
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
         )

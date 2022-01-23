@@ -1,8 +1,13 @@
 package com.map
 
 import platform.CoreGraphics.*
+import platform.Foundation.*
+import platform.UIKit.*
+import platform.posix.*
 
-typealias ImageIos = CGImage
+
+//typealias ImageIos = CGImage
+typealias ImageIos = UIImage
 
 actual class TileImage(
     val platformSpecificData: ImageIos,

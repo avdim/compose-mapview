@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class MapStoreWrapper(val sideEffectHandler: (MapSideEffect) -> Unit) {
+class MapStoreWrapper(val sideEffectHandler: (Store<MapState<TileImage>, MapIntent<TileImage>>, MapSideEffect) -> Unit) {
     val scope = MainScope()
     val store: Store<MapState<TileImage>, MapIntent<TileImage>> = scope.createMapStore(
         latitude = 0.0,
@@ -13,7 +13,7 @@ class MapStoreWrapper(val sideEffectHandler: (MapSideEffect) -> Unit) {
         startScale = 1.0,
         searchOrCropOrNull = { searchOrCrop(it) },
     ) { store, sideEffect ->
-        sideEffectHandler(sideEffect)
+        sideEffectHandler(store, sideEffect)
 //        when (sideEffect) {
 //            is MapSideEffect.LoadTile -> {
 ////                store.send(MapIntent.TileImageLoaded(sideEffect.tile, image as ImageIos))
