@@ -19,3 +19,5 @@ fun createIntentTileLoaded(tile: Tile, imageIos: ImageIos /*CGImage*/) = MapInte
 fun createTileUrl(tile: Tile): String {
     return Config.createTileUrl(tile.zoom, tile.x, tile.y, mapTilerSecretKey = MAPTILER_SECRET_KEY)
 }
+
+fun extract(tileImage: TileImage) = tileImage.platformSpecificData
