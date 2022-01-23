@@ -12,6 +12,13 @@ kotlin {
     js(IR) {
         browser()
     }
+    ios {
+        binaries {
+            framework {
+                baseName = "secret"
+            }
+        }
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {

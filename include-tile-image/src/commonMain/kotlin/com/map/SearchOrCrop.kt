@@ -4,7 +4,7 @@ import kotlin.math.max
 
 /**
  * Из кэша найти графику для нужного тайла.
- * Если нужной графики нету, то можно тайли tile с меньшим zoom и вырезать из него кусочек.
+ * Если нужной графики нету, то можно найти tile с меньшим zoom и вырезать из него кусочек.
  */
 fun Map<Tile, TileImage>.searchOrCrop(tile: Tile): TileImage? {
     val img1 = get(tile)
