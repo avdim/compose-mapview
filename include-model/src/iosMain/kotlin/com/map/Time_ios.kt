@@ -1,3 +1,5 @@
 package com.map
 
-actual inline fun timeMs(): Long = 0 //todo
+import platform.Foundation.NSDate
+
+actual inline fun timeMs(): Long = 0 //todo redundant in iOS
