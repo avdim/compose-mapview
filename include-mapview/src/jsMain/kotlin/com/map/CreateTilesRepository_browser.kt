@@ -12,7 +12,6 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.js.Promise
 
-@Composable
 internal actual fun createTilesRepository(
     ioScope: CoroutineScope,
     mapTilerSecretKey: String

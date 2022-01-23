@@ -1,6 +1,8 @@
 package com.map
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -25,12 +27,24 @@ fun main() = application {
         ),
         icon = icon
     ) {
+        val infiniteTransition = rememberInfiniteTransition()
+        val scale by infiniteTransition.animateFloat(
+            initialValue = 1f,
+            targetValue = 5f,
+            animationSpec = infiniteRepeatable(
+                animation = keyframes {
+                    durationMillis = 1000
+                    3f at 500
+                },
+                repeatMode = RepeatMode.Reverse
+            )
+        )
         MapView(
             modifier = Modifier.fillMaxSize(),
             mapTilerSecretKey = MAPTILER_SECRET_KEY,
-//            latitude = 59.999394,
-//            longitude = 29.745412,
-//            startScale = 840.0,
+            latitude = 59.999394,
+            longitude = 29.745412,
+            startScale = scale.toDouble(),
             onMapViewClick = { latitude, longitude ->
                 println("click on geo coordinates: (lat $latitude, lon $longitude)")
                 true

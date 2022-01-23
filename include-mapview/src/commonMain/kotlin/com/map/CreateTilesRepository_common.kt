@@ -9,7 +9,6 @@ import kotlin.coroutines.CoroutineContext
  * В зависимости от платформы будет обёрнут в Декоратор для кэша на диск и (или) in-memory кэш.
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
-@Composable
 internal expect fun createTilesRepository(
     ioScope: CoroutineScope,
     mapTilerSecretKey: String

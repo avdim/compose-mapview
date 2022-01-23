@@ -1,6 +1,8 @@
 package com.map
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -42,26 +44,32 @@ public fun MapView(
     onMapViewClick: (latitude: Double, longitude: Double) -> Boolean = { lat, lon -> true },
 ) {
     val viewScope = rememberCoroutineScope()
-    val ioScope = CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO())
-    val imageRepository = createTilesRepository(ioScope, mapTilerSecretKey)
-    val mapStore: Store<MapState<TileImage>, MapIntent<TileImage>> = viewScope.createMapStore(
-        latitude = latitude,
-        longitude = longitude,
-        startScale = startScale,
-        searchOrCropOrNull = { searchOrCrop(it) },
-    ) { store, sideEffect ->
-        when (sideEffect) {
-            is MapSideEffect.LoadTile -> {
-                ioScope.launch {
-                    try {
-                        val image: TileImage = imageRepository.loadContent(sideEffect.tile)
-                        store.send(MapIntent.TileImageLoaded(sideEffect.tile, image))
-                    } catch (t: Throwable) {
-                        // ignore errors. Tile image loaded with retries
+    val ioScope = remember { CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO()) }
+    val imageRepository = remember { createTilesRepository(ioScope, mapTilerSecretKey) }
+    val mapStore: Store<MapState<TileImage>, MapIntent<TileImage>> = remember {
+        viewScope.createMapStore(
+            latitude = latitude,
+            longitude = longitude,
+            startScale = startScale,
+            searchOrCropOrNull = { searchOrCrop(it) },
+        ) { store, sideEffect ->
+            when (sideEffect) {
+                is MapSideEffect.LoadTile -> {
+                    ioScope.launch {
+                        try {
+                            val image: TileImage = imageRepository.loadContent(sideEffect.tile)
+                            store.send(MapIntent.TileImageLoaded(sideEffect.tile, image))
+                        } catch (t: Throwable) {
+                            // ignore errors. Tile image loaded with retries
+                        }
                     }
                 }
             }
         }
+    }
+
+    SideEffect {
+        mapStore.send(MapIntent.Input.Recomposition(latitude, longitude, startScale))
     }
 
     PlatformMapView(

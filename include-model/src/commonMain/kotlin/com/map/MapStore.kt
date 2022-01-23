@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 sealed interface MapIntent<T> {
     class TileImageLoaded<T>(val tile: Tile, val image: T) : MapIntent<T>
     sealed interface Input<T> : MapIntent<T> {
+        class Recomposition<T>(val latitude: Double, val longitude: Double, val scale: Double) : Input<T>
         data class Zoom<T>(val pt: Pt, val delta: Double) : Input<T>
         data class Move<T>(val pt: Pt) : Input<T>
         data class SetSize<T>(val width: Int, val height: Int) : Input<T>
@@ -49,8 +50,13 @@ fun <T> CoroutineScope.createMapStore(
     ) { state: MapState<T>, intent: MapIntent<T> ->
         when (intent) {
             is MapIntent.Input -> {
-
                 when (intent) {
+                    is MapIntent.Input.Recomposition -> {
+                        state.copy(
+                            scale = intent.scale,
+                        ).copyAndChangeCenter(createGeoPt(intent.latitude, intent.longitude))
+                            .correctGeoXY()
+                    }
                     is MapIntent.Input.SetSize -> {
                         state.copy(width = intent.width, height = intent.height)
                     }
@@ -80,7 +86,7 @@ fun <T> CoroutineScope.createMapStore(
                     }
                 }.let {
                     if (state != it) {
-                        // Если стейт уже изменился, то ещё петесчитаем displayTiles
+                        // Если стейт уже изменился, то ещё пересчитаем displayTiles
                         it.updateDisplayTiles()
                     } else {
                         it.noSideEffects()

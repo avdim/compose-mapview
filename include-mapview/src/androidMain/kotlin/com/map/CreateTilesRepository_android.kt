@@ -12,7 +12,6 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Эта функция с аннотацией Composable, чтобы можно было получить android Context
  */
-@Composable
 internal actual fun createTilesRepository(
     ioScope: CoroutineScope,
     mapTilerSecretKey: String

@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
-@Composable
 internal actual fun createTilesRepository(
     ioScope: CoroutineScope,
     mapTilerSecretKey: String
