@@ -14,11 +14,6 @@ class MapStoreWrapper(val sideEffectHandler: (Store<MapState<TileImage>, MapInte
         searchOrCropOrNull = { searchOrCrop(it) },
     ) { store, sideEffect ->
         sideEffectHandler(store, sideEffect)
-//        when (sideEffect) {
-//            is MapSideEffect.LoadTile -> {
-////                store.send(MapIntent.TileImageLoaded(sideEffect.tile, image as ImageIos))
-//            }
-//        }
     }
 
     fun sendIntent(intent: MapIntent<TileImage>) {

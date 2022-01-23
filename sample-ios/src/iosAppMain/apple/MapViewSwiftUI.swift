@@ -50,13 +50,11 @@ public struct MapViewSwiftUI: View {
                     let t = displayTile.displayTile
                     let platformImage = SwiftHelpersKt.extract(tileImage: img)
                     let image: Image = Image(uiImage: platformImage)
-
-                    let rect3 = CGRect(
+                    let rect = CGRect(
                             origin: CGPoint(x: Double(t.x) / IOS_SCALE, y: Double(t.y) / IOS_SCALE),
                             size: CGSize(width: Double(t.size) / IOS_SCALE, height: Double(t.size) / IOS_SCALE)
                     )
-
-                    context.draw(image, in: rect3)
+                    context.draw(image, in: rect)
                 }
             }
                     .gesture(
