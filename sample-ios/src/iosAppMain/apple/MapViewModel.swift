@@ -1,5 +1,5 @@
 import Foundation
-import shared
+import ioshelper
 import model
 import tileimage
 

@@ -1,5 +1,5 @@
 import SwiftUI
-import shared
+import ioshelper
 import model
 import config
 
