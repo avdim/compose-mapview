@@ -55,7 +55,8 @@ public struct MapViewSwiftUI: View {
                     context.draw(image, in: rect3)
                 }
             }
-                    .frame(width: 300, height: 200)
+                    .frame(width: 400, height: 400)
+//                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .border(Color.blue)
         } else {
             // Fallback on earlier versions
