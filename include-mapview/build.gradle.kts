@@ -59,12 +59,10 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
             }
         }
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
         val uikitMain by creating {
-            dependsOn(nativeMain)
+            dependsOn(commonMain)
             dependencies {
+                implementation("com.map:ui-android-desktop:1.0-SNAPSHOT")
                 implementation(ktorIos)
             }
         }

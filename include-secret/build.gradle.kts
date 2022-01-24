@@ -44,11 +44,8 @@ kotlin {
 
             }
         }
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
         val uikitMain by creating {
-            dependsOn(nativeMain)
+            dependsOn(commonMain)
         }
         val uikitX64Main by getting {
             dependsOn(uikitMain)

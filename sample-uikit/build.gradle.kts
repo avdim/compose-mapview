@@ -56,6 +56,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("com.map:mapview:1.0-SNAPSHOT")
+                implementation("com.map:secret:1.0-SNAPSHOT")
+
                 implementation(compose.ui)
                 implementation(compose.foundation)
                 implementation(compose.material)
@@ -68,12 +71,8 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
         val uikitMain by creating {
-            dependsOn(nativeMain)
+            dependsOn(commonMain)
         }
         val uikitX64Main by getting {
             dependsOn(uikitMain)

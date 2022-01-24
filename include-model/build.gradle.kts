@@ -44,11 +44,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
             }
         }
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
         val uikitMain by creating {
-            dependsOn(nativeMain)
+            dependsOn(commonMain)
         }
         val uikitX64Main by getting {
             dependsOn(uikitMain)
