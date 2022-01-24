@@ -11,6 +11,32 @@ version = "1.0-SNAPSHOT"
 kotlin {
     android()
     jvm("desktop")
+    iosX64("uikitX64") {
+        binaries {
+            executable() {
+                entryPoint = "main"
+                freeCompilerArgs += listOf(
+                    "-linker-option", "-framework", "-linker-option", "Metal",
+                    "-linker-option", "-framework", "-linker-option", "CoreText",
+                    "-linker-option", "-framework", "-linker-option", "CoreGraphics"
+                )
+            }
+        }
+    }
+    iosArm64("uikitArm64") {
+        binaries {
+            executable() {
+                entryPoint = "main"
+                freeCompilerArgs += listOf(
+                    "-linker-option", "-framework", "-linker-option", "Metal",
+                    "-linker-option", "-framework", "-linker-option", "CoreText",
+                    "-linker-option", "-framework", "-linker-option", "CoreGraphics"
+                )
+                // TODO: the current compose binary surprises LLVM, so disable checks for now.
+                freeCompilerArgs += "-Xdisable-phases=VerifyBitcode"
+            }
+        }
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -21,6 +47,18 @@ kotlin {
                 api(compose.foundation)
                 api(compose.material)
             }
+        }
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+        val uikitMain by creating {
+            dependsOn(nativeMain)
+        }
+        val uikitX64Main by getting {
+            dependsOn(uikitMain)
+        }
+        val uikitArm64Main by getting {
+            dependsOn(uikitMain)
         }
         val androidMain by getting {
             dependencies {
@@ -66,4 +104,5 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    mavenLocal()
 }

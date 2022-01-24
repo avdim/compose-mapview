@@ -3,6 +3,7 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
+        mavenLocal()
     }
     plugins {
         val kotlinVersion = extra["kotlin.version"] as String
