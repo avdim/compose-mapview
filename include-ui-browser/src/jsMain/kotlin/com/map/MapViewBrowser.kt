@@ -16,7 +16,7 @@ import org.w3c.dom.events.MouseEvent
 public fun MapViewBrowser(
     width: Int,
     height: Int,
-    stateFlow: StateFlow<MapState<TileImage>>,
+    tiles: List<DisplayTileWithImage<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit
@@ -27,13 +27,12 @@ public fun MapViewBrowser(
     var previousMouseMoveDownPos by remember { mutableStateOf<Pt?>(null) }
     var previousMouseMovePos by remember { mutableStateOf(Pt(width / 2, height / 2)) }
     var previousMouseDownPos by remember { mutableStateOf<Pt?>(null) }
-    val state by stateFlow.collectAsState()
     TagElement(
         elementBuilder = ElementBuilder.createBuilder("canvas"),
         applyAttrs = {
             attr("width", "${width}px")
             attr("height", "${height}px")
-            attr("workaround", state.hashCode().toString())
+            attr("workaround", tiles.hashCode().toString())
         },
         content = {
             DisposableRefEffect { element: Element ->
@@ -108,10 +107,10 @@ public fun MapViewBrowser(
                     println("MapView disposed")
                 }
             }
-            DomSideEffect(state) { element: Element ->
+            DomSideEffect(tiles) { element: Element ->
                 val canvas = element as HTMLCanvasElement
                 val ctx = canvas.getContext("2d") as CanvasRenderingContext2D
-                state.displayTiles.forEach { (t, img) ->
+                tiles.forEach { (t, img) ->
                     if (img != null) {
                         ctx.drawImage(
                             image = img.extract(),

@@ -1,16 +1,10 @@
 package com.map
 
-/**
- * параметр T это тип картинки
- */
-data class MapState<T>(
+data class MapState(
     val width: Int = 100, // display width in dp (pixels)
     val height: Int = 100,//display height in dp (pixels)
     val scale: Double = 1.0,
     val topLeft: GeoPt = GeoPt(0.0, 0.0),
-    val displayTiles: List<DisplayTileWithImage<T>> = emptyList(),
-    // Мутабельный кэш, но мы обязуемся менять и читать его из одного потока
-    val cache: MutableMap<Tile, T> = hashMapOf()
 )
 
 data class DisplayTileWithImage<T>(
@@ -31,8 +25,8 @@ data class DisplayTileAndTile(
 )
 
 
-val MapState<*>.centerGeo get():GeoPt = displayToGeo(Pt(width / 2, height / 2))
-fun <T> MapState<T>.copyAndChangeCenter(targetCenter: GeoPt): MapState<T> =
+val MapState.centerGeo get():GeoPt = displayToGeo(Pt(width / 2, height / 2))
+fun MapState.copyAndChangeCenter(targetCenter: GeoPt): MapState =
     copy(
         topLeft = topLeft + targetCenter - centerGeo
     ).correctGeoXY()
@@ -40,10 +34,10 @@ fun <T> MapState<T>.copyAndChangeCenter(targetCenter: GeoPt): MapState<T> =
 /**
  * Корректируем координаты, чтобы они не выходили за край карты.
  */
-fun <T> MapState<T>.correctGeoXY(): MapState<T> =
+fun MapState.correctGeoXY(): MapState =
     correctGeoX().correctGeoY()
 
-fun <T> MapState<T>.correctGeoY(): MapState<T> {
+fun MapState.correctGeoY(): MapState {
     val minGeoY = 0.0
     val maxGeoY: Double = 1 - 1 / scale
     return if (topLeft.y < minGeoY) {
@@ -55,5 +49,5 @@ fun <T> MapState<T>.correctGeoY(): MapState<T> {
     }
 }
 
-fun <T> MapState<T>.correctGeoX(): MapState<T> = copy(topLeft = topLeft.copy(x = topLeft.x.mod(1.0)))
+fun MapState.correctGeoX(): MapState = copy(topLeft = topLeft.copy(x = topLeft.x.mod(1.0)))
 

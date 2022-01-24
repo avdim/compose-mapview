@@ -9,7 +9,7 @@ actual typealias DisplayModifier = Modifier
 @Composable
 internal actual fun PlatformMapView(
     modifier: DisplayModifier,
-    stateFlow: StateFlow<MapState<TileImage>>,
+    tiles: List<DisplayTileWithImage<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,
@@ -18,7 +18,7 @@ internal actual fun PlatformMapView(
     MapViewAndroidDesktop(
         modifier = modifier,
         isInTouchMode = false,
-        stateFlow = stateFlow,
+        tiles = tiles,
         onZoom = onZoom,
         onClick = onClick,
         onMove = onMove,

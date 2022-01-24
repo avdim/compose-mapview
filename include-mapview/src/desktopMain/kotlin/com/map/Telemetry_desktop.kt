@@ -11,8 +11,7 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-internal actual fun Telemetry(stateFlow: StateFlow<MapState<*>>) {
-    val state by stateFlow.collectAsState()
+internal actual fun Telemetry(state: MapState) {
     Column(Modifier.background(Color(0x77ffFFff))) {
         Text(state.toShortString())
     }
