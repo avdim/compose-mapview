@@ -6,6 +6,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
+data class ExternalMapState(
+    val latitude: Double,
+    val longitude: Double,
+    val scale: Double,
+)
+
 /**
  * MapView to display Earth tile maps. API provided by cloud.maptiler.com
  *
@@ -38,8 +44,10 @@ public fun MapView(
     latitude: Double? = null,
     longitude: Double? = null,
     startScale: Double? = null,
-    externalState: MutableState<MapState> = remember { mutableStateOf(MapState()) },
-    onStateChange: (MapState) -> Unit = { externalState.value = it },
+    externalState: MutableState<ExternalMapState> = remember {
+        mutableStateOf(ExternalMapState(latitude ?: 0.0, longitude ?: 0.0, startScale ?: 1.0))
+    },
+    onStateChange: (ExternalMapState) -> Unit = { externalState.value = it },
     onMapViewClick: (latitude: Double, longitude: Double) -> Boolean = { lat, lon -> true },
 ) {
     val viewScope = rememberCoroutineScope()
@@ -49,8 +57,13 @@ public fun MapView(
     var width: Int by remember { mutableStateOf(100) }
     var height: Int by remember { mutableStateOf(100) }
     var cache: Map<Tile, TileImage> by remember { mutableStateOf(mapOf()) }
+    val internalState: MapState by derivedStateOf {
+        val center = createGeoPt(externalState.value.latitude, externalState.value.longitude)
+        MapState(width, height, externalState.value.scale)
+            .copyAndChangeCenter(center)
+    }
     val displayTiles: List<DisplayTileWithImage<TileImage>> by derivedStateOf {
-        val calcTiles: List<DisplayTileAndTile> = externalState.value.calcTiles(width, height)
+        val calcTiles: List<DisplayTileAndTile> = internalState.calcTiles(width, height)
         val tilesToDisplay: MutableList<DisplayTileWithImage<TileImage>> = mutableListOf()
         val tilesToLoad: MutableSet<Tile> = mutableSetOf()
         calcTiles.forEach {
@@ -81,35 +94,33 @@ public fun MapView(
         modifier = modifier,
         tiles = displayTiles,
         onZoom = { pt: Pt?, change ->
-            onStateChange(externalState.value.zoom(pt, change))
+            onStateChange(internalState.zoom(pt, change).toExternalState())
         },
         onClick = {
-            val state = externalState.value
-            if (onMapViewClick(state.displayToGeo(it).latitude, state.displayToGeo(it).longitude)) {
-                onStateChange(externalState.value.zoom(it, Config.ZOOM_ON_CLICK))
+            if (onMapViewClick(internalState.displayToGeo(it).latitude, internalState.displayToGeo(it).longitude)) {
+                onStateChange(internalState.zoom(it, Config.ZOOM_ON_CLICK).toExternalState())
             }
         },
         onMove = { dx, dy ->
-            val state = externalState.value
-            val topLeft = state.topLeft + state.displayLengthToGeo(Pt(-dx, -dy))
-            onStateChange(state.copy(topLeft = topLeft).correctGeoXY())
+            val topLeft = internalState.topLeft + internalState.displayLengthToGeo(Pt(-dx, -dy))
+            onStateChange(internalState.copy(topLeft = topLeft).correctGeoXY().toExternalState())
         },
         updateSize = { w, h ->
             width = w
             height = h
-            onStateChange(externalState.value.copy(width = w, height = h))
+            onStateChange(internalState.copy(width = w, height = h).toExternalState())
         }
     )
     if (Config.DISPLAY_TELEMETRY) {
-        Telemetry(externalState.value)
+        Telemetry(internalState)
     }
 }
 
-data class ExternalMapState(
-    val latitude: Double? = null,
-    val longitude: Double? = null,
-    val scale: Double? = null,
-)
-
 expect interface DisplayModifier
 
+fun MapState.toExternalState() =
+    ExternalMapState(
+        centerGeo.latitude,
+        centerGeo.longitude,
+        scale
+    )
