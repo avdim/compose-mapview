@@ -33,10 +33,10 @@ data class MapState(
  * (value around 150.0 = Cities),
  * (value around 40000.0 = Street's)
  *
- * @param state - state for Advanced usage
+ * @param state state for Advanced usage
  * You may to configure your own state and control it.
  *
- * @param onStateChange - state change handler for Advanced usage
+ * @param onStateChange state change handler for Advanced usage
  * You may override change state behaviour in your app
  *
  * @param onMapViewClick handle click event with point coordinates (latitude, longitude)
