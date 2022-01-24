@@ -85,7 +85,6 @@ public fun MapView(
                     // ignore errors. Tile image loaded with retries
                 }
             }
-            //todo load tile
         }
         tilesToDisplay
     }
