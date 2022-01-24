@@ -81,29 +81,35 @@ public fun MapView(
         modifier = modifier,
         tiles = displayTiles,
         onZoom = { pt: Pt?, change ->
-            externalState.value = externalState.value.zoom(pt, change)
+            onStateChange(externalState.value.zoom(pt, change))
         },
         onClick = {
             val state = externalState.value
             if (onMapViewClick(state.displayToGeo(it).latitude, state.displayToGeo(it).longitude)) {
-                externalState.value = externalState.value.zoom(it, Config.ZOOM_ON_CLICK)
+                onStateChange(externalState.value.zoom(it, Config.ZOOM_ON_CLICK))
             }
         },
         onMove = { dx, dy ->
             val state = externalState.value
             val topLeft = state.topLeft + state.displayLengthToGeo(Pt(-dx, -dy))
-            externalState.value = state.copy(topLeft = topLeft).correctGeoXY()
+            onStateChange(state.copy(topLeft = topLeft).correctGeoXY())
         },
         updateSize = { w, h ->
             width = w
             height = h
-            externalState.value = externalState.value.copy(width = w, height = h)
+            onStateChange(externalState.value.copy(width = w, height = h))
         }
     )
     if (Config.DISPLAY_TELEMETRY) {
         Telemetry(externalState.value)
     }
 }
+
+data class ExternalMapState(
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val scale: Double? = null,
+)
 
 expect interface DisplayModifier
 
