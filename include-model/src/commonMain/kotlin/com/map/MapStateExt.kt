@@ -1,10 +1,5 @@
 package com.map
 
-import kotlin.math.ceil
-import kotlin.math.log2
-import kotlin.math.roundToInt
-
-
 fun MapState.geoLengthToDisplay(geoLength: Double): Int {
     return (height * geoLength * scale).toInt()
 }
@@ -21,7 +16,6 @@ fun MapState.displayToGeo(displayPt: Pt): GeoPt {
     return topLeft + GeoPt(x1, y1)
 }
 
-
 @Suppress("unused")
 val MapState.minScale
     get():Double = 1.0
@@ -35,4 +29,25 @@ fun pow2(x: Int): Int {
         return 0
     }
     return 1 shl x
+}
+
+fun MapState.zoom(zoomCenter:Pt?, change:Double):MapState {
+    val state = this
+    val pt = zoomCenter ?: Pt(state.width / 2, state.height / 2)
+    var multiply = (1 + change)
+    if (multiply < 1 / Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT) {
+        multiply = 1 / Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT
+    } else if (multiply > Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT) {
+        multiply = Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT
+    }
+    var scale = state.scale * multiply
+    if (scale < state.minScale) {
+        scale = state.minScale
+    }
+    if (scale > state.maxScale) {
+        scale = state.maxScale
+    }
+    val scaledState = state.copy(scale = scale)
+    val geoDelta = state.displayToGeo(pt) - scaledState.displayToGeo(pt)
+    return scaledState.copy(topLeft = scaledState.topLeft + geoDelta).correctGeoXY()
 }

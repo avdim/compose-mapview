@@ -81,33 +81,12 @@ public fun MapView(
         modifier = modifier,
         tiles = displayTiles,
         onZoom = { pt: Pt?, change ->
-            val state = externalState.value
-            val pt = pt ?: Pt(state.width / 2, state.height / 2)
-            var multiply = (1 + change)
-            if (multiply < 1 / Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT) {
-                multiply = 1 / Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT
-            } else if (multiply > Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT) {
-                multiply = Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT
-            }
-            var scale = state.scale * multiply
-            if (scale < state.minScale) {
-                scale = state.minScale
-            }
-            if (scale > state.maxScale) {
-                scale = state.maxScale
-            }
-            val scaledState = state.copy(scale = scale)
-            val geoDelta = state.displayToGeo(pt) - scaledState.displayToGeo(pt)
-
-            externalState.value = scaledState.copy(topLeft = scaledState.topLeft + geoDelta)
-                .correctGeoXY()
+            externalState.value = externalState.value.zoom(pt, change)
         },
         onClick = {
             val state = externalState.value
             if (onMapViewClick(state.displayToGeo(it).latitude, state.displayToGeo(it).longitude)) {
-
-//                mapStore.send(MapIntent.Input.Zoom(it, Config.ZOOM_ON_CLICK))//todo
-                externalState.value
+                externalState.value = externalState.value.zoom(it, Config.ZOOM_ON_CLICK)
             }
         },
         onMove = { dx, dy ->
