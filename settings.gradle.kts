@@ -22,6 +22,7 @@ rootProject.name = "compose-mapview"
 include(":sample-android")
 include(":sample-desktop")
 include(":sample-browser")
+include(":sample-uikit")
 include(":unit-tests")
 
 includeBuild("include-config") {
