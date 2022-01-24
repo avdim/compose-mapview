@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-internal actual fun Telemetry(state: MapState) {
+internal actual fun Telemetry(state: InternalMapState) {
     Column(Modifier.background(Color(0x77ffFFff))) {
         Text(state.toShortString())
     }

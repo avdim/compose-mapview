@@ -6,7 +6,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
-data class ExternalMapState(
+data class MapState(
     val latitude: Double,
     val longitude: Double,
     val scale: Double,
@@ -44,10 +44,10 @@ public fun MapView(
     latitude: Double? = null,
     longitude: Double? = null,
     startScale: Double? = null,
-    externalState: MutableState<ExternalMapState> = remember {
-        mutableStateOf(ExternalMapState(latitude ?: 0.0, longitude ?: 0.0, startScale ?: 1.0))
+    state: State<MapState> = remember {
+        mutableStateOf(MapState(latitude ?: 0.0, longitude ?: 0.0, startScale ?: 1.0))
     },
-    onStateChange: (ExternalMapState) -> Unit = { externalState.value = it },
+    onStateChange: (MapState) -> Unit = { (state as? MutableState<MapState>)?.value = it },
     onMapViewClick: (latitude: Double, longitude: Double) -> Boolean = { lat, lon -> true },
 ) {
     val viewScope = rememberCoroutineScope()
@@ -57,13 +57,13 @@ public fun MapView(
     var width: Int by remember { mutableStateOf(100) }
     var height: Int by remember { mutableStateOf(100) }
     var cache: Map<Tile, TileImage> by remember { mutableStateOf(mapOf()) }
-    val internalState: MapState by derivedStateOf {
-        val center = createGeoPt(externalState.value.latitude, externalState.value.longitude)
-        MapState(width, height, externalState.value.scale)
+    val internalState: InternalMapState by derivedStateOf {
+        val center = createGeoPt(state.value.latitude, state.value.longitude)
+        InternalMapState(width, height, state.value.scale)
             .copyAndChangeCenter(center)
     }
     val displayTiles: List<DisplayTileWithImage<TileImage>> by derivedStateOf {
-        val calcTiles: List<DisplayTileAndTile> = internalState.calcTiles(width, height)
+        val calcTiles: List<DisplayTileAndTile> = internalState.calcTiles()
         val tilesToDisplay: MutableList<DisplayTileWithImage<TileImage>> = mutableListOf()
         val tilesToLoad: MutableSet<Tile> = mutableSetOf()
         calcTiles.forEach {
@@ -118,8 +118,8 @@ public fun MapView(
 
 expect interface DisplayModifier
 
-fun MapState.toExternalState() =
-    ExternalMapState(
+fun InternalMapState.toExternalState() =
+    MapState(
         centerGeo.latitude,
         centerGeo.longitude,
         scale

@@ -7,7 +7,7 @@ import kotlin.math.roundToInt
 /**
  * Расчёт тайлов, исходя из положения карты и scale-а
  */
-fun MapState.calcTiles(width: Int, height: Int): List<DisplayTileAndTile> {
+fun InternalMapState.calcTiles(): List<DisplayTileAndTile> {
     fun geoLengthToDisplay(geoLength: Double): Int {
         return (height * geoLength * scale).toInt()
     }

@@ -7,7 +7,7 @@ class CalcTilesTest {
 
     @Test
     fun testSingleTile() {
-        val state = MapState<Unit>(512, 512)
+        val state = InternalMapState(512, 512)
         val tiles = state.calcTiles()
         assertEquals(1, tiles.size)
     }

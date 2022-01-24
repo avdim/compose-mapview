@@ -1,6 +1,6 @@
 package com.map
 
-fun MapState.toShortString(): String = buildString {
+fun InternalMapState.toShortString(): String = buildString {
     appendLine("width: $width, height: $height")
     appendLine("scale: ${scale.toShortString()}")
 //    appendLine("zoom: $zoom")
