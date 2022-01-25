@@ -1,4 +1,5 @@
 import org.jetbrains.compose.compose
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
 //    id("com.android.library")
@@ -7,7 +8,7 @@ plugins {
 }
 
 version = "1.0-SNAPSHOT"
-val KTOR_VERSION = "1.6.7"
+val KTOR_VERSION = "1.6.2-native-mm-eap-196"
 val ktorCore = "io.ktor:ktor-client-core:$KTOR_VERSION"
 val ktorCIO = "io.ktor:ktor-client-cio:$KTOR_VERSION"
 val ktorIos = "io.ktor:ktor-client-ios:$KTOR_VERSION"
@@ -56,7 +57,7 @@ kotlin {
                 implementation("com.map:model:1.0-SNAPSHOT")
                 implementation("com.map:tile-image:1.0-SNAPSHOT")
                 implementation(compose.runtime)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
             }
         }
         val uikitMain by creating {
@@ -123,6 +124,7 @@ repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     mavenLocal()
+    maven("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
 }
 
 // a temporary workaround for a bug in jsRun invocation - see https://youtrack.jetbrains.com/issue/KT-48273
@@ -130,5 +132,11 @@ afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
         versions.webpackDevServer.version = "4.0.0"
         versions.webpackCli.version = "4.9.0"
+    }
+}
+
+kotlin.targets.withType(KotlinNativeTarget::class.java) {
+    binaries.all {
+        binaryOptions["memoryModel"] = "experimental"
     }
 }

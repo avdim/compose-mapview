@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -18,6 +19,7 @@ import androidx.compose.ui.window.Application
 import kotlinx.cinterop.*
 import platform.UIKit.*
 import platform.Foundation.*
+import com.map.*
 
 fun main() {
     val args = emptyArray<String>()
@@ -44,13 +46,17 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
 
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
         window = UIWindow(frame = UIScreen.mainScreen.bounds)
-        window!!.rootViewController = Application("Minesweeper") {
-            Column {
-                // To skip upper part of screen.
-                Box(modifier = Modifier
-                    .height(100.dp))
-                Game()
-            }
+        window!!.rootViewController = Application("MapView") {
+            MapView(
+                modifier = Modifier.fillMaxSize(),
+                mapTilerSecretKey = MAPTILER_SECRET_KEY,
+            )
+//            Column {
+//                // To skip upper part of screen.
+//                Box(modifier = Modifier
+//                    .height(100.dp))
+//                Game()
+//            }
         }
         window!!.makeKeyAndVisible()
         return true

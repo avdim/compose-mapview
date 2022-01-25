@@ -94,8 +94,9 @@ tasks.withType<KotlinCompile> {
 kotlin {
     targets.withType<KotlinNativeTarget> {
         binaries.all {
+            binaryOptions["memoryModel"] = "experimental"
             // TODO: the current compose binary surprises LLVM, so disable checks for now.
-            freeCompilerArgs += "-Xdisable-phases=VerifyBitcode"
+            freeCompilerArgs += listOf("-Xdisable-phases=VerifyBitcode"/*, "-Xbinary=memoryModel=experimental"*/)
         }
     }
 }

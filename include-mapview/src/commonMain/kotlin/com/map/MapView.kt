@@ -1,10 +1,7 @@
 package com.map
 
 import androidx.compose.runtime.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 data class MapState(
     val latitude: Double,
@@ -82,12 +79,13 @@ public fun MapView(
                 tilesToDisplay.add(DisplayTileWithImage(it.display, croppedImage, it.tile))
             }
         }
-        ioScope.launch {
+        viewScope.launch {
             tilesToLoad.forEach { tile ->
                 try {
                     val image: TileImage = imageRepository.loadContent(tile)
                     cache = cache + (tile to image) //todo потенциально дорогая операция
                 } catch (t: Throwable) {
+                    println("exception in tiles loading, throwable: $t")
                     // ignore errors. Tile image loaded with retries
                 }
             }

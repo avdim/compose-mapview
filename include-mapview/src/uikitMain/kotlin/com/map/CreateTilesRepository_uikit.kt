@@ -17,7 +17,7 @@ internal actual fun rememberTilesRepository(
     createRealRepository(HttpClient(Ios), mapTilerSecretKey)
         .decorateWithLimitRequestsInParallel(ioScope)
         .adapter { TileImage(it.toImageBitmap()) }
-//        .decorateWithDistinctDownloader(ioScope)
+//        .decorateWithDistinctDownloader(ioScope) //todo
 }
 
 internal actual fun getDispatcherIO(): CoroutineContext = Dispatchers.Default
