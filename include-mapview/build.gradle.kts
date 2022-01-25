@@ -2,7 +2,7 @@ import org.jetbrains.compose.compose
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-//    id("com.android.library")
+    id("com.android.library")
     kotlin("multiplatform")
     id("org.jetbrains.compose")
 }
@@ -15,7 +15,7 @@ val ktorIos = "io.ktor:ktor-client-ios:$KTOR_VERSION"
 val ktorOkHttp = "io.ktor:ktor-client-okhttp:$KTOR_VERSION"
 
 kotlin {
-//    android()
+    android()
     jvm("desktop")
     js(IR) {
         browser {
@@ -73,14 +73,14 @@ kotlin {
         val uikitArm64Main by getting {
             dependsOn(uikitMain)
         }
-//        val androidMain by getting {
-//            dependencies {
-//                implementation("com.map:io-android-desktop:1.0-SNAPSHOT")
-//                implementation("com.map:ui-android-desktop:1.0-SNAPSHOT")
-//                implementation(ktorOkHttp)
-//                implementation(ktorCIO)
-//            }
-//        }
+        val androidMain by getting {
+            dependencies {
+                implementation("com.map:io-android-desktop:1.0-SNAPSHOT")
+                implementation("com.map:ui-android-desktop:1.0-SNAPSHOT")
+                implementation(ktorOkHttp)
+                implementation(ktorCIO)
+            }
+        }
         val desktopMain by getting {
             dependencies {
                 implementation("com.map:io-android-desktop:1.0-SNAPSHOT")
@@ -98,26 +98,26 @@ kotlin {
     }
 }
 
-//android {
-//    compileSdk = 31
-//
-//    defaultConfig {
-//        minSdk = 21
-//        targetSdk = 31
-//    }
-//
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.VERSION_1_8
-//        targetCompatibility = JavaVersion.VERSION_1_8
-//    }
-//
-//    sourceSets {
-//        named("main") {
-//            manifest.srcFile("src/androidMain/AndroidManifest.xml")
-//            res.srcDirs("src/androidMain/res")
-//        }
-//    }
-//}
+android {
+    compileSdk = 31
+
+    defaultConfig {
+        minSdk = 21
+        targetSdk = 31
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        named("main") {
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+            res.srcDirs("src/androidMain/res")
+        }
+    }
+}
 
 repositories {
     google()

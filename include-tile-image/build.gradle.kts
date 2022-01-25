@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-//    id("com.android.library")
+    id("com.android.library")
     kotlin("multiplatform")
     id("org.jetbrains.compose")
 }
@@ -9,7 +9,7 @@ plugins {
 version = "1.0-SNAPSHOT"
 
 kotlin {
-//    android()
+    android()
     jvm("desktop")
     js(IR) {
         browser()
@@ -60,11 +60,11 @@ kotlin {
         val uikitArm64Main by getting {
             dependsOn(uikitMain)
         }
-//        val androidMain by getting {
-//            dependencies {
-//                api(compose.foundation)
-//            }
-//        }
+        val androidMain by getting {
+            dependencies {
+                api(compose.foundation)
+            }
+        }
         val desktopMain by getting {
             dependencies {
                 api(compose.foundation)
@@ -83,26 +83,26 @@ kotlin {
     }
 }
 
-//android {
-//    compileSdk = 31
-//
-//    defaultConfig {
-//        minSdk = 21
-//        targetSdk = 31
-//    }
-//
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.VERSION_1_8
-//        targetCompatibility = JavaVersion.VERSION_1_8
-//    }
-//
-//    sourceSets {
-//        named("main") {
-//            manifest.srcFile("src/androidMain/AndroidManifest.xml")
-//            res.srcDirs("src/androidMain/res")
-//        }
-//    }
-//}
+android {
+    compileSdk = 31
+
+    defaultConfig {
+        minSdk = 21
+        targetSdk = 31
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        named("main") {
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+            res.srcDirs("src/androidMain/res")
+        }
+    }
+}
 
 repositories {
     google()

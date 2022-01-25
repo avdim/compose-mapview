@@ -11,15 +11,15 @@ pluginManagement {
         val composeVersion = extra["compose.version"] as String
         kotlin("jvm").version(kotlinVersion)
         kotlin("multiplatform").version(kotlinVersion)
-//        kotlin("android").version(kotlinVersion)
-//        id("com.android.application").version(agpVersion)
-//        id("com.android.library").version(agpVersion)
+        kotlin("android").version(kotlinVersion)
+        id("com.android.application").version(agpVersion)
+        id("com.android.library").version(agpVersion)
         id("org.jetbrains.compose").version(composeVersion)
     }
 }
 
 rootProject.name = "compose-mapview"
-//include(":sample-android")
+include(":sample-android")
 include(":sample-desktop")
 include(":sample-browser")
 include(":sample-uikit")
