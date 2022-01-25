@@ -4,10 +4,9 @@
  */
 
 // Use `xcodegen` first, then `open ./ComposeMinesweeper.xcodeproj` and then Run button in XCode.
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.*
+import androidx.compose.animation.core.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.geometry.Size
@@ -47,16 +46,11 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
     override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
         window = UIWindow(frame = UIScreen.mainScreen.bounds)
         window!!.rootViewController = Application("MapView") {
-            MapView(
-                modifier = Modifier.fillMaxSize(),
-                mapTilerSecretKey = MAPTILER_SECRET_KEY,
-            )
-//            Column {
-//                // To skip upper part of screen.
-//                Box(modifier = Modifier
-//                    .height(100.dp))
-//                Game()
-//            }
+            AnimatedMapView()
+//            MapView(
+//                modifier = Modifier.fillMaxSize(),
+//                mapTilerSecretKey = MAPTILER_SECRET_KEY,
+//            )
         }
         window!!.makeKeyAndVisible()
         return true
@@ -81,4 +75,36 @@ actual fun loadImage(src: String): Painter {
             drawRect(color = color)
         }
     }
+}
+
+@Composable
+fun AnimatedMapView() {
+    val infiniteTransition = rememberInfiniteTransition()
+    val animatedScale: Float by infiniteTransition.animateFloat(
+        initialValue = 2f,
+        targetValue = 4200f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 5_000
+                3.5f at 500
+                100f at 2000
+                4100f at 4_500
+            },
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val animatedMapState = derivedStateOf {
+        MapState(
+            latitude = 59.999394,
+            longitude = 29.745412,
+            scale = animatedScale.toDouble()
+        )
+    }
+    MapView(
+        modifier = Modifier.fillMaxSize(),
+        mapTilerSecretKey = MAPTILER_SECRET_KEY,
+        state = animatedMapState,
+        onStateChange = {}
+    )
 }
