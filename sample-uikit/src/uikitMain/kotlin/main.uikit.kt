@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE.txt file.
  */
 
-// Use `xcodegen` first, then `open ./ComposeMinesweeper.xcodeproj` and then Run button in XCode.
+// Use `xcodegen` first, then `open ./ComposeMapView.xcodeproj` and then Run button in XCode.
 import androidx.compose.foundation.*
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
@@ -47,33 +47,9 @@ class SkikoAppDelegate : UIResponder, UIApplicationDelegateProtocol {
         window = UIWindow(frame = UIScreen.mainScreen.bounds)
         window!!.rootViewController = Application("MapView") {
             AnimatedMapView()
-//            MapView(
-//                modifier = Modifier.fillMaxSize(),
-//                mapTilerSecretKey = MAPTILER_SECRET_KEY,
-//            )
         }
         window!!.makeKeyAndVisible()
         return true
-    }
-}
-
-@Composable
-actual fun loadImage(src: String): Painter {
-    // TODO Bundle pics and show images properly
-    val color = when (src) {
-        "assets/clock.png" -> Color.Blue
-        "assets/flag.png" -> Color.Green
-        "assets/mine.png" -> Color.Red
-        else -> Color.White
-    }
-
-    return object : Painter() {
-        override val intrinsicSize: Size
-            get() = Size(16f, 16f)
-
-        override fun DrawScope.onDraw() {
-            drawRect(color = color)
-        }
     }
 }
 
@@ -93,7 +69,6 @@ fun AnimatedMapView() {
             repeatMode = RepeatMode.Reverse
         )
     )
-
     val animatedMapState = derivedStateOf {
         MapState(
             latitude = 59.999394,
