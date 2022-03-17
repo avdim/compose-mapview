@@ -3,6 +3,7 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
+        mavenLocal()
     }
     plugins {
         val kotlinVersion = extra["kotlin.version"] as String
@@ -21,6 +22,7 @@ rootProject.name = "compose-mapview"
 include(":sample-android")
 include(":sample-desktop")
 include(":sample-browser")
+include(":sample-uikit")
 include(":unit-tests")
 
 includeBuild("include-config") {

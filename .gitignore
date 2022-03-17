@@ -27,3 +27,7 @@ temp_id_rsa
 .system**
 
 SecretApiKey.kt
+
+#XCode
+ComposeMapView.xcodeproj
+
