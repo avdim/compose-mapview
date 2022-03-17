@@ -8,8 +8,7 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-internal actual fun Telemetry(stateFlow: StateFlow<MapState<*>>) {
-    val state by stateFlow.collectAsState()
+internal actual fun Telemetry(state: InternalMapState) {
     Column {
         Text(state.toShortString())
     }

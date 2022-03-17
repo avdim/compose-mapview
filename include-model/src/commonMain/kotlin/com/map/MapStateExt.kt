@@ -1,50 +1,53 @@
 package com.map
 
-import kotlin.math.ceil
-import kotlin.math.log2
-import kotlin.math.roundToInt
-
-
-fun MapState<*>.geoLengthToDisplay(geoLength: Double): Int {
+fun InternalMapState.geoLengthToDisplay(geoLength: Double): Int {
     return (height * geoLength * scale).toInt()
 }
 
-fun MapState<*>.geoXToDisplay(x: Double): Int = geoLengthToDisplay(x - topLeft.x)
-fun MapState<*>.geoYToDisplay(y: Double): Int = geoLengthToDisplay(y - topLeft.y)
-fun MapState<*>.geoToDisplay(geoPt: GeoPt): Pt = Pt(geoXToDisplay(geoPt.x), geoYToDisplay(geoPt.y))
-fun MapState<*>.displayLengthToGeo(displayLength: Int): Double = displayLength / (scale * height)
-fun MapState<*>.displayLengthToGeo(pt: Pt): GeoPt = GeoPt(displayLengthToGeo(pt.x), displayLengthToGeo(pt.y))
+fun InternalMapState.geoXToDisplay(x: Double): Int = geoLengthToDisplay(x - topLeft.x)
+fun InternalMapState.geoYToDisplay(y: Double): Int = geoLengthToDisplay(y - topLeft.y)
+fun InternalMapState.geoToDisplay(geoPt: GeoPt): Pt = Pt(geoXToDisplay(geoPt.x), geoYToDisplay(geoPt.y))
+fun InternalMapState.displayLengthToGeo(displayLength: Int): Double = displayLength / (scale * height)
+fun InternalMapState.displayLengthToGeo(pt: Pt): GeoPt = GeoPt(displayLengthToGeo(pt.x), displayLengthToGeo(pt.y))
 
-fun MapState<*>.displayToGeo(displayPt: Pt): GeoPt {
+fun InternalMapState.displayToGeo(displayPt: Pt): GeoPt {
     val x1 = displayLengthToGeo((displayPt.x))
     val y1 = displayLengthToGeo((displayPt.y))
     return topLeft + GeoPt(x1, y1)
 }
 
-val MapState<*>.zoom: Int
-    get() {
-        return minOf(
-            Config.MAX_ZOOM,
-            maxOf(
-                Config.MIN_ZOOM,
-                ceil(log2(geoLengthToDisplay(1.0) / TILE_SIZE.toDouble())).roundToInt() - Config.FONT_LEVEL
-            )
-        )
-    }
-
 @Suppress("unused")
-val MapState<*>.minScale
+val InternalMapState.minScale
     get():Double = 1.0
-val MapState<*>.maxScale get():Double = (TILE_SIZE.toDouble() / height) * pow2(Config.MAX_ZOOM)
-val MapState<*>.maxTileIndex: Int get() = pow2(zoom)
-val MapState<*>.tileSize: Int get() = geoLengthToDisplay(1.0) / maxTileIndex + 1
+val InternalMapState.maxScale get():Double = (TILE_SIZE.toDouble() / height) * pow2(Config.MAX_ZOOM)
 
 /**
  * Функция 2^x
  */
-private fun pow2(x: Int): Int {
+fun pow2(x: Int): Int {
     if (x < 0) {
         return 0
     }
     return 1 shl x
+}
+
+fun InternalMapState.zoom(zoomCenter:Pt?, change:Double):InternalMapState {
+    val state = this
+    val pt = zoomCenter ?: Pt(state.width / 2, state.height / 2)
+    var multiply = (1 + change)
+    if (multiply < 1 / Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT) {
+        multiply = 1 / Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT
+    } else if (multiply > Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT) {
+        multiply = Config.MAX_SCALE_ON_SINGLE_ZOOM_EVENT
+    }
+    var scale = state.scale * multiply
+    if (scale < state.minScale) {
+        scale = state.minScale
+    }
+    if (scale > state.maxScale) {
+        scale = state.maxScale
+    }
+    val scaledState = state.copy(scale = scale)
+    val geoDelta = state.displayToGeo(pt) - scaledState.displayToGeo(pt)
+    return scaledState.copy(topLeft = scaledState.topLeft + geoDelta).correctGeoXY()
 }

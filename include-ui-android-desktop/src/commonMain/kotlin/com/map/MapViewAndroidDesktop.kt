@@ -28,7 +28,7 @@ import kotlin.math.roundToInt
 fun MapViewAndroidDesktop(
     modifier: Modifier,
     isInTouchMode: Boolean,
-    stateFlow: StateFlow<MapState<TileImage>>,
+    tiles: List<DisplayTileWithImage<TileImage>>,
     onZoom: (Pt?, Double) -> Unit,
     onClick: (Pt) -> Unit,
     onMove: (Int, Int) -> Unit,
@@ -37,7 +37,6 @@ fun MapViewAndroidDesktop(
     var previousMoveDownPos by remember { mutableStateOf<Offset?>(null) }
     var previousPressTime by remember { mutableStateOf(0L) }
     var previousPressPos by remember { mutableStateOf<Offset?>(null) }
-    val state by stateFlow.collectAsState()
 
     fun Modifier.applyPointerInput() = pointerInput(Unit) {
         while (true) {
@@ -127,7 +126,7 @@ fun MapViewAndroidDesktop(
     ) {
         updateSize(size.width.toInt(), size.height.toInt())
         clipRect() {
-            state.displayTiles.forEach { (t, img) ->
+            tiles.forEach { (t, img) ->
                 if (img != null) {
                     val size = IntSize(t.size, t.size)
                     val position = IntOffset(t.x, t.y)
