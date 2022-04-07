@@ -8,7 +8,9 @@ plugins {
 }
 
 version = "1.0-SNAPSHOT"
-val KTOR_VERSION = "1.6.2-native-mm-eap-196"
+
+val KTOR_VERSION = "1.6.8"
+//val KTOR_VERSION = "1.6.2-native-mm-eap-196"
 val ktorCore = "io.ktor:ktor-client-core:$KTOR_VERSION"
 val ktorCIO = "io.ktor:ktor-client-cio:$KTOR_VERSION"
 val ktorIos = "io.ktor:ktor-client-ios:$KTOR_VERSION"
