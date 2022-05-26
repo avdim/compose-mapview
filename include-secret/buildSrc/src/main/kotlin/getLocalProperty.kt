@@ -10,9 +10,8 @@ fun Project.getLocalProperty(key: String, default: String): String {
     }
 
     val propertiesFile: File? = listOf(
-        project.file("local.properties"),
-        rootProject.file("local.properties"),
         rootProject.file("../local.properties"),
+        rootProject.file("local.properties"),
     ).firstOrNull { it.exists() }
 
     val properties = Properties()
