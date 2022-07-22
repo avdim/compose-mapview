@@ -16,16 +16,15 @@ import kotlin.js.Promise
 @Composable
 internal actual fun rememberTilesRepository(
     ioScope: CoroutineScope,
-    mapTilerSecretKey: String
 ): ContentRepository<Tile, TileImage> = remember {
-    createRealRepository(mapTilerSecretKey)
+    createRealRepository()
         .adapter { TileImage(it) }
         .decorateWithLimitRequestsInParallel(ioScope)
 }
 
 internal actual fun getDispatcherIO(): CoroutineContext = Dispatchers.Default
 
-private fun createRealRepository(mapTilerSecretKey: String) =
+private fun createRealRepository() =
     object : ContentRepository<Tile, ImageBitmap> {
         @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
         override suspend fun loadContent(tile: Tile): ImageBitmap {
@@ -36,7 +35,7 @@ private fun createRealRepository(mapTilerSecretKey: String) =
                         createImageBitmap(img)
                     )
                 }
-                img.src = Config.createTileUrl(tile.zoom, tile.x, tile.y, mapTilerSecretKey)
+                img.src = Config.createTileUrl(tile.zoom, tile.x, tile.y)
             }
             return promise.await()
         }

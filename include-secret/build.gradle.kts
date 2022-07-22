@@ -94,28 +94,6 @@ android {
     }
 }
 
-/**
- * In file: local.properties, set key:    mapTilerSecretKey=xXxXxXxXxXxXx
- * Here you can get this key: https://cloud.maptiler.com/maps/streets/  (register and look at url field ?key=...#)
- */
-val MAPTILER_SECRET_KEY = project.getLocalProperty("mapTilerSecretKey", "please_set_secret_key_in_local.properties")
-
-buildConfig {
-    className("GeneratedSecretConfig")   // forces the class name. Defaults to 'BuildConfig'
-    packageName("com.map")
-    buildConfigField("String", "GENERATED_MAPTILER_SECRET_KEY", """ "$MAPTILER_SECRET_KEY" """)
-
-//    sourceSets.named<BuildConfigSourceSet>("jvmMain") {
-//        buildConfigField("String", "PLATFORM", "\"jvm\"")
-//        buildConfigField("String", "JVM_VALUE", "\"aJvmValue\"")
-//    }
-
-//    sourceSets.named<BuildConfigSourceSet>("jsMain") {
-//        buildConfigField("String", "PLATFORM", "\"js\"")
-//        buildConfigField("String", "JS_VALUE", "\"aJsValue\"")
-//    }
-}
-
 repositories {
     google()
     mavenCentral()

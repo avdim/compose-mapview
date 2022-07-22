@@ -14,10 +14,6 @@ data class MapState(
  *
  * @param modifier to specify size strategy for this composable
  *
- * @param mapTilerSecretKey secret API key for cloud.maptiler.com
- * Here you can get this key: https://cloud.maptiler.com/maps/streets/  (register and look at url field ?key=...#)
- * For build sample projects, in file: local.properties, set key: `mapTilerSecretKey=xXxXxXxXxXxXx`
- *
  * @param latitude initial Latitude of map center.
  * Available values between [-90.0 (South) .. 90.0 (North)]
  *
@@ -43,7 +39,6 @@ data class MapState(
 @Composable
 public fun MapView(
     modifier: DisplayModifier,
-    mapTilerSecretKey: String,
     latitude: Double? = null,
     longitude: Double? = null,
     startScale: Double? = null,
@@ -55,7 +50,7 @@ public fun MapView(
 ) {
     val viewScope = rememberCoroutineScope()
     val ioScope = remember { CoroutineScope(SupervisorJob(viewScope.coroutineContext.job) + getDispatcherIO()) }
-    val imageRepository = rememberTilesRepository(ioScope, mapTilerSecretKey)
+    val imageRepository = rememberTilesRepository(ioScope)
 
     var width: Int by remember { mutableStateOf(100) }
     var height: Int by remember { mutableStateOf(100) }

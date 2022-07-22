@@ -10,11 +10,10 @@ import kotlin.coroutines.CoroutineContext
 
 @Composable
 internal actual fun rememberTilesRepository(
-    ioScope: CoroutineScope,
-    mapTilerSecretKey: String
+    ioScope: CoroutineScope
 ): ContentRepository<Tile, TileImage> = remember {
     // Для iOS пока без дискового кэша
-    createRealRepository(HttpClient(Ios), mapTilerSecretKey)
+    createRealRepository(HttpClient(Ios))
         .decorateWithLimitRequestsInParallel(ioScope)
         .adapter { TileImage(it.toImageBitmap()) }
 //        .decorateWithDistinctDownloader(ioScope) //todo

@@ -29,7 +29,6 @@ fun main() = application {
         } else {
             MapView(
                 modifier = Modifier.fillMaxSize(),
-                mapTilerSecretKey = MAPTILER_SECRET_KEY,
                 latitude = 59.999394,
                 longitude = 29.745412,
                 startScale = 1.0,
@@ -68,7 +67,6 @@ fun AnimatedMapView() {
     }
     MapView(
         modifier = Modifier.fillMaxSize(),
-        mapTilerSecretKey = MAPTILER_SECRET_KEY,
         state = animatedMapState,
         onStateChange = {}
     )
