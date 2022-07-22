@@ -1,6 +1,6 @@
 package com.map
 
-val TILE_SIZE = 512
+val TILE_SIZE = 256
 
 object Config {
     val DISPLAY_TELEMETRY: Boolean = true
@@ -16,8 +16,9 @@ object Config {
     val MAX_ZOOM = 22
     val FONT_LEVEL = 2
 
-    fun createTileUrl(zoom: Int, x: Int, y: Int, mapTilerSecretKey: String): String =
-        "https://api.maptiler.com/maps/streets/$zoom/$x/$y.png?key=$mapTilerSecretKey"
+    fun createTileUrl(zoom: Int, x: Int, y: Int): String {
+        return "https://tile.openstreetmap.org/$zoom/$x/$y.png"
+    }
 }
 
 /**

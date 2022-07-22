@@ -78,7 +78,6 @@ fun AnimatedMapView() {
     }
     MapView(
         modifier = Modifier.fillMaxSize(),
-        mapTilerSecretKey = MAPTILER_SECRET_KEY,
         state = animatedMapState,
         onStateChange = {}
     )

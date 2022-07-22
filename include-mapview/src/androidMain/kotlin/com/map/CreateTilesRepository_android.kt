@@ -15,12 +15,11 @@ import kotlin.coroutines.CoroutineContext
  */
 @Composable
 internal actual fun rememberTilesRepository(
-    ioScope: CoroutineScope,
-    mapTilerSecretKey: String
+    ioScope: CoroutineScope
 ): ContentRepository<Tile, TileImage> {
     val cacheDir = LocalContext.current.cacheDir
     return remember(cacheDir) {
-        createRealRepository(HttpClient(CIO), mapTilerSecretKey)
+        createRealRepository(HttpClient(CIO))
             .decorateWithLimitRequestsInParallel(ioScope)
             .decorateWithDiskCache(ioScope, cacheDir)
             .adapter { TileImage(it.toImageBitmap()) }

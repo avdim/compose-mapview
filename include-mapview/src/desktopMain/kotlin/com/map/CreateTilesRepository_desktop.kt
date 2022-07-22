@@ -11,13 +11,12 @@ import kotlin.coroutines.CoroutineContext
 
 @Composable
 internal actual fun rememberTilesRepository(
-    ioScope: CoroutineScope,
-    mapTilerSecretKey: String
+    ioScope: CoroutineScope
 ): ContentRepository<Tile, TileImage> = remember {
     // Для HOME директории MacOS требует разрешения.
     // Чтобы не просить разрешений созданим кэш во временной директории.
     val cacheDir = File(System.getProperty("java.io.tmpdir")).resolve(Config.CACHE_DIR_NAME)
-    createRealRepository(HttpClient(CIO), mapTilerSecretKey)
+    createRealRepository(HttpClient(CIO))
         .decorateWithLimitRequestsInParallel(ioScope)
         .decorateWithDiskCache(ioScope, cacheDir)
         .adapter { TileImage(it.toImageBitmap()) }
