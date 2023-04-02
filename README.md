@@ -1,4 +1,4 @@
-Please first read OpenStreetMap policy: https://operations.osmfoundation.org/policies/tiles/
+## Please first read OpenStreetMap policy: https://operations.osmfoundation.org/policies/tiles/
 
 # MapView
 Composable UI component for Desktop, Android and Browser
