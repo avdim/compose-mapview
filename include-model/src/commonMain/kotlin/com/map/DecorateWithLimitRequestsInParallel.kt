@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
  */
 fun <K, T> ContentRepository<K, T>.decorateWithLimitRequestsInParallel(
     scope: CoroutineScope,
-    maxParallelRequests: Int = 10,
+    maxParallelRequests: Int = 2, // Policy: https://operations.osmfoundation.org/policies/tiles/
     waitBufferCapacity: Int = 50,
     delayBeforeRequestMs: Long = 50 // Если карта быстро изменяется, то загружать сразу нет смысла
 ): ContentRepository<K, T> {
